@@ -255,7 +255,15 @@
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\d3d10shader.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\d3d10effect.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\d3d10_1shader.h",
-            "c:\\users\\jungle\\source\\repos\\project1\\project1\\igamestage.h"
+            "c:\\users\\jungle\\source\\repos\\project1\\project1\\igamestage.h",
+            "c:\\users\\jungle\\source\\repos\\project1\\project1\\d3d11util.h",
+            "c:\\users\\jungle\\source\\repos\\project1\\project1\\mainmenustage.h",
+            "c:\\program files\\microsoft visual studio\\18\\insiders\\vc\\tools\\msvc\\14.51.36231\\include\\cstdio",
+            "c:\\program files\\microsoft visual studio\\18\\insiders\\vc\\tools\\msvc\\14.51.36231\\include\\yvals_core.h",
+            "c:\\program files\\microsoft visual studio\\18\\insiders\\vc\\tools\\msvc\\14.51.36231\\include\\xkeycheck.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\stdio.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\corecrt_wstdio.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\corecrt_stdio_config.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []
