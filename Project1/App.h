@@ -1,7 +1,9 @@
 #pragma once
+#include <windows.h>
+
 #include <d3dcompiler.h>
 #include <d3d11.h>
-#include <windows.h>
+
 #include "IGameStage.h"
 
 class App 
@@ -54,7 +56,7 @@ class App
 	void ReleaseShader();
 	void ReleaseDeviceAndSwapChain();
 
-
+	
 	//타이머,인풋 업데이트
 	
 	void Update();
@@ -80,6 +82,9 @@ class App
 	{
 		return m_deviceContext;
 	}
+
+	//버텍스버퍼 생성
+	ID3D11Buffer* CreateVertexBuffer(FVertexSimple* vertices, UINT byteWidth);
 
 	void ReleaseAll();
 
