@@ -1,0 +1,18 @@
+#pragma once
+#include "IGameStage.h"
+class MainmenuStage : public IGameStage
+{
+	void Enter() override;
+	void Update(float deltaTime) override;
+	void Render() override;
+	void Exit() override;
+
+
+
+
+
+
+
+
+
+};
