@@ -157,8 +157,10 @@ void App::CreateDeviceandSwapchain()
 
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 
-	swapChainDesc.BufferDesc.Width = 0;
-	swapChainDesc.BufferDesc.Height = 0;
+	RECT rc;
+	GetClientRect(m_mainWindow, &rc);
+	swapChainDesc.BufferDesc.Width = rc.right - rc.left;
+	swapChainDesc.BufferDesc.Height = rc.bottom - rc.top;
 	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	swapChainDesc.SampleDesc.Count = 1;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -287,6 +289,21 @@ App::App()
 {
 	Ins = this;
 
+};
+
+ID3D11Buffer* App::CreateVertexBuffer(FVertexSimple* vertices, UINT byteWidth)
+{
+	D3D11_BUFFER_DESC bufferDesc = {};
+	bufferDesc.ByteWidth = byteWidth;
+	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	D3D11_SUBRESOURCE_DATA vertexBufferSRD = { vertices };
+
+	ID3D11Buffer* vertexBuffer = nullptr;
+	m_device->CreateBuffer(&bufferDesc, &vertexBufferSRD, &vertexBuffer);
+
+	return vertexBuffer;
+}
 }
 App::~App()
 {

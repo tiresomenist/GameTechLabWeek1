@@ -1,3 +1,5 @@
+#include <windows.h>
+
 class TimeManager
 {
 public:
