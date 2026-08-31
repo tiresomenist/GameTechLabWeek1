@@ -1,6 +1,7 @@
 #pragma once
 #include "IGameStage.h"
 #include "ObjectManager.h"
+#include "TimeManager.cpp"
 
 class InGameStage : public IGameStage
 {
@@ -14,6 +15,7 @@ class InGameStage : public IGameStage
 	Object* player=nullptr;
 	void CheckHitCollision(float AttackRange);
 	void intersectsPlayerWithWall();
+	TimeManager timeManager;
 
 };
 

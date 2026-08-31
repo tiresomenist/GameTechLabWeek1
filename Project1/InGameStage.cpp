@@ -1,22 +1,27 @@
 #include "InGameStage.h"
 
+
 void InGameStage::Enter()
 {
 	//여기서 플레이어 캐릭터를 생성
 	if (player == nullptr) {
-		player = new Object(); // 임시로 생성
+		player = new Player(); // 임시로 생성
 	}
 	if (objectList == nullptr)
 	{
 		objectList = new std::vector<Object*>(); // 임시로 생성
 	}
+	timeManager = TimeManager();
 }
 
 void InGameStage::Update(float deltaTime)
 {
-	//특정 주기마다 적 생성 로직이 필요함
-	//특정 주기는 어떻게 판단함?
-	//인수로 받는건 프레임당 시간임.
+	float frameCount = timeManager.GetCurrentTime() / deltaTime;	//몇프레임돌았는가?
+	if ((int)frameCount % 30 == 0) {
+		//여기에 적생성 로직
+		Object* enemy = new Enemy();
+		objectList->push_back(enemy);
+	}
 
 	//플레이어 이동
 	
@@ -38,6 +43,8 @@ void InGameStage::Update(float deltaTime)
 	}
 	//플레이어에게 충돌하는지 체크
 	InGameStage::intersectsToPlayer();
+	//플레이어와 벽의 충돌 체크
+	InGameStage::intersectsPlayerWithWall();
 	Render();
 }
 

@@ -1,3 +1,4 @@
+#include <windows.h>
 #include <WinUser.h>
 class InputManager 
 {

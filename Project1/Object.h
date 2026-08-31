@@ -7,6 +7,7 @@ struct FVector
 class Object
 {
 public:
+	virtual ~Object() = default;
 	float GetAttack();
 	float GetSpeed();
 	float GetAttackSpeed();
@@ -21,13 +22,13 @@ public:
 	bool GetIsMove();
 
 	bool Intersect(Object* otherObject); // 충돌판정
-	void MoveObject(float x, float y); // 실제움직이기
+	virtual void MoveObject(float x, float y) = 0 ; // 실제움직이기
 
 	void DeadObject(); // 생사 여부
 
 	void UpdateState(); //최종 업데이트
 
-private:
+protected:
 	float attack;
 	float speed;
 	float attackSpeed;
@@ -42,4 +43,23 @@ private:
 	bool isDead;
 	bool isHit;
 	bool isMove;
+};
+
+class Enemy:public Object
+{
+public:
+	Enemy();
+	virtual ~Enemy() = default; // = default 추가
+private:
+	void MoveObject(float x, float y)override; // 실제움직이기
+};
+class Player : public Object
+{
+public:
+	Player();
+	virtual ~Player() = default; // = default 추가
+	bool IsWall(float x, float y);
+private:
+	void MoveObject(float x, float y)override; // 실제움직이기
+
 };

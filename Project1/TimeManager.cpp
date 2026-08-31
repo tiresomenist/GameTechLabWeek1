@@ -1,6 +1,15 @@
 class TimeManager
 {
+private:
+	float currentTime = 0.0f;
+	bool isRunning = false;
+
 public:
+	TimeManager() {
+		currentTime = 0.0f;
+		isRunning = false;
+	};
+
 	void TimeStart() {
 		if (isRunning == false)
 			isRunning = true;
@@ -37,8 +46,5 @@ public:
 		return isRunning;
 	}
 
-private:
-	float currentTime = 0.0f;
-	bool isRunning = false;
 
 };
