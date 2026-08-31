@@ -153,6 +153,7 @@
     <ClCompile Include="InGameStage.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainmenuStage.cpp" />
+    <ClCompile Include="Object.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="defaultPS.hlsl">
