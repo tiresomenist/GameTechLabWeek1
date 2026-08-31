@@ -7,6 +7,31 @@
 #include "ImGui/imgui_internal.h"
 #include <Windows.h>
 
+namespace
+{
+	// Main Menu
+	constexpr float MENU_WIDTH = 420.0f;
+	constexpr float MENU_HEIGHT = 360.0f;
+
+	constexpr float BUTTON_WIDTH = 220.0f;
+	constexpr float BUTTON_HEIGHT = 45.0f;
+
+	// Credits
+	constexpr float CREDIT_WIDTH = 320.0f;
+	constexpr float CREDIT_HEIGHT = 260.0f;
+
+	constexpr float CLOSE_BUTTON_WIDTH = 120.0f;
+	constexpr float CLOSE_BUTTON_HEIGHT = 35.0f;
+
+    const char* CREDIT_MEMBERS[] =
+    {
+        "Dongyun Hyun",
+        "Hyunseo Yoo",
+        "Jeongjun Park",
+        "Minsu Ko"
+    };
+}
+
 void MainmenuStage::Enter()
 {
 
@@ -24,40 +49,137 @@ void MainmenuStage::Render()
 
 	// 이후 ImGui UI 컨트롤 추가는 ImGui::NewFrame()과 ImGui::Render() 사이인 여기에 위치합니다. 
 
-	ImGui::Begin("Main Menu");
+    ImGuiIO& io = ImGui::GetIO();
 
-	ImGui::Text("BALL PHYSICS SIMULATOR");
-	ImGui::Separator();
+    ImVec2 windowSize(MENU_WIDTH, MENU_HEIGHT);
 
-	if (ImGui::Button("Start"))
-	{
-		m_app->ChangeState(new InGameStage());
-	}
+    ImVec2 windowPos(
+        (io.DisplaySize.x - MENU_WIDTH) * 0.5f,
+        (io.DisplaySize.y - MENU_HEIGHT) * 0.5f
+    );
 
-	if (ImGui::Button("Credits"))
-	{
-		ImGui::OpenPopup("Credits");
-	}
+    ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always);
+    ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
 
-	if (ImGui::BeginPopup("Credits"))
-	{
-		ImGui::Text("TEAM CREDITS");
-		ImGui::Separator();
+    ImGuiWindowFlags flags =
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoTitleBar;
 
-		ImGui::Text("현동윤");
-		ImGui::Text("유현서");
-		ImGui::Text("박정준");
-		ImGui::Text("고민수");
+    ImGui::Begin("Main Menu", nullptr, flags);
 
-		ImGui::EndPopup();
-	}
+    // =========================
+    // Title
+    // =========================
 
-	if (ImGui::Button("Exit"))
-	{
-		PostQuitMessage(0);
-	}
+    ImGui::Dummy(ImVec2(0.0f, 35.0f));
 
-	ImGui::End();
+    const char* title = "Ball Survivors";
+    float titleWidth = ImGui::CalcTextSize(title).x;
+
+    ImGui::SetCursorPosX((MENU_WIDTH - titleWidth) * 0.5f);
+    ImGui::Text("%s", title);
+
+    ImGui::Dummy(ImVec2(0.0f, 45.0f));
+
+    // =========================
+    // Start
+    // =========================
+
+    ImGui::SetCursorPosX((MENU_WIDTH - BUTTON_WIDTH) * 0.5f);
+
+    if (ImGui::Button("START", ImVec2(BUTTON_WIDTH, BUTTON_HEIGHT)))
+    {
+        m_app->ChangeState(new InGameStage());
+    }
+
+    ImGui::Dummy(ImVec2(0.0f, 10.0f));
+
+    // =========================
+    // Credits
+    // =========================
+
+    ImGui::SetCursorPosX((MENU_WIDTH - BUTTON_WIDTH) * 0.5f);
+
+    if (ImGui::Button("CREDITS", ImVec2(BUTTON_WIDTH, BUTTON_HEIGHT)))
+    {
+        ImGui::OpenPopup("Credits");
+    }
+
+    ImGui::Dummy(ImVec2(0.0f, 10.0f));
+
+    // =========================
+    // Exit
+    // =========================
+
+    ImGui::SetCursorPosX((MENU_WIDTH - BUTTON_WIDTH) * 0.5f);
+
+    if (ImGui::Button("EXIT", ImVec2(BUTTON_WIDTH, BUTTON_HEIGHT)))
+    {
+        PostQuitMessage(0);
+    }
+
+    // =========================
+    // Credits Popup
+    // =========================
+
+    ImGui::SetNextWindowSize(
+        ImVec2(CREDIT_WIDTH, CREDIT_HEIGHT),
+        ImGuiCond_Always
+    );
+
+    if (ImGui::BeginPopupModal(
+        "Credits",
+        nullptr,
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoCollapse))
+    {
+        ImGui::Dummy(ImVec2(0.0f, 10.0f));
+
+        const char* creditTitle = "TEAM CREDITS";
+        float creditTitleWidth = ImGui::CalcTextSize(creditTitle).x;
+
+        ImGui::SetCursorPosX(
+            (CREDIT_WIDTH - creditTitleWidth) * 0.5f
+        );
+
+        ImGui::Text("%s", creditTitle);
+
+        ImGui::Separator();
+        ImGui::Dummy(ImVec2(0.0f, 15.0f));
+
+        // 팀원 이름
+        for (const char* member : CREDIT_MEMBERS)
+        {
+            float textWidth = ImGui::CalcTextSize(member).x;
+
+            ImGui::SetCursorPosX(
+                (CREDIT_WIDTH - textWidth) * 0.5f
+            );
+
+            ImGui::Text("%s", member);
+
+            ImGui::Dummy(ImVec2(0.0f, 5.0f));
+        }
+
+        ImGui::Dummy(ImVec2(0.0f, 10.0f));
+
+        // Close
+        ImGui::SetCursorPosX(
+            (CREDIT_WIDTH - CLOSE_BUTTON_WIDTH) * 0.5f
+        );
+
+        if (ImGui::Button(
+            "CLOSE",
+            ImVec2(CLOSE_BUTTON_WIDTH, CLOSE_BUTTON_HEIGHT)))
+        {
+            ImGui::CloseCurrentPopup();
+        }
+
+        ImGui::EndPopup();
+    }
+
+    ImGui::End();
 
 
 }

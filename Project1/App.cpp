@@ -136,7 +136,6 @@ void App::InitImgui()
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO();
 	ImGui_ImplWin32_Init((void*)m_mainWindow);
 	ImGui_ImplDX11_Init(m_device, m_deviceContext);
 }
