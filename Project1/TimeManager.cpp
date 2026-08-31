@@ -2,29 +2,29 @@ class TimeManager
 {
 public:
 	void TimeStart() {
-		if isRunning == false
+		if (isRunning == false)
 			isRunning = true;
 	}
 
 	void TimeUpdate(float deltatime) {
-		if isRunning == true{
+		if (isRunning == true) {
 			currentTime += deltatime;
 		}
 	}
-	
+
 	void TimeReset() {
 		isRunning = false;
 		currentTime = 0.0f;
 	}
 
 	void TimePause() {
-		if isRunning == true{
+		if (isRunning == true) {
 			isRunning = false;
 		}
 	}
 
 	void TimeResume() {
-		if isRunning == false{
+		if (isRunning == false) {
 			isRunning = true;
 		}
 	}
@@ -37,10 +37,8 @@ public:
 		return isRunning;
 	}
 
-private :
-
+private:
 	float currentTime = 0.0f;
 	bool isRunning = false;
-
 
 };
