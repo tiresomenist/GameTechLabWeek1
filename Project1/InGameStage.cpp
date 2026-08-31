@@ -14,12 +14,16 @@ void InGameStage::Enter()
 
 void InGameStage::Update(float deltaTime)
 {
+	//특정 주기마다 적 생성 로직이 필요함
+	//특정 주기는 어떻게 판단함?
+	//인수로 받는건 프레임당 시간임.
+
 	//플레이어 이동
 	
 	//player.move(player.inputVector.x, player.inputVector.y);
 	// 플레이어 공격
-	//player.attack();
-
+	//player->GetAttackRange();
+	
 	//적들 이동
 	for (auto object : *objectList)
 	{
@@ -40,9 +44,10 @@ void InGameStage::Update(float deltaTime)
 void InGameStage::Render()
 {
 	//ObjectManager에서 오브젝트 랜더함수 호출
-	
-	
-
+	for (auto object : *objectList)
+	{
+		//object->Render();
+	}
 }
 
 void InGameStage::Exit()
@@ -52,6 +57,7 @@ void InGameStage::Exit()
 	player = nullptr;
 }
 
+//적군끼리의 충돌 체크
 void InGameStage::intersects(Object* object)
 {
 	// 각 오브젝트들에 대해 순회
@@ -73,6 +79,7 @@ void InGameStage::intersects(Object* object)
 	}
 }
 
+//적과 플레이어의 충돌 체크
 void InGameStage::intersectsToPlayer()
 {
 	// 각 오브젝트들에 대해 순회
@@ -94,6 +101,44 @@ void InGameStage::intersectsToPlayer()
 
 			//플레이어 피해 처리
 			//player.takenDamage(otherObject.damage);
+		}
+	}
+}
+
+void InGameStage::intersectsPlayerWithWall() {
+	FVector playerLocation = player->GetLocation();
+	float Radius = player->GetRadius();
+	const float LeftBorder = -1.0f + Radius;
+	const float RightBorder = 1.0f - Radius;
+	const float TopBorder = 1.0f - Radius;
+	const float BottomBorder = -1.0f + Radius;
+	if (playerLocation.x < LeftBorder) {
+		player->MoveObject(LeftBorder, playerLocation.y);
+	}
+	else if (playerLocation.x > RightBorder) {
+		player->MoveObject(RightBorder, playerLocation.y);
+	}
+	if (playerLocation.y < BottomBorder) {
+		player->MoveObject(playerLocation.x, BottomBorder);
+	}
+	else if (playerLocation.y > TopBorder) {
+		player->MoveObject(playerLocation.x, TopBorder);
+	}
+}
+
+//적과 플레이어의 공격간의 충돌 체크
+void InGameStage::CheckHitCollision(float AttackRange)
+{
+	for (auto ohterObject : *objectList)
+	{
+		float Dx = player->GetLocation().x - ohterObject->GetLocation().x;
+		float Dy = player->GetLocation().y - ohterObject->GetLocation().y;
+		float Distance = Dx * Dx + Dy * Dy;
+		
+		float TargetDistance = AttackRange + ohterObject->GetRadius();
+		if (TargetDistance * TargetDistance >= Distance)
+		{
+			//ohterObject의 피해처리
 		}
 	}
 }
