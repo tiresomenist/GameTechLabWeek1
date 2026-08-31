@@ -35,12 +35,66 @@ void App::mainLoop()
 {
 	Update();
 	Render();
+}
+void App::ReleaseAll()
+{
+	ReleaseShader();
+	ReleaseDeviceAndSwapChain();
 };
 
 void App::ChangeState(IGameStage* newState)
 {
 	nextStage = newState;
 }
+
+void App::ReleaseShader()
+{
+
+	if (defaultInputLayout)
+	{
+		defaultInputLayout->Release();
+		defaultInputLayout = nullptr;
+	}
+
+	if (defaultVertexShader)
+	{
+		defaultVertexShader->Release();
+		defaultVertexShader = nullptr;
+	}
+
+	if (defaultPixelShader)
+	{
+		defaultPixelShader->Release();
+		defaultPixelShader = nullptr;
+	}
+
+}
+void App::ReleaseDeviceAndSwapChain()
+{
+	if (m_deviceContext)
+	{
+		m_deviceContext->Flush();
+	}
+
+	if (m_swapChain)
+	{
+		m_swapChain->Release();
+		m_swapChain = nullptr;
+	}
+
+	if (m_device)
+	{
+		m_device->Release();
+		m_device = nullptr;
+	}
+
+	if (m_deviceContext)
+	{
+		m_deviceContext->Release();
+		m_deviceContext = nullptr;
+	}
+
+};
 
 void App::Initwindow(HINSTANCE hInstance)
 {
@@ -195,6 +249,7 @@ void App::Render()
 
 	//OM
 	m_deviceContext->OMSetRenderTargets(1, &m_frameBufferRTV, nullptr);
+
 
 	m_swapChain->Present(1, 0);
 }

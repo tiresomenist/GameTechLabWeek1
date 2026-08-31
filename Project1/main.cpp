@@ -28,5 +28,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		app.mainLoop();
 
 	}
+
+	app.ReleaseAll();
+
+
 	return 0;
 }

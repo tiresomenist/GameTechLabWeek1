@@ -50,6 +50,10 @@ class App
 	void CreateRasterizerState();
 	void ChangeState(IGameStage* newState);
 
+	//자원 해제 함수
+	void ReleaseShader();
+	void ReleaseDeviceAndSwapChain();
+
 
 	//타이머,인풋 업데이트
 	
@@ -76,6 +80,8 @@ class App
 	{
 		return m_deviceContext;
 	}
+
+	void ReleaseAll();
 
 
 };
