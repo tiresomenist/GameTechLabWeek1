@@ -1,12 +1,13 @@
 #pragma once
 #include <d3dcompiler.h>
 #include <d3d11.h>
+#include <windows.h>
 #include "IGameStage.h"
 
 class App 
 {
 	//fsm을 돌리면
-
+	//
 
 
 	//여기서 device,context,swapchain 등등 들고있어야함
@@ -25,16 +26,18 @@ class App
 
 	//타이머,인풋 업데이트
 	
-
+	void Update();
+	void Render();
 	public:
 
 	//싱글톤
 	static App* Ins;
 	//HINSTANCE는 윈도우 초기화용
 	void Init(HINSTANCE hInstance);
+	
 	void mainLoop();
-	void Update();
-	void Render();
+
+	
 
 
 
