@@ -6,6 +6,8 @@
 
 class App 
 {
+	public:
+	void ChangeState(IGameStage* newState);
 
 	//여기서 device,context,swapchain 등등 들고있어야함
 	private:
@@ -42,13 +44,13 @@ class App
 	
 	void InitD3D();
 	void Initwindow(HINSTANCE hInstance);
+	void InitImgui();
 
 	//자원 생성 함수
 	void CreateDeviceandSwapchain();
 	void CreateShader();
 	void CreateFrambuffer();
 	void CreateRasterizerState();
-	void ChangeState(IGameStage* newState);
 
 	//자원 해제 함수
 	void ReleaseShader();
@@ -63,6 +65,8 @@ class App
 	public:
 
 	App();
+
+	~App();
 
 	//싱글톤
 	static App* Ins;
