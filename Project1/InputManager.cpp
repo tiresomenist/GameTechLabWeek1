@@ -1,22 +1,22 @@
+#include <WinUser.h>
 class InputManager 
 {
 public:
-	void DownKeyPressed(int key) {
 
+	void KeyDown(int key) {
+		keys[key] = true;
 	}
 
-	void UpKeyPressed(int key) {
-
+	void KeyUp(int key) {
+		keys[key] = false;
 	}
 
-
-	void RightKeyPressed(int key) {
-
+	bool IsKeyPressed(int key) {
+		return keys[key];
 	}
 
-	void LeftKeyPressed(int key) {
-
-	}
+private:
+	bool keys[256] = {};
 
 };
 
