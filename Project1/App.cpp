@@ -304,7 +304,6 @@ ID3D11Buffer* App::CreateVertexBuffer(FVertexSimple* vertices, UINT byteWidth)
 
 	return vertexBuffer;
 }
-}
 App::~App()
 {
 	ImGui_ImplDX11_Shutdown();

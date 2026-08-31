@@ -5,6 +5,7 @@
 #include <d3d11.h>
 
 #include "IGameStage.h"
+#include "FVertexSimple.h"
 
 class App 
 {
