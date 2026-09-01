@@ -18,6 +18,8 @@ public:
 
 	static void CreatePixelShader(const LPCWSTR& fileName, ID3D11PixelShader** pixelShader);
 
+	static void CreateSamplerState(ID3D11SamplerState** samplerState);
+
 	
 
 	template<typename T>

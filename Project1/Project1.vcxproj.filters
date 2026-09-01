@@ -96,6 +96,9 @@
     <ClInclude Include="SoundManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Weapon.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InGameStage.cpp">
@@ -158,9 +161,13 @@
     <ClCompile Include="SoundManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Weapon.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="defaultPS.hlsl" />
     <FxCompile Include="defaultVS.hlsl" />
+    <FxCompile Include="texturePS.hlsl" />
   </ItemGroup>
 </Project>

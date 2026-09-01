@@ -35,6 +35,7 @@ void D3D11Util::CreateVertexShaderAndInputLayout(
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, 28, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
 
     device->CreateInputLayout(inputElementDesc,
@@ -50,14 +51,24 @@ void D3D11Util::CreatePixelShader(const LPCWSTR& fileName, ID3D11PixelShader** p
 {
     ID3DBlob* pixelshaderCSO = nullptr;
 
-    HRESULT hr = D3DCompileFromFile(fileName, nullptr, nullptr, "mainPS", "Ps_5_0", 0, 0, &pixelshaderCSO, nullptr);
-    hr = D3DCompileFromFile(fileName, nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &pixelshaderCSO, nullptr);
+    HRESULT hr = D3DCompileFromFile(fileName, nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &pixelshaderCSO, nullptr);
 
 
 
     App::Ins->GetDevice()->CreatePixelShader(pixelshaderCSO->GetBufferPointer(), pixelshaderCSO->GetBufferSize(), nullptr, pixelShader);
     pixelshaderCSO->Release();
 
+}
+
+void D3D11Util::CreateSamplerState(ID3D11SamplerState** samplerState)
+{
+	D3D11_SAMPLER_DESC samplerDesc = {};
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+
+	HRESULT hr = App::Ins->GetDevice()->CreateSamplerState(&samplerDesc, samplerState);
 }
 
 

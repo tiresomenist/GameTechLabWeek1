@@ -31,7 +31,11 @@ class App
 	//기본 쉐이더들
 	ID3D11VertexShader* defaultVertexShader;
 	ID3D11PixelShader* defaultPixelShader;
+	ID3D11PixelShader* texturePixelShader;
+	ID3D11SamplerState* textureSampler;
 	ID3D11InputLayout* defaultInputLayout;
+	ID3D11ShaderResourceView* textureSRV;
+	ID3D11Texture2D* texture;
 
 	//프레임 버퍼
 	ID3D11Texture2D* m_frameBuffer;
@@ -57,6 +61,7 @@ class App
 	void CreateShader();
 	void CreateFrambuffer();
 	void CreateRasterizerState();
+	void CreateTexture();
 
 	//자원 해제 함수
 	void ReleaseShader();

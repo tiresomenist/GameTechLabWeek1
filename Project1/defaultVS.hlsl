@@ -15,6 +15,7 @@ struct VS_INPUT
 {
     float3 pos : POSITION;
     float4 col : COLOR;
+    float2 uv : TEXCOORD;
 };
 
 struct PS_INPUT
@@ -22,6 +23,7 @@ struct PS_INPUT
     float4 posProj : SV_POSITION;
     float4 posWord : POSITION;
     float4 col : COLOR;
+    float2 uv : TEXCOORD;
 };
 
 
@@ -31,6 +33,8 @@ PS_INPUT mainVS(VS_INPUT input)
     
     output.posProj = float4(Offset, 0.0f) + float4(input.pos.xyz * Radius, 1.0f);
     output.col = input.col;
+    
+    output.uv = input.uv;
     
     //float4 pos = float4(input.pos, 1.0f);
     //pos = mul(pos, model);    
