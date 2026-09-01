@@ -17,33 +17,40 @@ void InGameStage::Enter()
 		objectList = new std::vector<Object*>(); // 임시로 생성
 	}
 	timeManager = TimeManager();
-	inputManager = InputManager::GetInstance();
+
+	//테스트용으로 적한번 찍어본거.
+	ObjectManager::GetInstance()->CreateEnemy();
 }
 
 void InGameStage::Update(float deltaTime)
 {
-	OutputDebugStringA("InGameStage Update!\n");
+	countTime += deltaTime;
+	//OutputDebugStringA("InGameStage Update!\n");
 	float frameCount = timeManager.GetcurrentTime() / deltaTime;	//몇프레임돌았는가?
-	if ((int)frameCount % 30 == 0) {
-		//여기에 적생성 로직
-		ObjectManager::GetInstance()->CreatePlayer();
+	if (countTime > 2.0f) {
+		countTime -= 2.0f;
+		ObjectManager::GetInstance()->CreateEnemy();
+		OutputDebugStringA("Enemy Creted!\n");
+
 	}
 
-	//플레이어 이동
+	////플레이어 이동
 	FVector moveDir(0.0f, 0.0f, 0.0f);
-	if (inputManager->IsKeyPressed(VK_UP))    moveDir.y += 1.0f;
-	if (inputManager->IsKeyPressed(VK_DOWN))  moveDir.y -= 1.0f;
-	if (inputManager->IsKeyPressed(VK_LEFT))  moveDir.x -= 1.0f;
-	if (inputManager->IsKeyPressed(VK_RIGHT)) moveDir.x += 1.0f;
+	if (InputManager::GetInstance()->IsKeyPressed(VK_UP))    moveDir.y += 1.0f;
+	if (InputManager::GetInstance()->IsKeyPressed(VK_DOWN))  moveDir.y -= 1.0f;
+	if (InputManager::GetInstance()->IsKeyPressed(VK_LEFT))  moveDir.x -= 1.0f;
+	if (InputManager::GetInstance()->IsKeyPressed(VK_RIGHT)) moveDir.x += 1.0f;
 	//인풋매니저 가져오고 델타타임이랑 이동속도 생각해서 한프레임당 이동 거리 계산해서 move호출
 	//
-	player->MoveObject(moveDir.x * deltaTime * player->GetSpeed() / 1000, moveDir.y * deltaTime * player->GetSpeed() / 1000);
-	// 플레이어 공격
-	int nextAttackFrame = (int)(30.0f / player->GetAttackSpeed());
-	if ((int)frameCount % nextAttackFrame == 0) {
-		CheckHitCollision(player->GetAttackRange());
 
-	}
+	//if(moveDir.y != 0.0f)
+	player->MoveObject(moveDir.x * deltaTime * player->GetSpeed(), moveDir.y * deltaTime * player->GetSpeed());
+	//// 플레이어 공격
+	//int nextAttackFrame = (int)(30.0f / player->GetAttackSpeed());
+	//if ((int)frameCount % nextAttackFrame == 0) {
+	//	CheckHitCollision(player->GetAttackRange());
+
+	//}
 	//적들 이동
 	for (auto object : *objectList)
 	{
