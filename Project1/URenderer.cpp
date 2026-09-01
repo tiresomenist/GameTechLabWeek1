@@ -1,6 +1,8 @@
 #include "App.h"
 #include "URenderer.h"
 #include "Sphere.h"
+#include "FConstant.h"
+#include "D3D11Util.h"
 
 URenderer::URenderer()
 {
@@ -10,10 +12,17 @@ URenderer::URenderer()
 
 
 }
-void URenderer::RenderPrimitive(ID3D11Buffer* vertexBuffer, UINT numVertices)
+void URenderer::RenderPrimitive(FVector location,float radius)
 {
-	UINT offset = 0;
-	App::Ins->GetDeviceContext()->IASetVertexBuffers(0, 1, &vertexBuffer, &Stride, &offset);
+	FConstant constantData;
+	constantData.offset = location;
+	constantData.radius = radius;
+
+	D3D11Util::UpdateConstantBuffer(App::Ins->GetDeviceContext(), App::Ins->GetConstantBuffer(), constantData);
+
+
+	UINT Offset = 0;
+	App::Ins->GetDeviceContext()->IASetVertexBuffers(0, 1, &vertexBuffer, &Stride, &Offset);
 
 	App::Ins->GetDeviceContext()->Draw(numVertices, 0);
 }

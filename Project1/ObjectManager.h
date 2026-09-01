@@ -7,7 +7,26 @@
 class ObjectManager
 {
 	std::vector<Object*>obejctList;
+	//적만 존재하는 리스트
+	std::vector<Enemy*> enemyList;
 
+	
 	void AddObject(Object* obj);
+	void AddEnemy(Enemy* enemy);
+
+	public:
+	void CreateEnemy();
+	Player* CreatePlayer();
+	ObjectManager();
+	void Render();
+	
+	static ObjectManager* Ins;
+
+	static ObjectManager* GetInstance()  {
+		if (Ins == nullptr) {
+			Ins = new ObjectManager();
+		}
+		return Ins;
+	}
 	
 };
