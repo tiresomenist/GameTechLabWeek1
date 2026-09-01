@@ -31,3 +31,7 @@ float Player::GetAttackRange() {
 float Player::GetSpeed() {
 	return this->speed;
 }
+
+bool Player::IsDead() {
+	return isDead;
+}

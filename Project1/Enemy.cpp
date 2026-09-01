@@ -21,3 +21,7 @@ void Enemy::MoveObject(float x, float y) {
 	location.x += x;
 	location.y += y;
 }
+
+bool Enemy::IsDead() {
+	return isDead;
+}

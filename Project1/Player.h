@@ -12,7 +12,7 @@ public:
 	void MoveObject(float x, float y)override; // 실제움직이기
 	float GetSpeed();
 	void GetAttacked(float damage);
-	bool IsDead();
+	bool IsDead()override;
 
 private:
 

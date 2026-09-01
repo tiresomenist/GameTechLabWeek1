@@ -26,7 +26,7 @@ public:
 	virtual void MoveObject(float x, float y) = 0 ; // 실제움직이기
 
 	void GetAttacked(float damage);
-	bool IsDead();
+	virtual bool IsDead();
 
 	void UpdateState(); //최종 업데이트
 
