@@ -1,6 +1,6 @@
 #pragma once
 
-#include "FVertexSimple.h"
+#include "FVector.h"
 class Object
 {
 public:
@@ -11,7 +11,7 @@ public:
 	float GetExp();
 	float GetRadius();
 
-	FVertexSimple GetLocation();
+	FVector GetLocation();
 
 	bool GetIsDead();
 	bool GetIsHit();
@@ -31,7 +31,7 @@ protected:
 	float health;
 	float exp;
 	
-	FVertexSimple location;
+	FVector location;
 	float radius;
 
 	int level;
@@ -39,29 +39,4 @@ protected:
 	bool isDead;
 	bool isHit;
 	bool isMove;
-};
-
-class Enemy:public Object
-{
-public:
-	Enemy();
-	virtual ~Enemy() = default; // = default 추가
-	void MoveObject(float x, float y)override; // 실제움직이기
-
-private:
-};
-class Player : public Object
-{
-public:
-	Player();
-	virtual ~Player() = default; // = default 추가
-	bool IsWall(float x, float y);
-	float GetAttackRange();
-	void MoveObject(float x, float y)override; // 실제움직이기
-	float GetAttackSpeed();
-
-
-private:
-	float attackRange = 0.1f;
-
 };

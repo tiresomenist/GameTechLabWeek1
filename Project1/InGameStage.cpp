@@ -27,8 +27,9 @@ void InGameStage::Update(float deltaTime)
 	}
 
 	//플레이어 이동
-	
-	//player.move(player.inputVector.x, player.inputVector.y);
+	//인풋매니저 가져오고 델타타임이랑 이동속도 생각해서 한프레임당 이동 거리 계산해서 move호출
+	//
+	player->MoveObject(deltaTime * player->GetSpeed() / 1000, deltaTime * player->GetSpeed() / 1000);
 	// 플레이어 공격
 	int nextAttackFrame = (int)(30.0f / player->GetAttackSpeed());
 	if ((int)frameCount % nextAttackFrame == 0) {
@@ -122,7 +123,7 @@ void InGameStage::intersectsToPlayer()
 }
 
 void InGameStage::intersectsPlayerWithWall() {
-	FVertexSimple playerLocation = player->GetLocation();
+	FVector playerLocation = player->GetLocation();
 	float Radius = player->GetRadius();
 	const float LeftBorder = -1.0f + Radius;
 	const float RightBorder = 1.0f - Radius;
