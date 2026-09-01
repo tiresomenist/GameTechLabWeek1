@@ -1,50 +1,21 @@
-#include "Object.h"
+#include "Player.h"
+#include <vector>
 
-struct FVector {
-	float x, y, z;
+Player::Player() {
+	//크기 0.05f
+	radius = 0.05f;
+	location = { 0.0f, 0.0f, 0.0f };
 };
+bool Player::IsWall(float x, float y) {
 
-class Player : public Object
-{
-
-
-public:
-	float GetAttack();
-	float GetSpeed();
-	float GetAttackSpeed();
-	float GetHealth();
-	float GetExp();
-	float GetAttackRange();
-
-
-	FVector GetLocation();
-	float radius();
-
-	int GetLevel();
-
-	bool GetIsDead();
-	bool GetIsHit();
-	bool GetIsMove();
-
-	bool Intersect(Object* otherObject); // 충돌판정
-	void IsMoveObject(); // 실제움직이기
-	void IsDeadObject(); // 생사 여부
-	void UpdateState(); //최종 업데이트
-
-private:
-	float attack;
-	float speed;
-	float attackSpeed;
-	float health;
-	float exp;
-	float attackRange;
-
-	FVector location;
-	float radius;
-
-	int level;
-
-	bool isDead;
-	bool isHit;
-	bool isMove;
-};
+	return (location.x + x >= -1 && location.x + x <= 1 && location.y + y >= -1 && location.y + y <= 1);
+}
+void Player::MoveObject(float x, float y) {
+	if (IsWall(x, y)) {
+		// 벽 충돌 처리 함수
+	}
+	else {
+		location.x += x;
+		location.y += y;
+	}
+}
