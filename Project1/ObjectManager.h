@@ -3,6 +3,7 @@
 #include "Object.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "Weapon.h"
 
 class ObjectManager
 {
@@ -10,13 +11,20 @@ class ObjectManager
 	//적만 존재하는 리스트
 	std::vector<Enemy*> enemyList;
 
-	
+	std::vector<Weapon*> weaponList;
+
 	void AddObject(Object* obj);
 	void AddEnemy(Enemy* enemy);
+	void AddWeapon(Weapon* weapon);
+
+	float orbitAngle = 0.0f;
 
 	public:
 	void CreateEnemy();
 	Player* CreatePlayer();
+	void CreateWeapon();
+
+
 	ObjectManager();
 	void Render();
 	void Update(float deltaTime);
@@ -25,12 +33,10 @@ class ObjectManager
 	void checkEnemiesIntersect();
 	void checkPlayerIntersectWithEnemy();
 	void intersectsPlayerWithWall();
-	bool isPlayerDead() {
-		if (obejctList.size() > 0) {
-			return obejctList[0]->IsDead();
-		}
-		return false;
-	}
+	void SpinWeapon(float deltaTime, float rotationSpeed);
+
+	
+
 	
 	static ObjectManager* Ins;
 

@@ -27,6 +27,9 @@ void InGameStage::Enter()
 
 	//테스트용으로 적한번 찍어본거.
 	ObjectManager::GetInstance()->CreateEnemy();
+
+	ObjectManager::GetInstance()->CreateWeapon();
+
 }
 
 void InGameStage::Update(float deltaTime)
@@ -73,12 +76,14 @@ void InGameStage::Update(float deltaTime)
 	
 	player->MoveObject(moveDir.x * deltaTime * player->GetSpeed(), moveDir.y * deltaTime * player->GetSpeed());
 	// 플레이어 공격
-	//if (countTimeForPlayer > (1.0f / player->GetAttackSpeed())) {
-	//	countTimeForPlayer -= (1.0f / player->GetAttackSpeed());
-	//	//공격 범위를 그리는 함수가 필요합니다.
-	//	//컬러값 (1.0f,0.0f,0.0f,0.5f)로 반지름 0.08f. 반투명 빨간색 생각중.
-	//	//CheckHitCollision(player->GetAttackRange());
-	//}
+	if (countTimeForPlayer > (1.0f / player->GetAttackSpeed())) {
+		countTimeForPlayer -= (1.0f / player->GetAttackSpeed());
+		//공격 범위를 그리는 함수가 필요합니다.
+		//컬러값 (1.0f,0.0f,0.0f,0.5f)로 반지름 0.08f. 반투명 빨간색 생각중.
+		//CheckHitCollision(player->GetAttackRange());
+	}
+	//무기 돌리기
+	ObjectManager::GetInstance()->SpinWeapon(deltaTime, player->GetWeaponRotationSpeed());	
 	//적들 이동
 	ObjectManager::GetInstance()->EnemyMove(deltaTime);
 	//적들끼리 충돌하는지 체크 
@@ -87,6 +92,7 @@ void InGameStage::Update(float deltaTime)
 	ObjectManager::GetInstance()->checkPlayerIntersectWithEnemy();
 	//플레이어와 벽의 충돌 체크
 	ObjectManager::GetInstance()->intersectsPlayerWithWall();
+
 }
 
 void InGameStage::Render()

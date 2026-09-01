@@ -165,6 +165,7 @@
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="TimeManager.h" />
     <ClInclude Include="URenderer.h" />
+    <ClInclude Include="Weapon.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
@@ -187,6 +188,7 @@
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="URenderer.cpp" />
+    <ClCompile Include="Weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="defaultPS.hlsl">

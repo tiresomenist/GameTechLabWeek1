@@ -8,6 +8,11 @@ void ObjectManager::AddEnemy(Enemy* enemy)
 	enemyList.push_back(enemy);
 }
 
+void ObjectManager::AddWeapon(Weapon* weapon)
+{
+	weaponList.push_back(weapon);
+}
+
 void ObjectManager::AddObject(Object* obj)
 {
 	obejctList.push_back(obj);
@@ -28,6 +33,12 @@ Player* ObjectManager::CreatePlayer()
 	return newPlayer;
 }
 
+void ObjectManager::CreateWeapon()
+{
+	Weapon* newWeapon = new Weapon();
+	AddWeapon(newWeapon);
+}
+
 
 
 ObjectManager::ObjectManager()
@@ -46,6 +57,12 @@ void ObjectManager::Render()
 		for (auto enemy : enemyList)
 		{
 			enemy->renderer->RenderPrimitive(enemy->GetLocation(), enemy->GetRadius());
+		}
+
+	if (weaponList.size() > 0)
+		for (auto weapon : weaponList)
+		{
+			weapon->renderer->RenderPrimitive(weapon->GetLocation(), weapon->GetRadius());
 		}
 
 }
@@ -140,6 +157,28 @@ void ObjectManager::intersectsPlayerWithWall()
 	else if (playerLocation.y > TopBorder) {
 		obejctList[0]->SetLocation(playerLocation.x, TopBorder);
 	}
+
+}
+
+void ObjectManager::SpinWeapon(float deltaTime, float rotationSpeed)
+{
+	Player* player = static_cast<Player*>(obejctList[0]);
+	orbitAngle += player->GetWeaponRotationSpeed() * deltaTime;      // 전체 회전
+
+	if (orbitAngle > 6.2831853f)
+		orbitAngle -= 6.2831853f;               // 오버플로 방지
+
+	int count = static_cast<int>(weaponList.size());
+	if (count == 0) return;
+
+	float step = 6.2831853f / count;
+	FVector center = player->GetLocation();
+
+	for (int i = 0; i < count; ++i) {
+		weaponList[i]->UpdateOrbit(deltaTime, player->GetWeaponRotationSpeed(), orbitAngle + step * i,center,player->GetOrbitRadius());
+	}
+
+
 
 }
 
