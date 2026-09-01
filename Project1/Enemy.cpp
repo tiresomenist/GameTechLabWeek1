@@ -16,6 +16,7 @@ Enemy::Enemy() {
 	case 6: location = { -0.9f, 0.9f, 0.0f }; break;
 	case 7: location = { 0.0f, 0.9f, 0.0f }; break;
 	}
+	speed = 0.2f;
 };
 void Enemy::MoveObject(float x, float y) {
 	location.x += x;

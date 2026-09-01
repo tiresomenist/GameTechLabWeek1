@@ -25,7 +25,6 @@ public:
     void CheckHitCollision(float AttackRange);
     void intersectsPlayerWithWall();
 
-    TimeManager timeManager;
     InputManager inputManager;
     float countTimeForEnemy = 0.0f;
     float countTimeForPlayer = 0.0f;

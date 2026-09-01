@@ -19,6 +19,13 @@ class ObjectManager
 	Player* CreatePlayer();
 	ObjectManager();
 	void Render();
+	void Update(float deltaTime);
+
+	void EnemyMove(float deltaTime);
+	void checkEnemiesIntersect();
+	void checkPlayerIntersectWithEnemy();
+	void intersectsPlayerWithWall();
+
 	
 	static ObjectManager* Ins;
 
@@ -28,5 +35,9 @@ class ObjectManager
 		}
 		return Ins;
 	}
+
+	
+
+	void ReleaseAllObjects();
 	
 };

@@ -15,7 +15,6 @@ public:
 	float GetHealth();
 	float GetExp();
 	float GetRadius();
-
 	FVector GetLocation();
 
 	bool GetIsDead();
@@ -28,7 +27,7 @@ public:
 	void DeadObject(); // 생사 여부
 
 	void UpdateState(); //최종 업데이트
-
+	void SetLocation(float x,float y);
 	URenderer* renderer;
 
 
