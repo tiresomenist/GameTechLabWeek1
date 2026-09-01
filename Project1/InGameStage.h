@@ -44,7 +44,10 @@ private:
 
     bool openResultPopup = false;
 	bool openPausePopup = false;
+    bool openAugmentPopup = false;
 
+
+    void RenderAugmentModal();
     void RenderHUD(int minutes, int seconds);
 	void RenderPauseModal();
 	void RenderResultModal(int minutes, int seconds);

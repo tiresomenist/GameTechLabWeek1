@@ -19,9 +19,18 @@ public:
 	float MaxHealth = 200.0f;
 	float GetMaxHealth();
 
+	int GetLevel();
+	int GetExp();
+	int GetExpTable();
+	void AddExp(int x);
+	bool IsLevelUp();
+
 private:
 	float WeaponRotationSpeed = 6.0f;
 	float orbitRadius = 0.2f;
 	
-
+	int exp = 0;
+	int level = 1;
+	int maxLevel = 5;
+	int expTable[6] = { 0, 33, 44, 55, 66, 66 };
 };

@@ -97,8 +97,88 @@ void InGameStage::Update(float deltaTime)
 	ObjectManager::GetInstance()->checkPlayerIntersectWithEnemy();
 	//플레이어와 벽의 충돌 체크
 	ObjectManager::GetInstance()->intersectsPlayerWithWall();
+
+
+	player->AddExp(1);
+	
+	if (player->IsLevelUp()) {
+		OutputDebugStringA("Level UP!");
+		TimeManager::GetInstance()->TimePause();
+		openAugmentPopup = true;
+	}
+
 	
 }
+
+void InGameStage::RenderAugmentModal()
+{
+	if (!openAugmentPopup)
+		return;
+	
+
+	float width = 160.0f;
+	float height = 220.0f;
+	float gap = 30.0f;
+
+	float windowWidth = width * 3 + gap * 2 + 40.0f;
+	float windowHeight = height + 60.0f;
+
+	ImGui::SetNextWindowSize(
+		ImVec2(windowWidth, windowHeight),
+		ImGuiCond_Always
+	);
+
+	ImGui::Begin(
+		"test",
+		nullptr,
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoCollapse
+	);
+
+	ImDrawList* drawList = ImGui::GetWindowDrawList();
+	ImVec2 pos = ImGui::GetCursorScreenPos();
+
+	const char* texts[3] = {
+		"Attack",
+		"Speed",
+		"Heal"
+	};
+
+	for (int i = 0; i < 3; i++)
+	{
+		ImVec2 minPos(
+			pos.x + i * (width + gap),
+			pos.y
+		);
+
+		ImVec2 maxPos(
+			minPos.x + width,
+			minPos.y + height
+		);
+
+		drawList->AddRectFilled(
+			minPos,
+			maxPos,
+			IM_COL32(100, 100, 100, 255)
+		);
+
+		ImVec2 textSize = ImGui::CalcTextSize(texts[i]);
+
+		ImVec2 textPos(
+			minPos.x + (width - textSize.x) / 2,
+			minPos.y + (height - textSize.y) / 2
+		);
+
+		drawList->AddText(
+			textPos,
+			IM_COL32(255, 255, 255, 255),
+			texts[i]
+		);
+	}
+
+	ImGui::End();
+}
+
 
 void InGameStage::Render()
 {
@@ -118,6 +198,7 @@ void InGameStage::Render()
 	RenderHUD(minutes, seconds);
 	RenderPauseModal();
 	RenderResultModal(minutes, seconds);
+	RenderAugmentModal();
 }
 
 void InGameStage::RenderHUD(int minutes, int seconds)
@@ -154,6 +235,9 @@ void InGameStage::RenderHUD(int minutes, int seconds)
 		ImVec2(300.0f, 25.0f),
 		hpText
 	);
+
+	ImGui::Text("Level : %d", player->GetLevel());
+	ImGui::Text("EXP : %d/%d", player->GetExp(), player->GetExpTable());
 
 	ImGui::Text("TIME  %02d:%02d", minutes, seconds);
 

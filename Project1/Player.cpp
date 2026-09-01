@@ -42,3 +42,43 @@ bool Player::IsDead() {
 float Player::GetMaxHealth() {
 	return MaxHealth;
 }
+
+int Player::GetLevel() {
+	return level;
+}
+
+int Player::GetExp() {
+	return exp;
+}
+
+int Player::GetExpTable() {
+	return expTable[level];
+}
+
+void Player::AddExp(int x) {
+	if(level != maxLevel)
+		exp += x;
+}
+
+bool Player::IsLevelUp() {
+
+	if (level == maxLevel)
+		return false;
+
+	if (exp >= expTable[level]) {
+
+		if (level == maxLevel - 1) {
+			level++;
+			return true;
+		}
+		else {
+			exp -= expTable[level];
+			level++;
+			return true;
+		}
+		
+	}
+
+	return false;
+}
+
