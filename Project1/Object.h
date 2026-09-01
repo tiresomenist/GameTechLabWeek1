@@ -1,0 +1,62 @@
+#pragma once
+
+#include "FVertexSimple.h"
+class Object
+{
+public:
+	virtual ~Object() = default;
+	float GetAttack();
+	float GetSpeed();
+	float GetAttackSpeed();
+	float GetHealth();
+	float GetExp();
+	float GetRadius();
+
+	FVertexSimple GetLocation();
+
+	bool GetIsDead();
+	bool GetIsHit();
+	bool GetIsMove();
+
+	bool Intersect(Object* otherObject); // 충돌판정
+	virtual void MoveObject(float x, float y) = 0 ; // 실제움직이기
+
+	void DeadObject(); // 생사 여부
+
+	void UpdateState(); //최종 업데이트
+
+protected:
+	float attack;
+	float speed;
+	float attackSpeed;
+	float health;
+	float exp;
+	
+	FVertexSimple location;
+	float radius;
+
+	int level;
+
+	bool isDead;
+	bool isHit;
+	bool isMove;
+};
+
+class Enemy:public Object
+{
+public:
+	Enemy();
+	virtual ~Enemy() = default; // = default 추가
+private:
+	void MoveObject(float x, float y)override; // 실제움직이기
+};
+class Player : public Object
+{
+public:
+	Player();
+	virtual ~Player() = default; // = default 추가
+	bool IsWall(float x, float y);
+private:
+	void MoveObject(float x, float y)override; // 실제움직이기
+
+};
