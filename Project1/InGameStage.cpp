@@ -8,6 +8,7 @@
 
 #include "ObjectManager.h"
 #include "SoundManager.h"
+#include "Augment.h"
 
 InGameStage::InGameStage(App* app)
 	: m_app(app)
@@ -99,15 +100,17 @@ void InGameStage::Update(float deltaTime)
 	ObjectManager::GetInstance()->intersectsPlayerWithWall();
 
 
+	// 경험치 상승 임시구현
 	player->AddExp(1);
-	
+
+
+	// 레벨업 경험치 도달 시 일시정지 및 팝업 on
 	if (player->IsLevelUp()) {
 		OutputDebugStringA("Level UP!");
 		TimeManager::GetInstance()->TimePause();
 		openAugmentPopup = true;
 	}
 
-	
 }
 
 void InGameStage::RenderAugmentModal()
@@ -115,6 +118,16 @@ void InGameStage::RenderAugmentModal()
 	if (!openAugmentPopup)
 		return;
 	
+	//증강 생성 되었는지
+	if (!isAugmnetSelected) {
+		//증강 3개 랜덤뽑기
+		aug1 = augment.Augment::GetAugmentStruct();
+		aug2 = augment.Augment::GetAugmentStruct();
+		aug3 = augment.Augment::GetAugmentStruct();
+		augment.Augment::ResetAugment();
+
+		isAugmnetSelected = true;
+	}
 
 	float width = 160.0f;
 	float height = 220.0f;
@@ -138,42 +151,47 @@ void InGameStage::RenderAugmentModal()
 	ImDrawList* drawList = ImGui::GetWindowDrawList();
 	ImVec2 pos = ImGui::GetCursorScreenPos();
 
-	const char* texts[3] = {
-		"Attack",
-		"Speed",
-		"Heal"
-	};
+	char texts[3][50];
+
+	sprintf_s(texts[0], "%s\n+%.0f", aug1.name, aug1.value);
+	sprintf_s(texts[1], "%s\n+%.0f", aug2.name, aug2.value);
+	sprintf_s(texts[2], "%s\n+%.0f", aug3.name, aug3.value);
 
 	for (int i = 0; i < 3; i++)
 	{
-		ImVec2 minPos(
-			pos.x + i * (width + gap),
-			pos.y
-		);
+		if (ImGui::Button(texts[i], ImVec2(width, height)))
+		{
+			switch (i)
+			{
+			case 0:
+				TimeManager::GetInstance()->TimeResume();
+				augment.UpgradePlayer(aug1, player);
+				isAugmnetSelected = false;
+				openAugmentPopup = false;
+				break;
 
-		ImVec2 maxPos(
-			minPos.x + width,
-			minPos.y + height
-		);
+			case 1:
+				TimeManager::GetInstance()->TimeResume();
+				augment.UpgradePlayer(aug2, player);
+				isAugmnetSelected = false;
+				openAugmentPopup = false;
+				break;
 
-		drawList->AddRectFilled(
-			minPos,
-			maxPos,
-			IM_COL32(100, 100, 100, 255)
-		);
+			case 2:
+				TimeManager::GetInstance()->TimeResume();
+				augment.UpgradePlayer(aug3, player);
+				isAugmnetSelected = false;
+				openAugmentPopup = false;
+				break;
+			}
 
-		ImVec2 textSize = ImGui::CalcTextSize(texts[i]);
+			openAugmentPopup = false;
+	
+		}
 
-		ImVec2 textPos(
-			minPos.x + (width - textSize.x) / 2,
-			minPos.y + (height - textSize.y) / 2
-		);
+		if (i < 2)
+			ImGui::SameLine(0.0f, gap);
 
-		drawList->AddText(
-			textPos,
-			IM_COL32(255, 255, 255, 255),
-			texts[i]
-		);
 	}
 
 	ImGui::End();

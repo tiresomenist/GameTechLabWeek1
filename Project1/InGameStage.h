@@ -3,6 +3,7 @@
 #include "ObjectManager.h"
 #include "TimeManager.h"
 #include "InputManager.h"
+#include "Augment.h"
 
 class App;
 
@@ -45,7 +46,13 @@ private:
     bool openResultPopup = false;
 	bool openPausePopup = false;
     bool openAugmentPopup = false;
+    bool isAugmnetSelected = false;
 
+    //증강 3개
+    Augment augment;
+    AugmentStruct aug1;
+    AugmentStruct aug2;
+    AugmentStruct aug3;
 
     void RenderAugmentModal();
     void RenderHUD(int minutes, int seconds);

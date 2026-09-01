@@ -82,3 +82,30 @@ bool Player::IsLevelUp() {
 	return false;
 }
 
+void Player::IncreaseAttack(float x) {
+	attack += x;
+}
+
+void Player::IncreaseAttackRange(float x) {
+	orbitRadius += x;
+}
+
+void Player::IncreaseAttackSpeed(float x) {
+	WeaponRotationSpeed += x;
+}
+
+void Player::IncreaseMoveSpeed(float x) {
+	speed += x;
+}
+
+void Player::IncreaseWeaponSize(float x) {
+
+}
+
+void Player::IncreaseHealHp(float x) {
+	health += x;
+
+	if (health > MaxHealth)
+		health = MaxHealth;
+}
+

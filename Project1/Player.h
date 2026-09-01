@@ -25,6 +25,14 @@ public:
 	void AddExp(int x);
 	bool IsLevelUp();
 
+	void IncreaseAttack(float x);
+	void IncreaseAttackRange(float x);
+	void IncreaseAttackSpeed(float x);
+	void IncreaseMoveSpeed(float x);
+	void IncreaseWeaponSize(float x);
+	void IncreaseHealHp(float x);
+
+
 private:
 	float WeaponRotationSpeed = 6.0f;
 	float orbitRadius = 0.2f;
@@ -32,5 +40,5 @@ private:
 	int exp = 0;
 	int level = 1;
 	int maxLevel = 5;
-	int expTable[6] = { 0, 33, 44, 55, 66, 66 };
+	int expTable[6] = { 0, 100, 101, 102, 103, 103 };
 };
