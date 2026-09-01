@@ -17,8 +17,13 @@ Enemy::Enemy() {
 	case 7: location = { 0.0f, 0.9f, 0.0f }; break;
 	}
 	speed = 0.2f;
+	attack = 1.0f;
 };
 void Enemy::MoveObject(float x, float y) {
 	location.x += x;
 	location.y += y;
+}
+
+bool Enemy::IsDead() {
+	return isDead;
 }

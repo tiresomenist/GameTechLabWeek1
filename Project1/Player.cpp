@@ -5,6 +5,7 @@ Player::Player() {
 	//크기 0.05f
 	radius = 0.05f;
 	location = FVector(0.0f, 0.0f, 0.0f);
+	health = MaxHealth;
 	speed = 0.2f;
 };
 bool Player::IsWall(float x, float y) {
@@ -26,4 +27,17 @@ float Player::GetAttackSpeed() {
 }
 float Player::GetAttackRange() {
 	return 0.08f; // 공격 범위는 플레이어의 반지름의 두 배로 설정
+}
+void Player::GetAttacked(float damage) {
+	float thisTime = TimeManager::GetInstance()->GetcurrentTime();
+	hittedTime = thisTime;
+	health -= damage;
+
+	if (health <= 0) isDead = true;
+}
+bool Player::IsDead() {
+	return isDead;
+}
+float Player::GetMaxHealth() {
+	return MaxHealth;
 }

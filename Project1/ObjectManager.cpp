@@ -109,7 +109,12 @@ void ObjectManager::checkPlayerIntersectWithEnemy()
 			ohterObject->MoveObject(-pushOffsetX, -pushOffsetY);
 
 			//플레이어 피해 처리
-			//obejctList[0]->GetAttacked(ohterObject->GetAttack());
+			obejctList[0]->GetAttacked(ohterObject->GetAttack());
+			if (obejctList[0]->IsDead())
+			{
+				//플레이어 죽음 처리
+				OutputDebugStringA("Player Dead!\n");
+			}
 		}
 	}
 

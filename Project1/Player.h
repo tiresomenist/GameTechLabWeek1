@@ -1,5 +1,6 @@
 #pragma once
 #include "Object.h"
+#include "TimeManager.h"
 
 class Player : public Object
 {
@@ -10,6 +11,11 @@ public:
 	float GetAttackSpeed();
 	float GetAttackRange();
 	void MoveObject(float x, float y)override; // 실제움직이기
+	void GetAttacked(float damage);
+	bool IsDead()override;
+	float hittedTime = 0.0f;
+	float MaxHealth = 200.0f;
+	float GetMaxHealth();
 
 private:
 

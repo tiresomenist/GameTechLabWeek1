@@ -23,6 +23,9 @@ FVector Object::GetLocation()
 Object::Object()
 {
 	renderer = new URenderer();
+
+
+
 }
 float Object::GetRadius() {
 	return radius;
@@ -30,6 +33,11 @@ float Object::GetRadius() {
 
 float Object::GetSpeed() {
 	return speed;
+}
+
+void Object::SetLocation(float x,float y) {
+	location.x = x;
+	location.y = y;
 }
 
 void Object::GetAttacked(float damage) {
@@ -40,4 +48,10 @@ void Object::GetAttacked(float damage) {
 
 bool Object::IsDead() {
 	return isDead;
+}
+float Object::GetAttack() {
+	return attack;
+}
+float Object::GetHealth() {
+	return health;
 }

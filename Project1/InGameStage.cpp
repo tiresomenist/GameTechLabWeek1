@@ -31,6 +31,13 @@ void InGameStage::Enter()
 
 void InGameStage::Update(float deltaTime)
 {
+	if (ObjectManager::GetInstance()->isPlayerDead())
+	{
+		TimeManager::GetInstance()->TimePause();
+		gameResult = 2;
+		openResultPopup = true;
+		return;
+	}
 	// Pause / Clear / GameOver 상태면 게임 진행 중지
 	if (!TimeManager::GetInstance()->IsRunning())
 		return;
@@ -52,7 +59,7 @@ void InGameStage::Update(float deltaTime)
 	if (countTimeForEnemy > 2.0f - (difficulty * 0.39f)) {
 		countTimeForEnemy -= 2.0f-(difficulty * 0.3f);
 		ObjectManager::GetInstance()->CreateEnemy();
-		OutputDebugStringA("Enemy Creted!\n");
+		//OutputDebugStringA("Enemy Creted!\n");
 
 	}
 
@@ -66,12 +73,12 @@ void InGameStage::Update(float deltaTime)
 	
 	player->MoveObject(moveDir.x * deltaTime * player->GetSpeed(), moveDir.y * deltaTime * player->GetSpeed());
 	// 플레이어 공격
-	if (countTimeForPlayer > (1.0f / player->GetAttackSpeed())) {
-		countTimeForPlayer -= (1.0f / player->GetAttackSpeed());
-		//공격 범위를 그리는 함수가 필요합니다.
-		//컬러값 (1.0f,0.0f,0.0f,0.5f)로 반지름 0.08f. 반투명 빨간색 생각중.
-		//CheckHitCollision(player->GetAttackRange());
-	}
+	//if (countTimeForPlayer > (1.0f / player->GetAttackSpeed())) {
+	//	countTimeForPlayer -= (1.0f / player->GetAttackSpeed());
+	//	//공격 범위를 그리는 함수가 필요합니다.
+	//	//컬러값 (1.0f,0.0f,0.0f,0.5f)로 반지름 0.08f. 반투명 빨간색 생각중.
+	//	//CheckHitCollision(player->GetAttackRange());
+	//}
 	//적들 이동
 	ObjectManager::GetInstance()->EnemyMove(deltaTime);
 	//적들끼리 충돌하는지 체크 
@@ -126,10 +133,10 @@ void InGameStage::RenderHUD(int minutes, int seconds)
 	// HP
 	ImGui::Text("HP");
 
-	float hpRatio = tempHP / tempMaxHP;
+	float hpRatio = player->GetHealth() / player->GetMaxHealth();
 
 	char hpText[32];
-	sprintf_s(hpText, "%.0f / %.0f", tempHP, tempMaxHP);
+	sprintf_s(hpText, "%.0f / %.0f", player->GetHealth(), player->GetMaxHealth());
 
 	ImGui::ProgressBar(
 		hpRatio,

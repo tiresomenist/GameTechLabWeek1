@@ -25,7 +25,12 @@ class ObjectManager
 	void checkEnemiesIntersect();
 	void checkPlayerIntersectWithEnemy();
 	void intersectsPlayerWithWall();
-
+	bool isPlayerDead() {
+		if (obejctList.size() > 0) {
+			return obejctList[0]->IsDead();
+		}
+		return false;
+	}
 	
 	static ObjectManager* Ins;
 

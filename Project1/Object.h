@@ -28,6 +28,7 @@ public:
 	virtual bool IsDead();
 
 	void UpdateState(); //최종 업데이트
+	void SetLocation(float x,float y);
 	URenderer* renderer;
 
 
