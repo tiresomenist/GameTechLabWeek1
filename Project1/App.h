@@ -1,11 +1,16 @@
 #pragma once
 #include <windows.h>
+
 #include <d3dcompiler.h>
 #include <d3d11.h>
+
 #include "IGameStage.h"
+#include "FVertexSimple.h"
 
 class App 
 {
+	public:
+	void ChangeState(IGameStage* newState);
 
 	//여기서 device,context,swapchain 등등 들고있어야함
 	private:
@@ -42,19 +47,19 @@ class App
 	
 	void InitD3D();
 	void Initwindow(HINSTANCE hInstance);
+	void InitImgui();
 
 	//자원 생성 함수
 	void CreateDeviceandSwapchain();
 	void CreateShader();
 	void CreateFrambuffer();
 	void CreateRasterizerState();
-	void ChangeState(IGameStage* newState);
 
 	//자원 해제 함수
 	void ReleaseShader();
 	void ReleaseDeviceAndSwapChain();
 
-
+	
 	//타이머,인풋 업데이트
 	
 	void Update();
@@ -63,6 +68,8 @@ class App
 	public:
 
 	App();
+
+	~App();
 
 	//싱글톤
 	static App* Ins;
@@ -80,6 +87,9 @@ class App
 	{
 		return m_deviceContext;
 	}
+
+	//버텍스버퍼 생성
+	ID3D11Buffer* CreateVertexBuffer(FVertexSimple* vertices, UINT byteWidth);
 
 	void ReleaseAll();
 

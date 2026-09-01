@@ -1,4 +1,8 @@
 #include "InGameStage.h"
+#include "ImGui/imgui.h"
+#include "ImGui/imgui_impl_win32.h"
+#include "ImGui/imgui_impl_dx11.h"
+#include "ImGui/imgui_internal.h"
 
 
 void InGameStage::Enter()
@@ -55,6 +59,8 @@ void InGameStage::Render()
 	{
 		//object->Render();
 	}
+	ImGui::Begin("In-Game Menu");
+	ImGui::End();
 }
 
 void InGameStage::Exit()
@@ -62,6 +68,8 @@ void InGameStage::Exit()
 	//자원 전부 해제
 	delete player;
 	player = nullptr;
+	delete objectList;
+	objectList = nullptr;
 }
 
 //적군끼리의 충돌 체크

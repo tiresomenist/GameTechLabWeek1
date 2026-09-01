@@ -2,16 +2,28 @@
 #include "D3D11Util.h"
 #include "MainmenuStage.h"
 #include <cstdio>
+
+#pragma comment(lib, "d3d11.lib")
+
+
+#include "ImGui/imgui.h"
+#include "ImGui/imgui_impl_win32.h"
+#include "ImGui/imgui_impl_dx11.h"
+#include "ImGui/imgui_internal.h"
+
+
 App* App::Ins = nullptr;
+
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 LRESULT	CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	//Imgui를 사용하게 되면, 필요한 핸들러, imgui 라이브러리 merge후에 주석 풀기
-	//if (ImGui_ImplWin32_WndProcHandler(hwnd, message, wParam, lParam))
-	//{
-	//	return true;
-	//}
-	
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, message, wParam, lParam))
+	{
+		return true;
+	}
+
 	switch (message)
 	{
 	case WM_DESTROY:
@@ -27,8 +39,9 @@ void App::Init(HINSTANCE hInstance)
 {
 	Initwindow(hInstance);
 	InitD3D();
+	InitImgui();
 	
-	ChangeState(new MainmenuStage());
+	ChangeState(new MainmenuStage(this));
 }
 
 void App::mainLoop()
@@ -117,8 +130,14 @@ void App::Initwindow(HINSTANCE hInstance)
 		ShowWindow(m_mainWindow, SW_SHOW);
 		UpdateWindow(m_mainWindow);
 	}
+}
 
-
+void App::InitImgui()
+{
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGui_ImplWin32_Init((void*)m_mainWindow);
+	ImGui_ImplDX11_Init(m_device, m_deviceContext);
 }
 
 void App::InitD3D()
@@ -138,8 +157,10 @@ void App::CreateDeviceandSwapchain()
 
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 
-	swapChainDesc.BufferDesc.Width = 0;
-	swapChainDesc.BufferDesc.Height = 0;
+	RECT rc;
+	GetClientRect(m_mainWindow, &rc);
+	swapChainDesc.BufferDesc.Width = rc.right - rc.left;
+	swapChainDesc.BufferDesc.Height = rc.bottom - rc.top;
 	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	swapChainDesc.SampleDesc.Count = 1;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -148,7 +169,6 @@ void App::CreateDeviceandSwapchain()
 	swapChainDesc.Windowed = TRUE;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 
-	//device,device context, swap chain ����
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(
 		nullptr,
 		D3D_DRIVER_TYPE_HARDWARE,
@@ -250,13 +270,46 @@ void App::Render()
 	//OM
 	m_deviceContext->OMSetRenderTargets(1, &m_frameBufferRTV, nullptr);
 
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+
+	if (m_currentStage != nullptr)
+		m_currentStage->Render();
+
+
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
 
 	m_swapChain->Present(1, 0);
 }
+
 App::App()
 {
 	Ins = this;
 
+};
+
+ID3D11Buffer* App::CreateVertexBuffer(FVertexSimple* vertices, UINT byteWidth)
+{
+	D3D11_BUFFER_DESC bufferDesc = {};
+	bufferDesc.ByteWidth = byteWidth;
+	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	D3D11_SUBRESOURCE_DATA vertexBufferSRD = { vertices };
+
+	ID3D11Buffer* vertexBuffer = nullptr;
+	m_device->CreateBuffer(&bufferDesc, &vertexBufferSRD, &vertexBuffer);
+
+	return vertexBuffer;
+}
+App::~App()
+{
+	ImGui_ImplDX11_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
+	ReleaseAll();
 }
 ;
 
