@@ -1,6 +1,6 @@
 #include "ObjectManager.h"
 #include "Enemy.h"
-
+#include "SoundManager.h"
 ObjectManager* ObjectManager::Ins = nullptr;
 
 void ObjectManager::AddEnemy(Enemy* enemy)
@@ -20,9 +20,9 @@ void ObjectManager::AddObject(Object* obj)
 }
 
 
-void ObjectManager::CreateEnemy()
+void ObjectManager::CreateEnemy(float difficulty)
 {
-	Enemy* newEnemy = new Enemy();
+	Enemy* newEnemy = new Enemy(difficulty);
 	AddEnemy(newEnemy);
 }
 
@@ -187,6 +187,7 @@ void ObjectManager::checkWeaponIntersectWithEnemy()
 				//적 피해 처리
 				if (enemy->GetisHit() == false)
 				{
+					USoundManager::GetInstance()->PlaySFX(ENEMY_HIT);
 					enemy->GetAttacked(player->GetAttack());
 					enemy->SetisHit(true);
 				}

@@ -5,6 +5,14 @@
 #include <string>
 
 #define SOUND_KEY_BGM L"bgm"
+#define ENEMY_HIT L"hit_enemy"
+#define PLAYER_HIT L"hit_player"
+#define GAME_OVER L"game_over"
+#define GAME_CLEAR L"game_clear"
+#define UI_OPEN L"ui_open"
+#define UI_CLOSE L"ui_close"
+#define ENEMY_DEAD L"enemy_dead"
+#define LEVEL_UP L"level_up"
 
 struct SoundData
 {

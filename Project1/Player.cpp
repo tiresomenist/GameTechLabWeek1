@@ -6,7 +6,7 @@ Player::Player() {
 	radius = 0.05f;
 	location = FVector(0.0f, 0.0f, 0.0f);
 	health = MaxHealth;
-	speed = 0.2f;
+	speed = 0.4f;
 	attack = 1.0f;
 };
 bool Player::IsWall(float x, float y) {
