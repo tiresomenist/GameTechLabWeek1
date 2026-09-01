@@ -30,8 +30,11 @@ void InGameStage::Update(float deltaTime)
 	
 	//player.move(player.inputVector.x, player.inputVector.y);
 	// 플레이어 공격
-	//player->GetAttackRange();
-	
+	int nextAttackFrame = (int)(30.0f / player->GetAttackSpeed());
+	if ((int)frameCount % nextAttackFrame == 0) {
+		CheckHitCollision(player->GetAttackRange());
+
+	}
 	//적들 이동
 	for (auto object : *objectList)
 	{
@@ -48,7 +51,6 @@ void InGameStage::Update(float deltaTime)
 	InGameStage::intersectsToPlayer();
 	//플레이어와 벽의 충돌 체크
 	InGameStage::intersectsPlayerWithWall();
-	Render();
 }
 
 void InGameStage::Render()

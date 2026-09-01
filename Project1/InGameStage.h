@@ -12,7 +12,7 @@ class InGameStage : public IGameStage
 	void intersects(Object* object);
 	void intersectsToPlayer();
 	std::vector<Object*>* objectList = nullptr;
-	Object* player=nullptr;
+	Player* player=nullptr;
 	void CheckHitCollision(float AttackRange);
 	void intersectsPlayerWithWall();
 	TimeManager timeManager;

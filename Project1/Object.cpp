@@ -58,3 +58,9 @@ void Player::MoveObject(float x, float y) {
 		location.y += y;
 	}
 }
+float Player::GetAttackSpeed() {
+	return attackSpeed;
+}
+float Player::GetAttackRange() {
+	return attackRange;
+}

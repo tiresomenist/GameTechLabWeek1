@@ -7,7 +7,6 @@ public:
 	virtual ~Object() = default;
 	float GetAttack();
 	float GetSpeed();
-	float GetAttackSpeed();
 	float GetHealth();
 	float GetExp();
 	float GetRadius();
@@ -47,8 +46,9 @@ class Enemy:public Object
 public:
 	Enemy();
 	virtual ~Enemy() = default; // = default 추가
-private:
 	void MoveObject(float x, float y)override; // 실제움직이기
+
+private:
 };
 class Player : public Object
 {
@@ -56,7 +56,12 @@ public:
 	Player();
 	virtual ~Player() = default; // = default 추가
 	bool IsWall(float x, float y);
-private:
+	float GetAttackRange();
 	void MoveObject(float x, float y)override; // 실제움직이기
+	float GetAttackSpeed();
+
+
+private:
+	float attackRange = 0.1f;
 
 };
