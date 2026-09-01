@@ -60,6 +60,120 @@ void InGameStage::Render()
 	}
 	ImGui::Begin("In-Game Menu");
 	ImGui::End();
+    static float tempHP = 75.0f;
+    static float tempMaxHP = 100.0f;
+    static float tempRemainingTime = 83.0f;
+    static int tempExp = 120;
+
+    // 0 = None, 1 = Clear, 2 = Game Over
+    static int tempResult = 0;
+
+    bool openResultPopup = false;
+
+    ImGui::SetNextWindowPos(ImVec2(20.0f, 20.0f), ImGuiCond_Always);
+
+    ImGuiWindowFlags hudFlags =
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoTitleBar |
+        ImGuiWindowFlags_AlwaysAutoResize;
+
+    ImGui::Begin("HUD", nullptr, hudFlags);
+
+    // HP
+    ImGui::Text("HP");
+
+    float hpRatio = tempHP / tempMaxHP;
+
+    char hpText[32];
+    sprintf_s(hpText, "%.0f / %.0f", tempHP, tempMaxHP);
+
+    ImGui::ProgressBar(
+        hpRatio,
+        ImVec2(300.0f, 25.0f),
+        hpText
+    );
+
+    // TIME
+    int totalSeconds = static_cast<int>(tempRemainingTime);
+    int minutes = totalSeconds / 60;
+    int seconds = totalSeconds % 60;
+
+    ImGui::Text("TIME  %02d:%02d", minutes, seconds);
+
+    ImGui::Separator();
+
+    // 임시 테스트 버튼
+    if (ImGui::Button("Preview Clear"))
+    {
+        tempResult = 1;
+        openResultPopup = true;
+    }
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("Preview Game Over"))
+    {
+        tempResult = 2;
+        openResultPopup = true;
+    }
+
+    ImGui::End();
+
+
+    // 팝업은 HUD 밖에서 열기
+    if (openResultPopup)
+    {
+        ImGui::OpenPopup("Game Result");
+    }
+
+    ImGui::SetNextWindowSize(
+        ImVec2(360.0f, 250.0f),
+        ImGuiCond_Always
+    );
+
+    if (ImGui::BeginPopupModal(
+        "Game Result",
+        nullptr,
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoCollapse))
+    {
+        if (tempResult == 1)
+        {
+            ImGui::Text("CLEAR!");
+        }
+        else if (tempResult == 2)
+        {
+            ImGui::Text("GAME OVER");
+        }
+
+        ImGui::Separator();
+
+        ImGui::Text(
+            "Remaining Time : %02d:%02d",
+            minutes,
+            seconds
+        );
+
+        ImGui::Text("EXP : %d", tempExp);
+
+        ImGui::Separator();
+
+        if (ImGui::Button("RESTART", ImVec2(140.0f, 40.0f)))
+        {
+            ImGui::CloseCurrentPopup();
+            m_app->ChangeState(new InGameStage(m_app));
+        }
+
+        ImGui::SameLine();
+
+        if (ImGui::Button("MAIN MENU", ImVec2(140.0f, 40.0f)))
+        {
+            m_app->ChangeState(new MainmenuStage(m_app));
+        }
+
+        ImGui::EndPopup();
+    }
 }
 
 void InGameStage::Exit()

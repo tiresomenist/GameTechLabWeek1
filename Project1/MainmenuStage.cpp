@@ -90,7 +90,7 @@ void MainmenuStage::Render()
 
     if (ImGui::Button("START", ImVec2(BUTTON_WIDTH, BUTTON_HEIGHT)))
     {
-        m_app->ChangeState(new InGameStage());
+        m_app->ChangeState(new InGameStage(m_app));
     }
 
     ImGui::Dummy(ImVec2(0.0f, 10.0f));
