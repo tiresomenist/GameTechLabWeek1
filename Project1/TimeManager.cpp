@@ -1,4 +1,5 @@
 #include <windows.h>
+#include "TimeManager.h"
 
 class TimeManager
 {
