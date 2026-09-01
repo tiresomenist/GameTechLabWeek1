@@ -45,20 +45,11 @@ void InGameStage::Update(float deltaTime)
 		openResultPopup = true;
 		return;
 	}
-<<<<<<< HEAD
 	countTimeForEnemy += deltaTime;
 	countTimeForPlayer += deltaTime;
 	//적군 생성 로직
 	if (countTimeForEnemy > 2.0f) {
 		countTimeForEnemy -= 2.0f;
-=======
-	countTime += deltaTime;
-
-	OutputDebugStringA("InGameStage Update!\n");
-	float frameCount = TimeManager::GetInstance()->GetcurrentTime() / deltaTime;	//몇프레임돌았는가?
-	if (countTime > 2.0f) {
-		countTime -= 2.0f;
->>>>>>> 6eadc2f714e3dd965396e5e5e88e2933f311eb27
 		ObjectManager::GetInstance()->CreateEnemy();
 		OutputDebugStringA("Enemy Creted!\n");
 
@@ -73,7 +64,6 @@ void InGameStage::Update(float deltaTime)
 	//인풋매니저 가져오고 델타타임이랑 이동속도 생각해서 한프레임당 이동 거리 계산해서 move호출
 	
 	player->MoveObject(moveDir.x * deltaTime * player->GetSpeed(), moveDir.y * deltaTime * player->GetSpeed());
-<<<<<<< HEAD
 	// 플레이어 공격
 	if (countTimeForPlayer > (1.0f / player->GetAttackSpeed())) {
 		countTimeForPlayer -= (1.0f / player->GetAttackSpeed());
@@ -81,22 +71,6 @@ void InGameStage::Update(float deltaTime)
 		//컬러값 (1.0f,0.0f,0.0f,0.5f)로 반지름 0.08f. 반투명 빨간색 생각중.
 		//CheckHitCollision(player->GetAttackRange());
 	}
-	//적들끼리 충돌하는지 체크
-	//for (auto object : *objectList)
-	//{
-	//	InGameStage::intersects(object);
-	//}
-	//플레이어에게 충돌하는지 체크
-	//InGameStage::intersectsToPlayer();
-	//플레이어와 벽의 충돌 체크
-	//InGameStage::intersectsPlayerWithWall();
-=======
-	//// 플레이어 공격
-	//int nextAttackFrame = (int)(30.0f / player->GetAttackSpeed());
-	//if ((int)frameCount % nextAttackFrame == 0) {
-	//	CheckHitCollision(player->GetAttackRange());
-
-	//}
 	//적들 이동
 	ObjectManager::GetInstance()->EnemyMove(deltaTime);
 	//적들끼리 충돌하는지 체크 
@@ -105,7 +79,6 @@ void InGameStage::Update(float deltaTime)
 	ObjectManager::GetInstance()->checkPlayerIntersectWithEnemy();
 	//플레이어와 벽의 충돌 체크
 	ObjectManager::GetInstance()->intersectsPlayerWithWall();
->>>>>>> 6eadc2f714e3dd965396e5e5e88e2933f311eb27
 }
 
 void InGameStage::Render()
@@ -413,8 +386,7 @@ void InGameStage::RenderResultModal(int minutes, int seconds)
 
 void InGameStage::Exit()
 {
-	//자원 전부 해제
-	// ObjectManager::GetInstance()->RealeseAllObjects();
+	ObjectManager::GetInstance()->ReleaseAllObjects();
 }
 
 
