@@ -40,7 +40,8 @@ class ObjectManager
 		}
 		return false;
 	}
-	
+	void checkWeaponIntersectWithEnemy();
+
 
 	
 	static ObjectManager* Ins;

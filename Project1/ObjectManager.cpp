@@ -159,6 +159,39 @@ void ObjectManager::intersectsPlayerWithWall()
 	}
 
 }
+void ObjectManager::checkWeaponIntersectWithEnemy() {
+	//무기와 적 충돌 처리
+	Player* player = static_cast<Player*>(obejctList[0]);
+	for (auto weapon : weaponList)
+	{
+		for (auto enemy : enemyList)
+		{
+			if (weapon->Intersect(enemy)) {
+				//여기에 충돌관련 처리
+				//충돌한만큼 서로 밀어내기/적 체력 피해
+				// 법선벡터*겹쳐진범위만큼 적만 밀어내면 됨.(질량은 고려하지않음)
+				float Dx = weapon->GetLocation().x - enemy->GetLocation().x;
+				float Dy = weapon->GetLocation().y - enemy->GetLocation().y;
+				float Distance = sqrt(Dx * Dx + Dy * Dy);
+				float overlap = (weapon->GetRadius() + enemy->GetRadius()) - Distance;
+				float pushOffsetX = Dx * overlap /  Distance;
+				float pushOffsetY = Dy * overlap /  Distance;
+				enemy->MoveObject(-pushOffsetX, -pushOffsetY);
+				//적 피해 처리
+				enemy->GetAttacked(player->GetAttack());
+				if (enemy->IsDead())
+				{
+					//적 제거
+					auto it = std::find(enemyList.begin(), enemyList.end(), enemy);
+					if (it != enemyList.end()) {
+						delete* it; // 메모리 해제
+						enemyList.erase(it); // 리스트에서 제거
+					}
+				}
+			}
+		}
+	}
+}
 
 void ObjectManager::SpinWeapon(float deltaTime, float rotationSpeed)
 {

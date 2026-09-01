@@ -18,6 +18,8 @@ Enemy::Enemy() {
 	}
 	speed = 0.2f;
 	attack = 1.0f;
+	float MaxHealth = 30.0f;
+	health = MaxHealth;
 };
 void Enemy::MoveObject(float x, float y) {
 	location.x += x;

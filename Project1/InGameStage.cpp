@@ -84,6 +84,8 @@ void InGameStage::Update(float deltaTime)
 	}
 	//무기 돌리기
 	ObjectManager::GetInstance()->SpinWeapon(deltaTime, player->GetWeaponRotationSpeed());	
+	//무기와 적의 충돌 체크
+	ObjectManager::GetInstance()->checkWeaponIntersectWithEnemy();
 	//적들 이동
 	ObjectManager::GetInstance()->EnemyMove(deltaTime);
 	//적들끼리 충돌하는지 체크 
@@ -92,7 +94,7 @@ void InGameStage::Update(float deltaTime)
 	ObjectManager::GetInstance()->checkPlayerIntersectWithEnemy();
 	//플레이어와 벽의 충돌 체크
 	ObjectManager::GetInstance()->intersectsPlayerWithWall();
-
+	
 }
 
 void InGameStage::Render()
