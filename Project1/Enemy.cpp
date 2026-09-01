@@ -1,6 +1,8 @@
 #include "Enemy.h"
 #include <vector>
 
+
+
 Enemy::Enemy() {
 	//크기 0.03f
 	radius = 0.03f;

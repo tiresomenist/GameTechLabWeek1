@@ -12,6 +12,8 @@
 #include "ImGui/imgui_impl_dx11.h"
 #include "ImGui/imgui_internal.h"
 #include "InputManager.h"
+#include "TimeManager.h"
+
 
 App* App::Ins = nullptr;
 
@@ -50,6 +52,7 @@ void App::Init(HINSTANCE hInstance)
 	InitD3D();
 	InitImgui();
 	InputManager::IMins = new InputManager();
+	TimeManager::Ins = new TimeManager();
 	ChangeState(new MainmenuStage(this));
 }
 
@@ -242,7 +245,11 @@ void App::CreateRasterizerState()
 
 void App::Update()
 {
+
+
 	//타이머,인풋 매니저 호출
+	TimeManager::GetInstance()->Update();
+
 	if (nextStage != nullptr)
 	{
 
@@ -261,7 +268,7 @@ void App::Update()
 	if (m_currentStage != nullptr)
 	{
 		
-		//m_currentStage->Update(deltaTime);
+		m_currentStage->Update(TimeManager::GetInstance()->GetDeltaTime());
 
 	}
 };

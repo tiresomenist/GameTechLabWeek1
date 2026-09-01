@@ -26,7 +26,10 @@ public:
     void intersectsPlayerWithWall();
 
     TimeManager timeManager;
-	InputManager inputManager;
+    InputManager inputManager;
+	float countTime=0.0f;
+	
+
 private:
     App* m_app = nullptr;
 };
