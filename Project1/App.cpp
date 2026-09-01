@@ -2,6 +2,7 @@
 #include "D3D11Util.h"
 #include "MainmenuStage.h"
 #include <cstdio>
+#include <DirectXTex.h>
 
 #pragma comment(lib, "d3d11.lib")
 
@@ -95,6 +96,12 @@ void App::ReleaseShader()
 		defaultPixelShader = nullptr;
 	}
 
+	if (texturePixelShader)
+	{
+		texturePixelShader->Release();
+		texturePixelShader = nullptr;
+	}
+
 }
 void App::ReleaseDeviceAndSwapChain()
 {
@@ -158,6 +165,7 @@ void App::InitD3D()
 {
 	CreateDeviceandSwapchain();
 	CreateShader();
+	CreateTexture();
 	CreateFrambuffer();
 	CreateRasterizerState();
 
@@ -222,6 +230,79 @@ void App::CreateShader()
 {
 	D3D11Util::CreateVertexShaderAndInputLayout(L"defaultVS.hlsl", m_device, &defaultVertexShader, &defaultInputLayout);
 	D3D11Util::CreatePixelShader(L"defaultPS.hlsl", &defaultPixelShader);
+	D3D11Util::CreatePixelShader(L"texturePS.hlsl", &texturePixelShader);
+	D3D11Util::CreateSamplerState(&textureSampler);
+}
+
+void App::CreateTexture()
+{
+	DirectX::ScratchImage scratchImage;
+
+	HRESULT hr = DirectX::LoadFromWICFile(
+		L"earth.jpg",
+		DirectX::WIC_FLAGS_NONE,
+		nullptr,
+		scratchImage
+	);
+
+	if (FAILED(hr))
+	{
+		OutputDebugStringA("Failed to load texture image\n");
+		return;
+	}
+
+	const DirectX::Image* image = scratchImage.GetImage(0, 0, 0);
+
+	if (image == nullptr)
+	{
+		OutputDebugStringA("Failed to get image data\n");
+		return;
+	}
+
+	D3D11_TEXTURE2D_DESC textureDesc = {};
+	textureDesc.Width = static_cast<UINT>(image->width);
+	textureDesc.Height = static_cast<UINT>(image->height);
+	textureDesc.MipLevels = 1;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = image->format;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+	D3D11_SUBRESOURCE_DATA initData = {};
+	initData.pSysMem = image->pixels;
+	initData.SysMemPitch = static_cast<UINT>(image->rowPitch);
+	initData.SysMemSlicePitch = static_cast<UINT>(image->slicePitch);
+
+	hr = m_device->CreateTexture2D(
+		&textureDesc,
+		&initData,
+		&texture
+	);
+
+	if (FAILED(hr))
+	{
+		OutputDebugStringA("Failed to create Texture2D\n");
+		return;
+	}
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Format = textureDesc.Format;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	srvDesc.Texture2D.MipLevels = 1;
+
+	hr = m_device->CreateShaderResourceView(
+		texture,
+		&srvDesc,
+		&textureSRV
+	);
+
+	if (FAILED(hr))
+	{
+		OutputDebugStringA("Failed to create texture SRV\n");
+		return;
+	}
 }
 
 void App::CreateFrambuffer()
@@ -301,7 +382,11 @@ void App::Render()
 	m_deviceContext->VSSetConstantBuffers(0, 1, &constantBuffer);
 
 	m_deviceContext->VSSetShader(defaultVertexShader,0,0);
-	m_deviceContext->PSSetShader(defaultPixelShader, 0, 0);
+	//m_deviceContext->PSSetShader(defaultPixelShader, 0, 0);
+	m_deviceContext->PSSetSamplers(0, 1, &textureSampler);
+	m_deviceContext->PSSetShader(texturePixelShader, 0, 0);
+	m_deviceContext->PSSetShaderResources(0, 1, &textureSRV);
+
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
