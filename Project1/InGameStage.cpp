@@ -23,8 +23,8 @@ void InGameStage::Enter()
 	{
 		objectList = new std::vector<Object*>(); // 임시로 생성
 	}
-	timeManager.TimeReset();
-	timeManager.TimeStart();
+	TimeManager::GetInstance()->TimeReset();
+	TimeManager::GetInstance()->TimeStart();
 
 	gameResult = 0;
 
@@ -35,22 +35,23 @@ void InGameStage::Enter()
 void InGameStage::Update(float deltaTime)
 {
 	// Pause / Clear / GameOver 상태면 게임 진행 중지
-	if (!timeManager.IsRunning())
+	if (!TimeManager::GetInstance()->IsRunning())
 		return;
 
-	timeManager.TimeUpdate(deltaTime);
+	TimeManager::GetInstance()->TimeUpdate(deltaTime);
 
 	// 60초 생존하면 Clear
-	if (timeManager.GetcurrentTime() >= 60.0f)
+	if (TimeManager::GetInstance()->GetcurrentTime() >= 60.0f)
 	{
-		timeManager.TimePause();
+		TimeManager::GetInstance()->TimePause();
 		gameResult = 1;
 		openResultPopup = true;
 		return;
 	}
+	countTime += deltaTime;
 
 	OutputDebugStringA("InGameStage Update!\n");
-	float frameCount = timeManager.GetcurrentTime() / deltaTime;	//몇프레임돌았는가?
+	float frameCount = TimeManager::GetInstance()->GetcurrentTime() / deltaTime;	//몇프레임돌았는가?
 	if (countTime > 2.0f) {
 		countTime -= 2.0f;
 		ObjectManager::GetInstance()->CreateEnemy();
@@ -76,21 +77,13 @@ void InGameStage::Update(float deltaTime)
 
 	//}
 	//적들 이동
-	for (auto object : *objectList)
-	{
-		float targetX = player->GetLocation().x - object->GetLocation().x;
-		float targetY = player->GetLocation().y - object->GetLocation().y;
-		object->MoveObject(targetX, targetY);
-	}
-	//적들끼리 충돌하는지 체크
-	for (auto object : *objectList)
-	{
-		InGameStage::intersects(object);
-	}
+	ObjectManager::GetInstance()->EnemyMove(deltaTime);
+	//적들끼리 충돌하는지 체크 
+	ObjectManager::GetInstance()->checkEnemiesIntersect();
 	//플레이어에게 충돌하는지 체크
-	InGameStage::intersectsToPlayer();
+	ObjectManager::GetInstance()->checkPlayerIntersectWithEnemy();
 	//플레이어와 벽의 충돌 체크
-	InGameStage::intersectsPlayerWithWall();
+	ObjectManager::GetInstance()->intersectsPlayerWithWall();
 }
 
 void InGameStage::Render()
@@ -152,7 +145,7 @@ void InGameStage::Render()
     );
 
     // TIME
-	float currentTime = timeManager.GetcurrentTime();
+	float currentTime = TimeManager::GetInstance()->GetcurrentTime();
 
 	int totalSeconds = static_cast<int>(currentTime);
 	int minutes = totalSeconds / 60;
@@ -203,7 +196,7 @@ void InGameStage::Render()
 	{
 		ImGui::OpenPopup("Pause Menu");
 		openPausePopup = false;
-		timeManager.TimePause();
+		TimeManager::GetInstance()->TimePause();
 		escPressed = false;
 	}
 
@@ -238,7 +231,7 @@ void InGameStage::Render()
 			"RESUME",
 			ImVec2(buttonWidth, buttonHeight)) || (escPressed && !leaveGameOpen))
 		{
-			timeManager.TimeResume();
+			TimeManager::GetInstance()->TimeResume();
 			ImGui::CloseCurrentPopup();
 		}
 
@@ -399,89 +392,4 @@ void InGameStage::Exit()
 	objectList = nullptr;
 }
 
-//적군끼리의 충돌 체크
-void InGameStage::intersects(Object* object)
-{
-	// 각 오브젝트들에 대해 순회
-	for (auto ohterObject : *objectList)
-	{
-		if (object->Intersect(ohterObject)) {
-			//여기에 충돌관련 처리
-			//충돌한만큼 서로 밀어내기/적군과 플레이어간 충돌이면 플레이어 체력 피해
-			// 법선벡터*겹쳐진범위/2만큼 서로 밀어내면 됨.(질량은 고려하지않음)
-			float Dx = object->GetLocation().x - ohterObject->GetLocation().x;
-			float Dy = object->GetLocation().y - ohterObject->GetLocation().y;
-			float Distance = sqrt(Dx * Dx + Dy * Dy);
-			float overlap = (object->GetRadius() + ohterObject->GetRadius()) - Distance;
-			float pushOffsetX = Dx * overlap / (2 * Distance);
-			float pushOffsetY = Dy * overlap / (2 * Distance);
-			object->MoveObject(pushOffsetX, pushOffsetY);
-			ohterObject->MoveObject(-pushOffsetX, -pushOffsetY);
-		}
-	}
-}
 
-//적과 플레이어의 충돌 체크
-void InGameStage::intersectsToPlayer()
-{
-	// 각 오브젝트들에 대해 순회
-	//만약 충돌하면 플레이어의 체력을 감소시키고, 체력이 0이되면 게임오버 처리
-	for (auto ohterObject : *objectList)
-	{
-		if (player->Intersect(ohterObject)) {
-			//여기에 충돌관련 처리
-			//충돌한만큼 서로 밀어내기/플레이어 체력 피해
-			// 법선벡터*겹쳐진범위/2만큼 서로 밀어내면 됨.(질량은 고려하지않음)
-			float Dx = player->GetLocation().x - ohterObject->GetLocation().x;
-			float Dy = player->GetLocation().y - ohterObject->GetLocation().y;
-			float Distance = sqrt(Dx * Dx + Dy * Dy);
-			float overlap = (player->GetRadius() + ohterObject->GetRadius()) - Distance;
-			float pushOffsetX = Dx * overlap / (2 * Distance);
-			float pushOffsetY = Dy * overlap / (2 * Distance);
-			player->MoveObject(pushOffsetX, pushOffsetY);
-			ohterObject->MoveObject(-pushOffsetX, -pushOffsetY);
-
-			//플레이어 피해 처리
-			//player.takenDamage(otherObject.damage);
-		}
-	}
-}
-
-void InGameStage::intersectsPlayerWithWall() 
-{
-	FVector playerLocation = player->GetLocation();
-	float Radius = player->GetRadius();
-	const float LeftBorder = -1.0f + Radius;
-	const float RightBorder = 1.0f - Radius;
-	const float TopBorder = 1.0f - Radius;
-	const float BottomBorder = -1.0f + Radius;
-	if (playerLocation.x < LeftBorder) {
-		player->MoveObject(LeftBorder, playerLocation.y);
-	}
-	else if (playerLocation.x > RightBorder) {
-		player->MoveObject(RightBorder, playerLocation.y);
-	}
-	if (playerLocation.y < BottomBorder) {
-		player->MoveObject(playerLocation.x, BottomBorder);
-	}
-	else if (playerLocation.y > TopBorder) {
-		player->MoveObject(playerLocation.x, TopBorder);
-	}
-}
-
-//적과 플레이어의 공격간의 충돌 체크
-void InGameStage::CheckHitCollision(float AttackRange)
-{
-	for (auto ohterObject : *objectList)
-	{
-		float Dx = player->GetLocation().x - ohterObject->GetLocation().x;
-		float Dy = player->GetLocation().y - ohterObject->GetLocation().y;
-		float Distance = Dx * Dx + Dy * Dy;
-		
-		float TargetDistance = AttackRange + ohterObject->GetRadius();
-		if (TargetDistance * TargetDistance >= Distance)
-		{
-			//ohterObject의 피해처리
-		}
-	}
-}

@@ -10,7 +10,7 @@ public:
 	float GetAttackSpeed();
 	float GetAttackRange();
 	void MoveObject(float x, float y)override; // 실제움직이기
-	float GetSpeed();
+
 private:
 
 };

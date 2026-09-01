@@ -30,3 +30,12 @@ Object::Object()
 float Object::GetRadius() {
 	return radius;
 }
+
+float Object::GetSpeed() {
+	return speed;
+}
+
+void Object::SetLocation(float x,float y) {
+	location.x = x;
+	location.y = y;
+}
