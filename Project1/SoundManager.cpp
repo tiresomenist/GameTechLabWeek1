@@ -79,6 +79,7 @@ void USoundManager::Init()
     XAudio2Create(&XAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR);
     XAudio2->CreateMasteringVoice(&MasterVoice);
 
+
     LoadBGM(SOUND_KEY_BGM, L".\\Resource\\Sound\\bgm.wav");
     LoadSFX(ENEMY_HIT, L".\\Resource\\Sound\\enemy_hit.wav");
     LoadSFX(PLAYER_HIT, L".\\Resource\\Sound\\player_hit.wav");
