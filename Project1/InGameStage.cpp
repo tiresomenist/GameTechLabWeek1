@@ -27,7 +27,6 @@ void InGameStage::Enter()
 	timeManager.TimeStart();
 
 	gameResult = 0;
-	inputManager = InputManager();
 
 	//테스트용으로 적한번 찍어본거.
 	ObjectManager::GetInstance()->CreateEnemy();
@@ -100,14 +99,20 @@ void InGameStage::Render()
 	// 임시 UI 데이터
     static float tempHP = 75.0f;
     static float tempMaxHP = 100.0f;
-    static float tempRemainingTime = 83.0f;
     static int tempExp = 120;
 
 	bool openPausePopup = false;
 
-	// ESC 키 입력 체크 (소비되지 않도록 변수로 저장)
-	// TODO: InputManager 사용하는 코드로 대체 예정
-	bool escPressed = ImGui::IsKeyPressed(ImGuiKey_Escape);
+	// ESC 키 입력 체크
+	static bool prevEscDown = false;
+
+	bool escDown =
+		InputManager::GetInstance()->IsKeyPressed(VK_ESCAPE);
+
+	bool escPressed =
+		escDown && !prevEscDown;
+
+	prevEscDown = escDown;
 
 	/////////////////////////
 	// InGame 상시 HUD 
