@@ -29,7 +29,10 @@ void InGameStage::Enter()
 	ObjectManager::GetInstance()->CreateEnemy();
 
 	ObjectManager::GetInstance()->CreateWeapon();
-
+	ObjectManager::GetInstance()->CreateWeapon();
+	ObjectManager::GetInstance()->CreateWeapon();
+	ObjectManager::GetInstance()->CreateWeapon();
+	ObjectManager::GetInstance()->CreateWeapon();
 }
 
 void InGameStage::Update(float deltaTime)

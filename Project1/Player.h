@@ -20,7 +20,7 @@ public:
 	float GetMaxHealth();
 
 private:
-	float WeaponRotationSpeed = 3.0f;
+	float WeaponRotationSpeed = 6.0f;
 	float orbitRadius = 0.2f;
 	
 

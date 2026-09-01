@@ -159,13 +159,17 @@ void ObjectManager::intersectsPlayerWithWall()
 	}
 
 }
-void ObjectManager::checkWeaponIntersectWithEnemy() {
+void ObjectManager::checkWeaponIntersectWithEnemy() 
+{
+	for (auto enemy : enemyList)
+		enemy->InvincibleTimerUpdate(TimeManager::GetInstance()->GetDeltaTime());
 	//무기와 적 충돌 처리
 	Player* player = static_cast<Player*>(obejctList[0]);
 	for (auto weapon : weaponList)
 	{
 		for (auto enemy : enemyList)
 		{
+			
 			if (weapon->Intersect(enemy)) {
 				//여기에 충돌관련 처리
 				//충돌한만큼 서로 밀어내기/적 체력 피해
@@ -178,7 +182,15 @@ void ObjectManager::checkWeaponIntersectWithEnemy() {
 				float pushOffsetY = Dy * overlap /  Distance;
 				enemy->MoveObject(-pushOffsetX, -pushOffsetY);
 				//적 피해 처리
-				enemy->GetAttacked(player->GetAttack());
+				if (enemy->GetisHit() == false)
+				{
+					enemy->GetAttacked(player->GetAttack());
+					enemy->SetisHit(true);
+					char debugMessage[50];
+					sprintf_s(debugMessage, "Enemy Hit! HP: %.0f\n", enemy->GetHealth());
+					OutputDebugStringA(debugMessage);
+				}
+				
 				if (enemy->IsDead())
 				{
 					//적 제거

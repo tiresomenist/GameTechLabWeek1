@@ -29,3 +29,17 @@ void Enemy::MoveObject(float x, float y) {
 bool Enemy::IsDead() {
 	return isDead;
 }
+
+void Enemy::InvincibleTimerUpdate(float deltaTime)
+{
+	if(isHit)
+	{
+		invincibleTimer += deltaTime;
+		if (invincibleTimer >= invinciblethreshold)
+		{
+			isHit = false;
+			invincibleTimer = 0.0f;
+		}
+	}
+
+}
