@@ -12,7 +12,6 @@ public:
 	virtual ~Object() = default;
 	float GetAttack();
 	float GetSpeed();
-	float GetAttackSpeed();
 	float GetHealth();
 	float GetExp();
 	float GetRadius();

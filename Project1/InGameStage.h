@@ -2,6 +2,7 @@
 #include "IGameStage.h"
 #include "ObjectManager.h"
 #include "TimeManager.h"
+#include "InputManager.h"
 
 class App;
 
@@ -19,13 +20,13 @@ public:
     void intersectsToPlayer();
 
     std::vector<Object*>* objectList = nullptr;
-    Object* player = nullptr;
+    Player* player = nullptr;
 
     void CheckHitCollision(float AttackRange);
     void intersectsPlayerWithWall();
 
     TimeManager timeManager;
-
+	InputManager inputManager;
 private:
     App* m_app = nullptr;
 };

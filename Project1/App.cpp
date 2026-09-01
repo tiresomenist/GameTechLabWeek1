@@ -11,7 +11,7 @@
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx11.h"
 #include "ImGui/imgui_internal.h"
-
+#include "InputManager.h"
 
 App* App::Ins = nullptr;
 
@@ -27,6 +27,14 @@ LRESULT	CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	switch (message)
 	{
+	case WM_KEYDOWN:
+		OutputDebugStringA("WM_KEYDOWN Triggered!\n");
+		InputManager::IMins->KeyDown(static_cast<int>(wParam));
+		break;
+	case WM_KEYUP:
+		OutputDebugStringA("WM_KEYDOWN Triggered!\n");
+		InputManager::IMins->KeyUp(static_cast<int>(wParam));
+		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
@@ -41,7 +49,7 @@ void App::Init(HINSTANCE hInstance)
 	Initwindow(hInstance);
 	InitD3D();
 	InitImgui();
-	
+	InputManager::IMins = new InputManager();
 	ChangeState(new MainmenuStage(this));
 }
 
