@@ -6,6 +6,10 @@
 #include "ImGui/imgui_impl_dx11.h"
 #include "ImGui/imgui_internal.h"
 #include <Windows.h>
+#include "SoundManager.h"
+
+#define SOUND_KEY_BGM L"bgm"
+
 
 namespace
 {
@@ -34,8 +38,7 @@ namespace
 
 void MainmenuStage::Enter()
 {
-
-
+    USoundManager::GetInstance()->PlayBGM(SOUND_KEY_BGM,true);
 }
 
 void MainmenuStage::Update(float deltaTime)
