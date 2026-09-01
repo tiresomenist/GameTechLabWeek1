@@ -153,6 +153,7 @@
     <ClInclude Include="ImGui\imstb_textedit.h" />
     <ClInclude Include="ImGui\imstb_truetype.h" />
     <ClInclude Include="InGameStage.h" />
+    <ClInclude Include="InputManager.h" />
     <ClInclude Include="MainmenuStage.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectManager.h" />
