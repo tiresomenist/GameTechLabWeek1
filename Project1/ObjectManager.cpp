@@ -1,6 +1,6 @@
 #include "ObjectManager.h"
 #include "Enemy.h"
-
+#include "SoundManager.h"
 ObjectManager* ObjectManager::Ins = nullptr;
 
 void ObjectManager::AddEnemy(Enemy* enemy)
@@ -20,9 +20,9 @@ void ObjectManager::AddObject(Object* obj)
 }
 
 
-void ObjectManager::CreateEnemy()
+void ObjectManager::CreateEnemy(float difficulty)
 {
-	Enemy* newEnemy = new Enemy();
+	Enemy* newEnemy = new Enemy(difficulty);
 	AddEnemy(newEnemy);
 }
 
@@ -178,17 +178,18 @@ void ObjectManager::checkWeaponIntersectWithEnemy()
 				float Dy = weapon->GetLocation().y - enemy->GetLocation().y;
 				float Distance = sqrt(Dx * Dx + Dy * Dy);
 				float overlap = (weapon->GetRadius() + enemy->GetRadius()) - Distance;
-				float pushOffsetX = Dx * overlap /  Distance;
-				float pushOffsetY = Dy * overlap /  Distance;
-				enemy->MoveObject(-pushOffsetX, -pushOffsetY);
+				float nv = sqrt((enemy->GetLocation().x - player->GetLocation().x) * (enemy->GetLocation().x - player->GetLocation().x) + (enemy->GetLocation().y - player->GetLocation().y) * (enemy->GetLocation().y - player->GetLocation().y));
+				float nx = (enemy->GetLocation().x - player->GetLocation().x) / nv;
+				float ny = (enemy->GetLocation().y - player->GetLocation().y) / nv;
+				float pushOffsetX = weapon->GetRadius() * 2;
+				float pushOffsetY = weapon->GetRadius() * 2;
+				enemy->MoveObject(nx * pushOffsetX, ny * pushOffsetY);
 				//적 피해 처리
 				if (enemy->GetisHit() == false)
 				{
+					USoundManager::GetInstance()->PlaySFX(ENEMY_HIT);
 					enemy->GetAttacked(player->GetAttack());
 					enemy->SetisHit(true);
-					char debugMessage[50];
-					sprintf_s(debugMessage, "Enemy Hit! HP: %.0f\n", enemy->GetHealth());
-					OutputDebugStringA(debugMessage);
 				}
 				
 				if (enemy->IsDead())

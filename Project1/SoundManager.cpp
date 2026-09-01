@@ -80,6 +80,14 @@ void USoundManager::Init()
     XAudio2->CreateMasteringVoice(&MasterVoice);
 
     LoadBGM(SOUND_KEY_BGM, L".\\Resource\\Sound\\bgm.wav");
+    LoadSFX(ENEMY_HIT, L".\\Resource\\Sound\\enemy_hit.wav");
+    LoadSFX(PLAYER_HIT, L".\\Resource\\Sound\\player_hit.wav");
+    LoadSFX(GAME_OVER, L".\\Resource\\Sound\\game_over.wav");
+    LoadSFX(GAME_CLEAR, L".\\Resource\\Sound\\game_clear.wav");
+    LoadSFX(UI_OPEN, L".\\Resource\\Sound\\ui_open.wav");
+    LoadSFX(UI_CLOSE, L".\\Resource\\Sound\\ui_close.wav");
+    LoadSFX(ENEMY_DEAD, L".\\Resource\\Sound\\enemy_dead.wav");
+    LoadSFX(LEVEL_UP, L".\\Resource\\Sound\\level_up.wav");
 }
 
 void USoundManager::Release()

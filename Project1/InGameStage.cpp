@@ -7,6 +7,7 @@
 #include "ImGui/imgui_internal.h"
 
 #include "ObjectManager.h"
+#include "SoundManager.h"
 
 InGameStage::InGameStage(App* app)
 	: m_app(app)
@@ -25,14 +26,14 @@ void InGameStage::Enter()
 
 	gameResult = 0;
 
-	//테스트용으로 적한번 찍어본거.
-	ObjectManager::GetInstance()->CreateEnemy();
+	ObjectManager::GetInstance()->CreateWeapon();
+	ObjectManager::GetInstance()->CreateWeapon();
+	ObjectManager::GetInstance()->CreateWeapon();
+	ObjectManager::GetInstance()->CreateWeapon();
+	ObjectManager::GetInstance()->CreateWeapon();
 
-	ObjectManager::GetInstance()->CreateWeapon();
-	ObjectManager::GetInstance()->CreateWeapon();
-	ObjectManager::GetInstance()->CreateWeapon();
-	ObjectManager::GetInstance()->CreateWeapon();
-	ObjectManager::GetInstance()->CreateWeapon();
+	USoundManager::GetInstance()->StopBGM();
+	USoundManager::GetInstance()->PlayBGM(SOUND_KEY_BGM, true);
 }
 
 void InGameStage::Update(float deltaTime)
@@ -64,9 +65,8 @@ void InGameStage::Update(float deltaTime)
 	//적군 생성 로직
 	if (countTimeForEnemy > 2.0f - (difficulty * 0.39f)) {
 		countTimeForEnemy -= 2.0f-(difficulty * 0.3f);
-		ObjectManager::GetInstance()->CreateEnemy();
+		ObjectManager::GetInstance()->CreateEnemy(difficulty);
 		//OutputDebugStringA("Enemy Creted!\n");
-
 	}
 
 	////플레이어 이동
@@ -181,6 +181,7 @@ void InGameStage::RenderHUD(int minutes, int seconds)
 	// Pause 열기
 	if (ImGui::Button("||"))
 	{
+		
 		openPausePopup = true;
 	}
 
@@ -212,6 +213,7 @@ void InGameStage::RenderPauseModal()
 	if (openPausePopup)
 	{
 		ImGui::OpenPopup("Pause Menu");
+		USoundManager::GetInstance()->PlaySFX(UI_OPEN);
 		openPausePopup = false;
 		TimeManager::GetInstance()->TimePause();
 		escPressed = false;
@@ -364,14 +366,27 @@ void InGameStage::RenderResultModal(int minutes, int seconds)
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoCollapse))
 	{
+		// 렌더 루프 안
+		if (gameResult != PrevGameResult)
+		{
+			if (gameResult == 1)
+			{
+				USoundManager::GetInstance()->StopBGM();
+				USoundManager::GetInstance()->PlaySFX(GAME_CLEAR);
+			}
+			else if (gameResult == 2)
+			{
+				USoundManager::GetInstance()->StopBGM();
+				USoundManager::GetInstance()->PlaySFX(GAME_OVER);
+			}
+			PrevGameResult = gameResult;
+		}
+
+		// 텍스트는 매 프레임 그려져야 하므로 밖으로 분리
 		if (gameResult == 1)
-		{
-			ImGui::Text("CLEAR!");
-		}
+			ImGui::Text("GAME CLEAR!");
 		else if (gameResult == 2)
-		{
 			ImGui::Text("GAME OVER");
-		}
 
 		ImGui::Separator();
 

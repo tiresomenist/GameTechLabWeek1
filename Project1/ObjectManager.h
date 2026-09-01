@@ -20,7 +20,7 @@ class ObjectManager
 	float orbitAngle = 0.0f;
 
 	public:
-	void CreateEnemy();
+	void CreateEnemy(float difficulty);
 	Player* CreatePlayer();
 	void CreateWeapon();
 

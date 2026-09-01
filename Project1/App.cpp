@@ -32,11 +32,9 @@ LRESULT	CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	switch (message)
 	{
 	case WM_KEYDOWN:
-		OutputDebugStringA("WM_KEYDOWN Triggered!\n");
 		InputManager::IMins->KeyDown(static_cast<int>(wParam));
 		break;
 	case WM_KEYUP:
-		OutputDebugStringA("WM_KEYDOWN Triggered!\n");
 		InputManager::IMins->KeyUp(static_cast<int>(wParam));
 		break;
 	case WM_DESTROY:
