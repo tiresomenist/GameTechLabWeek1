@@ -50,9 +50,10 @@ void InGameStage::Update(float deltaTime)
 	}
 	countTimeForEnemy += deltaTime;
 	countTimeForPlayer += deltaTime;
+	difficulty = TimeManager::GetInstance()->GetcurrentTime() / 10.0f;
 	//적군 생성 로직
-	if (countTimeForEnemy > 2.0f) {
-		countTimeForEnemy -= 2.0f;
+	if (countTimeForEnemy > 2.0f - (difficulty * 0.39f)) {
+		countTimeForEnemy -= 2.0f-(difficulty * 0.3f);
 		ObjectManager::GetInstance()->CreateEnemy();
 		OutputDebugStringA("Enemy Creted!\n");
 

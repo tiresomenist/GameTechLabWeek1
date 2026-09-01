@@ -28,7 +28,7 @@ public:
     InputManager inputManager;
     float countTimeForEnemy = 0.0f;
     float countTimeForPlayer = 0.0f;
-	
+    int difficulty;
 
 private:
     App* m_app = nullptr;

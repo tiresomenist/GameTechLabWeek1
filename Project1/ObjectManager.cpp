@@ -109,7 +109,7 @@ void ObjectManager::checkPlayerIntersectWithEnemy()
 			ohterObject->MoveObject(-pushOffsetX, -pushOffsetY);
 
 			//플레이어 피해 처리
-			//player.takenDamage(otherObject.damage);
+			//obejctList[0]->GetAttacked(ohterObject->GetAttack());
 		}
 	}
 
