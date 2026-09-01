@@ -41,6 +41,11 @@ void ObjectManager::Render()
 			object->renderer->RenderPrimitive(object->GetLocation(),object->GetRadius());
 		}
 
+	if (enemyList.size() > 0)
+		for (auto enemy : enemyList)
+		{
+			enemy->renderer->RenderPrimitive(enemy->GetLocation(), enemy->GetRadius());
+		}
 
 }
 ;

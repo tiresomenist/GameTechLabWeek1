@@ -17,7 +17,8 @@ void InGameStage::Enter()
 		objectList = new std::vector<Object*>(); // 임시로 생성
 	}
 	timeManager = TimeManager();
-	inputManager = InputManager();
+
+	ObjectManager::GetInstance()->CreateEnemy();
 }
 
 void InGameStage::Update(float deltaTime)
@@ -30,7 +31,7 @@ void InGameStage::Update(float deltaTime)
 		objectList->push_back(enemy);
 	}
 
-	//플레이어 이동
+	////플레이어 이동
 	FVector moveDir(0.0f, 0.0f, 0.0f);
 	if (inputManager.IsKeyPressed(VK_UP))    moveDir.y += 1.0f;
 	if (inputManager.IsKeyPressed(VK_DOWN))  moveDir.y -= 1.0f;
@@ -38,29 +39,37 @@ void InGameStage::Update(float deltaTime)
 	if (inputManager.IsKeyPressed(VK_RIGHT)) moveDir.x += 1.0f;
 	//인풋매니저 가져오고 델타타임이랑 이동속도 생각해서 한프레임당 이동 거리 계산해서 move호출
 	//
-	player->MoveObject(moveDir.x * deltaTime * player->GetSpeed() / 1000, moveDir.y * deltaTime * player->GetSpeed() / 1000);
-	// 플레이어 공격
-	int nextAttackFrame = (int)(30.0f / player->GetAttackSpeed());
-	if ((int)frameCount % nextAttackFrame == 0) {
-		CheckHitCollision(player->GetAttackRange());
 
-	}
+	//if(moveDir.y != 0.0f)
+	player->MoveObject(moveDir.x * deltaTime * player->GetSpeed() / 1000, moveDir.y * deltaTime * player->GetSpeed() / 1000);
+	
+	char buf[256];
+	sprintf_s(buf, "Player: x=%.3f, y=%.3f\n",
+		player->GetLocation().x,
+		player->GetLocation().y);
+	OutputDebugStringA(buf);
+	//// 플레이어 공격
+	//int nextAttackFrame = (int)(30.0f / player->GetAttackSpeed());
+	//if ((int)frameCount % nextAttackFrame == 0) {
+	//	CheckHitCollision(player->GetAttackRange());
+
+	//}
 	//적들 이동
-	for (auto object : *objectList)
-	{
-		float targetX = player->GetLocation().x - object->GetLocation().x;
-		float targetY = player->GetLocation().y - object->GetLocation().y;
-		object->MoveObject(targetX, targetY);
-	}
-	//적들끼리 충돌하는지 체크
-	for (auto object : *objectList)
-	{
-		InGameStage::intersects(object);
-	}
+	//for (auto object : *objectList)
+	//{
+	//	float targetX = player->GetLocation().x - object->GetLocation().x;
+	//	float targetY = player->GetLocation().y - object->GetLocation().y;
+	//	object->MoveObject(targetX, targetY);
+	//}
+	////적들끼리 충돌하는지 체크
+	//for (auto object : *objectList)
+	//{
+	//	InGameStage::intersects(object);
+	//}
 	//플레이어에게 충돌하는지 체크
-	InGameStage::intersectsToPlayer();
+	//InGameStage::intersectsToPlayer();
 	//플레이어와 벽의 충돌 체크
-	InGameStage::intersectsPlayerWithWall();
+	//InGameStage::intersectsPlayerWithWall();
 }
 
 void InGameStage::Render()

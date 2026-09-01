@@ -1,8 +1,14 @@
 
 #include "App.h"
 #include "FConstant.h"
+
+#include <ctime>
+
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
+	srand(static_cast<unsigned>(time(nullptr)));
+
 	App app;
 	app.Init(hInstance);
 	bool bIsExit = false;
