@@ -193,6 +193,11 @@ void ObjectManager::ReleaseAllObjects()
 			delete enemy;
 		}
 		enemyList.clear();
+
+		for (auto weapon : weaponList) {
+			delete weapon;
+		}
+		weaponList.clear();
 };
 
 

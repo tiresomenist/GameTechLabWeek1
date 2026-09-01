@@ -34,7 +34,12 @@ class ObjectManager
 	void checkPlayerIntersectWithEnemy();
 	void intersectsPlayerWithWall();
 	void SpinWeapon(float deltaTime, float rotationSpeed);
-
+	bool isPlayerDead() {
+		if (obejctList.size() > 0) {
+			return obejctList[0]->IsDead();
+		}
+		return false;
+	}
 	
 
 	
