@@ -4,11 +4,13 @@
 #include "ImGui/imgui_impl_dx11.h"
 #include "ImGui/imgui_internal.h"
 
+#include "ObjectManager.h"
+
 void InGameStage::Enter()
 {
 	//여기서 플레이어 캐릭터를 생성
 	if (player == nullptr) {
-		player = new Player(); // 임시로 생성
+		player = ObjectManager::GetInstance()->CreatePlayer();
 	}
 	if (objectList == nullptr)
 	{
@@ -54,10 +56,9 @@ void InGameStage::Update(float deltaTime)
 void InGameStage::Render()
 {
 	//ObjectManager에서 오브젝트 랜더함수 호출
-	for (auto object : *objectList)
-	{
-		//object->Render();
-	}
+
+		ObjectManager::GetInstance()->Render();
+
 	ImGui::Begin("In-Game Menu");
 	ImGui::End();
 }
@@ -119,8 +120,9 @@ void InGameStage::intersectsToPlayer()
 	}
 }
 
-void InGameStage::intersectsPlayerWithWall() {
-	FVertexSimple playerLocation = player->GetLocation();
+void InGameStage::intersectsPlayerWithWall() 
+{
+	FVector playerLocation = player->GetLocation();
 	float Radius = player->GetRadius();
 	const float LeftBorder = -1.0f + Radius;
 	const float RightBorder = 1.0f - Radius;

@@ -5,6 +5,7 @@
 
 #pragma comment(lib, "d3d11.lib")
 
+#include "FConstant.h"
 
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
@@ -47,7 +48,7 @@ void App::Init(HINSTANCE hInstance)
 void App::mainLoop()
 {
 	Update();
-	Render();
+   	Render();
 }
 void App::ReleaseAll()
 {
@@ -146,6 +147,16 @@ void App::InitD3D()
 	CreateShader();
 	CreateFrambuffer();
 	CreateRasterizerState();
+
+	D3D11_BUFFER_DESC constantbufferdesc = {};
+	constantbufferdesc.ByteWidth = sizeof(FConstant);
+	constantbufferdesc.Usage = D3D11_USAGE_DYNAMIC;
+	constantbufferdesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	constantbufferdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+	m_device->CreateBuffer(&constantbufferdesc, nullptr, &constantBuffer);
+
+	assert(constantBuffer != nullptr);
 };
 
 void App::CreateDeviceandSwapchain()
@@ -270,20 +281,24 @@ void App::Render()
 	//OM
 	m_deviceContext->OMSetRenderTargets(1, &m_frameBufferRTV, nullptr);
 
+	m_deviceContext->VSSetConstantBuffers(0, 1, &constantBuffer);
+
+	m_deviceContext->VSSetShader(defaultVertexShader,0,0);
+	m_deviceContext->PSSetShader(defaultPixelShader, 0, 0);
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
 	if (m_currentStage != nullptr)
-		m_currentStage->Render();
+ 		m_currentStage->Render();
 
 
 	ImGui::Render();
-	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+ 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 
 	m_swapChain->Present(1, 0);
-}
+ }
 
 App::App()
 {

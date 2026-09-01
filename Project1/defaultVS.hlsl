@@ -1,8 +1,14 @@
+//cbuffer VertexConstantBuffer : register(b0)
+//{
+//    matrix model;
+//    matrix view;
+//    matrix projection;
+//};
+
 cbuffer VertexConstantBuffer : register(b0)
 {
-    matrix model;
-    matrix view;
-    matrix projection;
+    float3 Offset;
+    float Radius;
 };
 
 struct VS_INPUT
@@ -23,13 +29,16 @@ PS_INPUT mainVS(VS_INPUT input)
 {
     PS_INPUT output;
     
-    float4 pos = float4(input.pos, 1.0f);
-    pos = mul(pos, model);
-    output.posWord = pos;
-    
-    pos = mul(pos, view);
-    pos = mul(pos, projection);
-    output.posProj = pos;
+    output.posProj = float4(Offset, 0.0f) + float4(input.pos.xyz * Radius, 1.0f);
     output.col = input.col;
+    
+    //float4 pos = float4(input.pos, 1.0f);
+    //pos = mul(pos, model);    
+    //output.posWord = pos;
+    
+    //pos = mul(pos, view);
+    //pos = mul(pos, projection);
+    //output.posProj = pos;
+    //output.col = input.col;
     return output;
 }

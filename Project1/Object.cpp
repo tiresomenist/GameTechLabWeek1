@@ -15,8 +15,16 @@ bool Object::Intersect(Object* otherObject)
 		float TargetDistance = (radius + otherObject->radius);
 		return Distance <= TargetDistance * TargetDistance;
 }
-FVertexSimple Object::GetLocation() {
+FVector Object::GetLocation() 
+{
 	return location;
+}
+Object::Object()
+{
+	renderer = new URenderer();
+
+
+
 }
 float Object::GetRadius() {
 	return radius;
