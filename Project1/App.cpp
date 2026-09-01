@@ -13,6 +13,7 @@
 #include "ImGui/imgui_internal.h"
 #include "InputManager.h"
 #include "TimeManager.h"
+#include "SoundManager.h"
 
 
 App* App::Ins = nullptr;
@@ -54,6 +55,7 @@ void App::Init(HINSTANCE hInstance)
 	InputManager::IMins = new InputManager();
 	TimeManager::Ins = new TimeManager();
 	ChangeState(new MainmenuStage(this));
+	USoundManager::GetInstance()->Init();
 }
 
 void App::mainLoop()
