@@ -42,7 +42,7 @@ class ObjectManager
 	}
 	void checkWeaponIntersectWithEnemy();
 
-
+	ID3D11ShaderResourceView* m_lastBoundSRV = nullptr;
 	
 	static ObjectManager* Ins;
 

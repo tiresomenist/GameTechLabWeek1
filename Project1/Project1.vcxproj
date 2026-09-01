@@ -148,6 +148,7 @@
   <ItemGroup>
     <ClInclude Include="App.h" />
     <ClInclude Include="Augment.h" />
+    <ClInclude Include="background.h" />
     <ClInclude Include="D3D11Util.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="FConstant.h" />

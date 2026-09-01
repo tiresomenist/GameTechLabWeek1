@@ -15,6 +15,7 @@
 #include "InputManager.h"
 #include "TimeManager.h"
 #include "SoundManager.h"
+#include "background.h"
 
 
 App* App::Ins = nullptr;
@@ -163,7 +164,10 @@ void App::InitD3D()
 {
 	CreateDeviceandSwapchain();
 	CreateShader();
-	CreateTexture();
+	CreateTexture(L"earthCartoon.jpg", &texture, &textureSRV);
+	CreateTexture(L"moonCartoon.png", &moonTexture, &moonTextureSRV);
+	CreateTexture(L"meteor.jpg", &meteorTexture, &meteorTextureSRV);
+	CreateTexture(L"CartoonBackGround2.png", &m_bgTexture, &m_bgSRV);
 	CreateFrambuffer();
 	CreateRasterizerState();
 
@@ -174,6 +178,9 @@ void App::InitD3D()
 	constantbufferdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
 	m_device->CreateBuffer(&constantbufferdesc, nullptr, &constantBuffer);
+
+	//배경 버텍스 버퍼 생성
+	m_bgVertexBuffer = CreateVertexBuffer(bgQuad, sizeof(bgQuad));
 
 	assert(constantBuffer != nullptr);
 };
@@ -232,12 +239,12 @@ void App::CreateShader()
 	D3D11Util::CreateSamplerState(&textureSampler);
 }
 
-void App::CreateTexture()
+void App::CreateTexture(const LPCWSTR& fileName, ID3D11Texture2D** texture, ID3D11ShaderResourceView** srv)
 {
 	DirectX::ScratchImage scratchImage;
 
 	HRESULT hr = DirectX::LoadFromWICFile(
-		L"earth.jpg",
+		fileName,
 		DirectX::WIC_FLAGS_NONE,
 		nullptr,
 		scratchImage
@@ -275,7 +282,7 @@ void App::CreateTexture()
 	hr = m_device->CreateTexture2D(
 		&textureDesc,
 		&initData,
-		&texture
+		texture
 	);
 
 	if (FAILED(hr))
@@ -291,14 +298,16 @@ void App::CreateTexture()
 	srvDesc.Texture2D.MipLevels = 1;
 
 	hr = m_device->CreateShaderResourceView(
-		texture,
+		*texture,
 		&srvDesc,
-		&textureSRV
+		srv
 	);
 
 	if (FAILED(hr))
 	{
-		OutputDebugStringA("Failed to create texture SRV\n");
+		OutputDebugStringA("Failed to create SRV\n");
+		(*texture)->Release();   // 이미 만들어진 텍스처 정리
+		*texture = nullptr;
 		return;
 	}
 }
@@ -383,7 +392,23 @@ void App::Render()
 	//m_deviceContext->PSSetShader(defaultPixelShader, 0, 0);
 	m_deviceContext->PSSetSamplers(0, 1, &textureSampler);
 	m_deviceContext->PSSetShader(texturePixelShader, 0, 0);
-	m_deviceContext->PSSetShaderResources(0, 1, &textureSRV);
+	
+	FConstant cb = {};
+	cb.offset = { 0.0f, 0.0f, 0.0f };
+	cb.radius = 1.0f;
+	D3D11Util::UpdateConstantBuffer(m_deviceContext, constantBuffer, cb);
+	m_deviceContext->VSSetConstantBuffers(0, 1, &constantBuffer);
+	UINT stride = sizeof(FVertexSimple);
+	UINT offset = 0;
+	m_deviceContext->IASetVertexBuffers(0, 1, &m_bgVertexBuffer, &stride, &offset);
+	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+
+	m_deviceContext->PSSetShaderResources(0, 1, &m_bgSRV);
+	m_deviceContext->Draw(4, 0);
+
+	// 원상복구
+	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();

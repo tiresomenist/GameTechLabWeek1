@@ -47,23 +47,56 @@ ObjectManager::ObjectManager()
 }
 void ObjectManager::Render()
 {
+	
 	if (obejctList.size() > 0)
-		for (auto object : obejctList)
+	{
+		ID3D11ShaderResourceView* srv = App::Ins->GetEarthTextureSRV();
+		if(srv != m_lastBoundSRV)
 		{
-			object->renderer->RenderPrimitive(object->GetLocation(),object->GetRadius());
+			App::Ins->GetDeviceContext()->PSSetShaderResources(0, 1, &srv);
+			m_lastBoundSRV = srv;
 		}
 
+		for (auto object : obejctList)
+		{
+			object->renderer->RenderPrimitive(object->GetLocation(), object->GetRadius());
+		}
+	}
+
+
 	if (enemyList.size() > 0)
-		for (auto enemy : enemyList)
+	{
+		ID3D11ShaderResourceView* srv = App::Ins->GetMeteorTextureSRV();
+		if (srv != m_lastBoundSRV)
+		{
+
+			App::Ins->GetDeviceContext()->PSSetShaderResources(0, 1, &srv);
+			m_lastBoundSRV = srv;
+		}
+				for (auto enemy : enemyList)
 		{
 			enemy->renderer->RenderPrimitive(enemy->GetLocation(), enemy->GetRadius());
 		}
 
+	}
+
+
 	if (weaponList.size() > 0)
+	{
+		ID3D11ShaderResourceView* srv = App::Ins->GetMoonTextureSRV();
+		if (srv != m_lastBoundSRV)
+		{
+			
+			App::Ins->GetDeviceContext()->PSSetShaderResources(0, 1, &srv);
+			m_lastBoundSRV = srv;
+		}
 		for (auto weapon : weaponList)
 		{
 			weapon->renderer->RenderPrimitive(weapon->GetLocation(), weapon->GetRadius());
 		}
+
+	}
+
 
 }
 void ObjectManager::Update(float deltaTime)
