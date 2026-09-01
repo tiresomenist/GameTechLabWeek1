@@ -4,6 +4,7 @@ struct PS_INPUT
     float4 posProj : SV_POSITION;
     float4 posWord : POSITION;
     float4 col : COLOR;
+    float2 uv : TEXCOORD;
 };
 
                                    
