@@ -40,6 +40,9 @@ class App
 	//래스터라이저 상태
 	ID3D11RasterizerState* m_rasterizerState;
 
+	//상수 버퍼
+	ID3D11Buffer* constantBuffer;
+
 	//화면 클리어 컬러
 	float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
@@ -92,6 +95,11 @@ class App
 
 	//버텍스버퍼 생성
 	ID3D11Buffer* CreateVertexBuffer(FVertexSimple* vertices, UINT byteWidth);
+
+	ID3D11Buffer* GetConstantBuffer() const
+	{
+		return constantBuffer;
+	}
 
 	void ReleaseAll();
 

@@ -143,6 +143,8 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="D3D11Util.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="FConstant.h" />
+    <ClInclude Include="FVector.h" />
     <ClInclude Include="FVertexSimple.h" />
     <ClInclude Include="IGameStage.h" />
     <ClInclude Include="ImGui\imconfig.h" />
@@ -167,7 +169,6 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="D3D11Util.cpp" />
     <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="FVector.h" />
     <ClCompile Include="ImGui\imgui.cpp" />
     <ClCompile Include="ImGui\imgui_demo.cpp" />
     <ClCompile Include="ImGui\imgui_draw.cpp" />
@@ -181,6 +182,7 @@
     <ClCompile Include="MainmenuStage.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="ObjectManager.cpp" />
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="URenderer.cpp" />
   </ItemGroup>

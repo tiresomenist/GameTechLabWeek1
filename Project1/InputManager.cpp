@@ -2,6 +2,12 @@
 #include <WinUser.h>
 #include "InputManager.h"
 
+InputManager* InputManager::IMins = nullptr;
+
+InputManager::InputManager() {
+	IMins = this;
+}
+
 void InputManager::KeyDown(int key) {
 	keys[key] = true;
 }

@@ -1,11 +1,13 @@
 
 #include "App.h"
+#include "FConstant.h"
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
 	App app;
 	app.Init(hInstance);
 	bool bIsExit = false;
 	MSG msg;
+
 	while (!bIsExit)
 	{
 
@@ -24,9 +26,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		}
 
-		app.mainLoop();
+ 		app.mainLoop();
 
-	}
+ 	}
 
 	app.ReleaseAll();
 

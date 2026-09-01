@@ -2,6 +2,7 @@
 #include  <d3d11.h>
 #include <d3dcompiler.h>
 #include "App.h"
+#include "FVector.h"
 
 class URenderer
 {
@@ -17,7 +18,7 @@ class URenderer
 	URenderer();
 	~URenderer();
 
-	void RenderPrimitive(ID3D11Buffer* vertexBuffer, UINT numVertices);
+	void RenderPrimitive(FVector location,float radius);
 
 
 

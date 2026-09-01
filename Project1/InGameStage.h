@@ -2,6 +2,7 @@
 #include "IGameStage.h"
 #include "ObjectManager.h"
 #include "TimeManager.h"
+#include "InputManager.h"
 
 class InGameStage : public IGameStage
 {
@@ -16,7 +17,7 @@ class InGameStage : public IGameStage
 	void CheckHitCollision(float AttackRange);
 	void intersectsPlayerWithWall();
 	TimeManager timeManager;
-
+	InputManager inputManager;
 };
 
 

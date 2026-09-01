@@ -4,21 +4,25 @@
 #include "ImGui/imgui_impl_dx11.h"
 #include "ImGui/imgui_internal.h"
 
+#include "ObjectManager.h"
+
 void InGameStage::Enter()
 {
 	//여기서 플레이어 캐릭터를 생성
 	if (player == nullptr) {
-		player = new Player(); // 임시로 생성
+		player = ObjectManager::GetInstance()->CreatePlayer();
 	}
 	if (objectList == nullptr)
 	{
 		objectList = new std::vector<Object*>(); // 임시로 생성
 	}
 	timeManager = TimeManager();
+	inputManager = InputManager();
 }
 
 void InGameStage::Update(float deltaTime)
 {
+	OutputDebugStringA("InGameStage Update!\n");
 	float frameCount = timeManager.GetcurrentTime() / deltaTime;	//몇프레임돌았는가?
 	if ((int)frameCount % 30 == 0) {
 		//여기에 적생성 로직
@@ -27,9 +31,14 @@ void InGameStage::Update(float deltaTime)
 	}
 
 	//플레이어 이동
+	FVector moveDir(0.0f, 0.0f, 0.0f);
+	if (inputManager.IsKeyPressed(VK_UP))    moveDir.y += 1.0f;
+	if (inputManager.IsKeyPressed(VK_DOWN))  moveDir.y -= 1.0f;
+	if (inputManager.IsKeyPressed(VK_LEFT))  moveDir.x -= 1.0f;
+	if (inputManager.IsKeyPressed(VK_RIGHT)) moveDir.x += 1.0f;
 	//인풋매니저 가져오고 델타타임이랑 이동속도 생각해서 한프레임당 이동 거리 계산해서 move호출
 	//
-	player->MoveObject(deltaTime * player->GetSpeed() / 1000, deltaTime * player->GetSpeed() / 1000);
+	player->MoveObject(moveDir.x * deltaTime * player->GetSpeed() / 1000, moveDir.y * deltaTime * player->GetSpeed() / 1000);
 	// 플레이어 공격
 	int nextAttackFrame = (int)(30.0f / player->GetAttackSpeed());
 	if ((int)frameCount % nextAttackFrame == 0) {
@@ -57,10 +66,9 @@ void InGameStage::Update(float deltaTime)
 void InGameStage::Render()
 {
 	//ObjectManager에서 오브젝트 랜더함수 호출
-	for (auto object : *objectList)
-	{
-		//object->Render();
-	}
+
+		ObjectManager::GetInstance()->Render();
+
 	ImGui::Begin("In-Game Menu");
 	ImGui::End();
 }
@@ -122,7 +130,8 @@ void InGameStage::intersectsToPlayer()
 	}
 }
 
-void InGameStage::intersectsPlayerWithWall() {
+void InGameStage::intersectsPlayerWithWall() 
+{
 	FVector playerLocation = player->GetLocation();
 	float Radius = player->GetRadius();
 	const float LeftBorder = -1.0f + Radius;

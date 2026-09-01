@@ -1,9 +1,14 @@
 #pragma once
 
+#include "FVertexSimple.h"
 #include "FVector.h"
+#include "FConstant.h"
+
+#include "URenderer.h"
 class Object
 {
 public:
+	Object();
 	virtual ~Object() = default;
 	float GetAttack();
 	float GetSpeed();
@@ -24,6 +29,9 @@ public:
 
 	void UpdateState(); //최종 업데이트
 
+	URenderer* renderer;
+
+
 protected:
 	float attack;
 	float speed;
@@ -31,8 +39,9 @@ protected:
 	float health;
 	float exp;
 	
-	FVector location;
+	FVector location;	
 	float radius;
+
 
 	int level;
 
