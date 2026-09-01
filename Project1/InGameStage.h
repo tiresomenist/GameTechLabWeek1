@@ -17,7 +17,9 @@ class InGameStage : public IGameStage
 	void CheckHitCollision(float AttackRange);
 	void intersectsPlayerWithWall();
 	TimeManager timeManager;
-	float countTime=0.0f;
+	float countTimeForEnemy = 0.0f;
+	float countTimeForPlayer = 0.0f;
+
 	
 
 };

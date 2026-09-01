@@ -24,11 +24,11 @@ void InGameStage::Enter()
 
 void InGameStage::Update(float deltaTime)
 {
-	countTime += deltaTime;
-	//OutputDebugStringA("InGameStage Update!\n");
-	float frameCount = timeManager.GetcurrentTime() / deltaTime;	//몇프레임돌았는가?
-	if (countTime > 2.0f) {
-		countTime -= 2.0f;
+	countTimeForEnemy += deltaTime;
+	countTimeForPlayer += deltaTime;
+	//적군 생성 로직
+	if (countTimeForEnemy > 2.0f) {
+		countTimeForEnemy -= 2.0f;
 		ObjectManager::GetInstance()->CreateEnemy();
 		OutputDebugStringA("Enemy Creted!\n");
 
@@ -41,16 +41,15 @@ void InGameStage::Update(float deltaTime)
 	if (InputManager::GetInstance()->IsKeyPressed(VK_LEFT))  moveDir.x -= 1.0f;
 	if (InputManager::GetInstance()->IsKeyPressed(VK_RIGHT)) moveDir.x += 1.0f;
 	//인풋매니저 가져오고 델타타임이랑 이동속도 생각해서 한프레임당 이동 거리 계산해서 move호출
-	//
-
-	//if(moveDir.y != 0.0f)
+	
 	player->MoveObject(moveDir.x * deltaTime * player->GetSpeed(), moveDir.y * deltaTime * player->GetSpeed());
-	//// 플레이어 공격
-	//int nextAttackFrame = (int)(30.0f / player->GetAttackSpeed());
-	//if ((int)frameCount % nextAttackFrame == 0) {
-	//	CheckHitCollision(player->GetAttackRange());
-
-	//}
+	// 플레이어 공격
+	if (countTimeForPlayer > (1.0f / player->GetAttackSpeed())) {
+		countTimeForPlayer -= (1.0f / player->GetAttackSpeed());
+		//공격 범위를 그리는 함수가 필요합니다.
+		//컬러값 (1.0f,0.0f,0.0f,0.5f)로 반지름 0.08f. 반투명 빨간색 생각중.
+		CheckHitCollision(player->GetAttackRange());
+	}
 	//적들 이동
 	for (auto object : *objectList)
 	{
@@ -82,10 +81,7 @@ void InGameStage::Render()
 void InGameStage::Exit()
 {
 	//자원 전부 해제
-	delete player;
-	player = nullptr;
-	delete objectList;
-	objectList = nullptr;
+	// ObjectManager::GetInstance()->RealeseAllObjects();
 }
 
 //적군끼리의 충돌 체크
