@@ -39,4 +39,9 @@ private:
     // 2 = Game Over
 
     bool openResultPopup = false;
+	bool openPausePopup = false;
+
+    void RenderHUD(int minutes, int seconds);
+	void RenderPauseModal();
+	void RenderResultModal(int minutes, int seconds);
 };
