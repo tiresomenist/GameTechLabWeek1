@@ -12,12 +12,11 @@ bool Player::IsWall(float x, float y) {
 	return (location.x + x < -1 || location.x + x > 1 || location.y + y < -1 || location.y + y > 1);
 }
 void Player::MoveObject(float x, float y) {
-	if(x >0.0f || y > 0.0f)
+	if (x > 0.0f || y > 0.0f)
 	{
 		location.x += x;
-	
+
 	}
-	
 	if (IsWall(x, y)) 
 	{
 		// 벽 충돌 처리 함수1
