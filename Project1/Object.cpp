@@ -23,10 +23,17 @@ FVector Object::GetLocation()
 Object::Object()
 {
 	renderer = new URenderer();
-
-
-
 }
 float Object::GetRadius() {
 	return radius;
+}
+
+void Object::GetAttacked(float damage) {
+	health -= damage;
+
+	if (health <= 0) isDead = true;
+}
+
+bool Object::IsDead() {
+	return isDead;
 }

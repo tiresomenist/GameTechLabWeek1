@@ -25,7 +25,8 @@ public:
 	bool Intersect(Object* otherObject); // 충돌판정
 	virtual void MoveObject(float x, float y) = 0 ; // 실제움직이기
 
-	void DeadObject(); // 생사 여부
+	void GetAttacked(float damage);
+	bool IsDead();
 
 	void UpdateState(); //최종 업데이트
 

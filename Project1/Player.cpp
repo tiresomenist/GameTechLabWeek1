@@ -5,19 +5,14 @@ Player::Player() {
 	//크기 0.05f
 	radius = 0.05f;
 	location = FVector(0.0f, 0.0f, 0.0f);
-	speed = 0.2f;
+	speed = 0.6f;
 };
 bool Player::IsWall(float x, float y) {
 
-	return (location.x + x < -1 || location.x + x > 1 || location.y + y < -1 || location.y + y > 1);
+	return (location.x + x < -1 + radius || location.x + x > 1 - radius || location.y + y < -1 + radius || location.y + y > 1 - radius);
 }
 void Player::MoveObject(float x, float y) {
-	if(x >0.0f || y > 0.0f)
-	{
-		location.x += x;
-	
-	}
-	
+
 	if (IsWall(x, y)) 
 	{
 		// 벽 충돌 처리 함수1
