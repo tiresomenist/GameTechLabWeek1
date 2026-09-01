@@ -1,8 +1,16 @@
 #include "InGameStage.h"
+#include "App.h"
+#include "MainmenuStage.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx11.h"
 #include "ImGui/imgui_internal.h"
+
+InGameStage::InGameStage(App* app)
+	: m_app(app)
+{
+}
+
 
 void InGameStage::Enter()
 {
@@ -48,7 +56,6 @@ void InGameStage::Update(float deltaTime)
 	InGameStage::intersectsToPlayer();
 	//플레이어와 벽의 충돌 체크
 	InGameStage::intersectsPlayerWithWall();
-	Render();
 }
 
 void InGameStage::Render()
@@ -58,8 +65,12 @@ void InGameStage::Render()
 	{
 		//object->Render();
 	}
-	ImGui::Begin("In-Game Menu");
-	ImGui::End();
+
+	/////////////////////////
+	// InGame ImGui 시작
+	/////////////////////////
+
+	// 임시 UI 데이터
     static float tempHP = 75.0f;
     static float tempMaxHP = 100.0f;
     static float tempRemainingTime = 83.0f;
@@ -69,6 +80,14 @@ void InGameStage::Render()
     static int tempResult = 0;
 
     bool openResultPopup = false;
+	bool openPausePopup = false;
+
+	// ESC 키 입력 체크 (소비되지 않도록 변수로 저장)
+	bool escPressed = ImGui::IsKeyPressed(ImGuiKey_Escape);
+
+	/////////////////////////
+	// InGame 상시 HUD 
+	/////////////////////////
 
     ImGui::SetNextWindowPos(ImVec2(20.0f, 20.0f), ImGuiCond_Always);
 
@@ -78,6 +97,7 @@ void InGameStage::Render()
         ImGuiWindowFlags_NoTitleBar |
         ImGuiWindowFlags_AlwaysAutoResize;
 
+	// HUD 창 Begin
     ImGui::Begin("HUD", nullptr, hudFlags);
 
     // HP
@@ -104,6 +124,7 @@ void InGameStage::Render()
     ImGui::Separator();
 
     // 임시 테스트 버튼
+	// TODO: 게임 종료조건 API 붙으면 삭제 예정
     if (ImGui::Button("Preview Clear"))
     {
         tempResult = 1;
@@ -118,10 +139,155 @@ void InGameStage::Render()
         openResultPopup = true;
     }
 
+	ImGui::Separator();
+
+	// Pause 열기
+	if (ImGui::Button("||"))
+	{
+		openPausePopup = true;
+	}
+
+	// HUD 창 End
     ImGui::End();
 
+	// =========================
+	// Pause Modal
+	// =========================
 
-    // 팝업은 HUD 밖에서 열기
+	// 인게임에서 ESC로 Pause 열기
+	if (escPressed && !ImGui::IsPopupOpen("Pause Menu"))
+	{
+		openPausePopup = true;
+	}
+
+	if (openPausePopup)
+	{
+		ImGui::OpenPopup("Pause Menu");
+		openPausePopup = false;
+		timeManager.TimePause();
+		escPressed = false;
+	}
+
+	ImGui::SetNextWindowSize(
+		ImVec2(320.0f, 220.0f),
+		ImGuiCond_Always
+	);
+
+	if (ImGui::BeginPopupModal(
+		"Pause Menu",
+		nullptr,
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoCollapse))
+	{
+		const float buttonWidth = 220.0f;
+		const float buttonHeight = 40.0f;
+
+		ImGui::Text("PAUSED");
+		ImGui::Separator();
+		ImGui::Dummy(ImVec2(0.0f, 15.0f));
+
+		// RESUME 버튼
+		bool leaveGameOpen = ImGui::IsPopupOpen("Leave Game?");
+
+		ImGui::SetCursorPosX(
+			(ImGui::GetWindowSize().x - buttonWidth) * 0.5f
+		);
+
+		if (ImGui::Button(
+			"RESUME",
+			ImVec2(buttonWidth, buttonHeight)) || (escPressed && !leaveGameOpen))
+		{
+			timeManager.TimeResume();
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::Dummy(ImVec2(0.0f, 10.0f));
+
+		// MAIN MENU 버튼
+		static bool openMainMenuConfirm = false;
+
+		ImGui::SetCursorPosX(
+			(ImGui::GetWindowSize().x - buttonWidth) * 0.5f
+		);
+
+		if (ImGui::Button(
+			"MAIN MENU",
+			ImVec2(buttonWidth, buttonHeight)))
+		{
+			openMainMenuConfirm = true;
+		}
+
+		// =========================
+		// Main Menu Confirm: 게임 진행 중 메인 메뉴로 돌아갈 때 경고창 팝업
+		// =========================
+
+		if (openMainMenuConfirm)
+		{
+			ImGui::OpenPopup("Leave Game?");
+			openMainMenuConfirm = false;
+		}
+
+		ImGui::SetNextWindowSize(
+			ImVec2(300.0f, 170.0f),
+			ImGuiCond_Always
+		);
+
+		if (ImGui::BeginPopupModal(
+			"Leave Game?",
+			nullptr,
+			ImGuiWindowFlags_NoResize |
+			ImGuiWindowFlags_NoCollapse))
+		{
+			ImGui::Text("Return to Main Menu?");
+			ImGui::Text("Current progress will be lost.");
+
+			ImGui::Separator();
+			ImGui::Dummy(ImVec2(0.0f, 10.0f));
+
+			const float confirmButtonWidth = 100.0f;
+
+			float totalButtonWidth =
+				confirmButtonWidth * 2.0f
+				+ ImGui::GetStyle().ItemSpacing.x;
+
+			ImGui::SetCursorPosX(
+				(ImGui::GetWindowSize().x - totalButtonWidth) * 0.5f
+			);
+
+			if (ImGui::Button(
+				"YES",
+				ImVec2(confirmButtonWidth, 35.0f)))
+			{
+				ImGui::CloseCurrentPopup();
+
+				m_app->ChangeState(
+					new MainmenuStage(m_app)
+				);
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button(
+				"NO",
+				ImVec2(confirmButtonWidth, 35.0f)))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+
+			// 경고창에서 ESC = 취소
+			if (ImGui::IsKeyPressed(ImGuiKey_Escape))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+		ImGui::EndPopup();
+	}
+
+	// =========================
+	// Result Modal: 게임 클리어 또는 게임 오버 시의 결과창 팝업
+	// =========================
+
     if (openResultPopup)
     {
         ImGui::OpenPopup("Game Result");
@@ -169,10 +335,15 @@ void InGameStage::Render()
 
         if (ImGui::Button("MAIN MENU", ImVec2(140.0f, 40.0f)))
         {
+			ImGui::CloseCurrentPopup();
             m_app->ChangeState(new MainmenuStage(m_app));
         }
 
         ImGui::EndPopup();
+
+		/////////////////////////
+		// InGame ImGui 끝
+		/////////////////////////
     }
 }
 
