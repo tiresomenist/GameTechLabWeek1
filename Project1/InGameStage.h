@@ -32,4 +32,11 @@ public:
 
 private:
     App* m_app = nullptr;
+
+    int gameResult = 0;
+    // 0 = 진행중
+    // 1 = Clear
+    // 2 = Game Over
+
+    bool openResultPopup = false;
 };

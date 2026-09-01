@@ -13,7 +13,6 @@ InGameStage::InGameStage(App* app)
 {
 }
 
-
 void InGameStage::Enter()
 {
 	//여기서 플레이어 캐릭터를 생성
@@ -24,7 +23,11 @@ void InGameStage::Enter()
 	{
 		objectList = new std::vector<Object*>(); // 임시로 생성
 	}
-	timeManager = TimeManager();
+	timeManager.TimeReset();
+	timeManager.TimeStart();
+
+	gameResult = 0;
+	inputManager = InputManager();
 
 	//테스트용으로 적한번 찍어본거.
 	ObjectManager::GetInstance()->CreateEnemy();
@@ -32,8 +35,22 @@ void InGameStage::Enter()
 
 void InGameStage::Update(float deltaTime)
 {
-	countTime += deltaTime;
-	//OutputDebugStringA("InGameStage Update!\n");
+	// Pause / Clear / GameOver 상태면 게임 진행 중지
+	if (!timeManager.IsRunning())
+		return;
+
+	timeManager.TimeUpdate(deltaTime);
+
+	// 60초 생존하면 Clear
+	if (timeManager.GetcurrentTime() >= 60.0f)
+	{
+		timeManager.TimePause();
+		gameResult = 1;
+		openResultPopup = true;
+		return;
+	}
+
+	OutputDebugStringA("InGameStage Update!\n");
 	float frameCount = timeManager.GetcurrentTime() / deltaTime;	//몇프레임돌았는가?
 	if (countTime > 2.0f) {
 		countTime -= 2.0f;
@@ -94,13 +111,10 @@ void InGameStage::Render()
     static float tempRemainingTime = 83.0f;
     static int tempExp = 120;
 
-    // 0 = None, 1 = Clear, 2 = Game Over
-    static int tempResult = 0;
-
-    bool openResultPopup = false;
 	bool openPausePopup = false;
 
 	// ESC 키 입력 체크 (소비되지 않도록 변수로 저장)
+	// TODO: InputManager 사용하는 코드로 대체 예정
 	bool escPressed = ImGui::IsKeyPressed(ImGuiKey_Escape);
 
 	/////////////////////////
@@ -133,11 +147,13 @@ void InGameStage::Render()
     );
 
     // TIME
-    int totalSeconds = static_cast<int>(tempRemainingTime);
-    int minutes = totalSeconds / 60;
-    int seconds = totalSeconds % 60;
+	float currentTime = timeManager.GetcurrentTime();
 
-    ImGui::Text("TIME  %02d:%02d", minutes, seconds);
+	int totalSeconds = static_cast<int>(currentTime);
+	int minutes = totalSeconds / 60;
+	int seconds = totalSeconds % 60;
+
+	ImGui::Text("TIME  %02d:%02d", minutes, seconds);
 
     ImGui::Separator();
 
@@ -145,7 +161,7 @@ void InGameStage::Render()
 	// TODO: 게임 종료조건 API 붙으면 삭제 예정
     if (ImGui::Button("Preview Clear"))
     {
-        tempResult = 1;
+		gameResult = 1;
         openResultPopup = true;
     }
 
@@ -153,7 +169,7 @@ void InGameStage::Render()
 
     if (ImGui::Button("Preview Game Over"))
     {
-        tempResult = 2;
+		gameResult = 2;
         openResultPopup = true;
     }
 
@@ -205,6 +221,8 @@ void InGameStage::Render()
 		ImGui::Dummy(ImVec2(0.0f, 15.0f));
 
 		// RESUME 버튼
+
+		// ESC 키 입력 시 Leave Game? 팝업이 열려있으면 RESUME 버튼이 작동하지 않도록 체크
 		bool leaveGameOpen = ImGui::IsPopupOpen("Leave Game?");
 
 		ImGui::SetCursorPosX(
@@ -272,6 +290,7 @@ void InGameStage::Render()
 				(ImGui::GetWindowSize().x - totalButtonWidth) * 0.5f
 			);
 
+			// YES 버튼
 			if (ImGui::Button(
 				"YES",
 				ImVec2(confirmButtonWidth, 35.0f)))
@@ -285,6 +304,7 @@ void InGameStage::Render()
 
 			ImGui::SameLine();
 
+			// NO 버튼
 			if (ImGui::Button(
 				"NO",
 				ImVec2(confirmButtonWidth, 35.0f)))
@@ -322,11 +342,11 @@ void InGameStage::Render()
         ImGuiWindowFlags_NoResize |
         ImGuiWindowFlags_NoCollapse))
     {
-        if (tempResult == 1)
+        if (gameResult == 1)
         {
             ImGui::Text("CLEAR!");
         }
-        else if (tempResult == 2)
+        else if (gameResult == 2)
         {
             ImGui::Text("GAME OVER");
         }
