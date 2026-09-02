@@ -8,6 +8,8 @@
 
 
 #include "ObjectManager.h"
+#include "SoundManager.h"
+#include "Augment.h"
 
 InGameStage::InGameStage(App* app)
 	: m_app(app)
@@ -27,14 +29,15 @@ void InGameStage::Enter()
 	gameResult = 0;
 	ObjectManager::GetInstance()->setKillCount(0);
 	score = 0;
-	//테스트용으로 적한번 찍어본거.
-	ObjectManager::GetInstance()->CreateEnemy();
 
 	ObjectManager::GetInstance()->CreateWeapon();
 	ObjectManager::GetInstance()->CreateWeapon();
 	ObjectManager::GetInstance()->CreateWeapon();
 	ObjectManager::GetInstance()->CreateWeapon();
 	ObjectManager::GetInstance()->CreateWeapon();
+
+	USoundManager::GetInstance()->StopBGM();
+	USoundManager::GetInstance()->PlayBGM(SOUND_KEY_BGM, true);
 }
 
 void InGameStage::Update(float deltaTime)
@@ -66,9 +69,8 @@ void InGameStage::Update(float deltaTime)
 	//적군 생성 로직
 	if (countTimeForEnemy > 2.0f - (difficulty * 0.39f)) {
 		countTimeForEnemy -= 2.0f-(difficulty * 0.39f);
-		ObjectManager::GetInstance()->CreateEnemy();
+		ObjectManager::GetInstance()->CreateEnemy(difficulty);
 		//OutputDebugStringA("Enemy Creted!\n");
-
 	}
 
 	////플레이어 이동
@@ -93,8 +95,105 @@ void InGameStage::Update(float deltaTime)
 	ObjectManager::GetInstance()->checkPlayerIntersectWithEnemy();
 	//플레이어와 벽의 충돌 체크
 	ObjectManager::GetInstance()->intersectsPlayerWithWall();
-	
+
+
+	// 경험치 상승 임시구현
+	player->AddExp(1);
+
+
+	// 레벨업 경험치 도달 시 일시정지 및 팝업 on
+	if (player->IsLevelUp()) {
+		OutputDebugStringA("Level UP!");
+		TimeManager::GetInstance()->TimePause();
+		openAugmentPopup = true;
+	}
+
 }
+
+void InGameStage::RenderAugmentModal()
+{
+	if (!openAugmentPopup)
+		return;
+	
+	//증강 생성 되었는지
+	if (!isAugmnetSelected) {
+		//증강 3개 랜덤뽑기
+		aug1 = augment.Augment::GetAugmentStruct();
+		aug2 = augment.Augment::GetAugmentStruct();
+		aug3 = augment.Augment::GetAugmentStruct();
+		augment.Augment::ResetAugment();
+
+		isAugmnetSelected = true;
+	}
+
+	float width = 160.0f;
+	float height = 220.0f;
+	float gap = 30.0f;
+
+	float windowWidth = width * 3 + gap * 2 + 40.0f;
+	float windowHeight = height + 60.0f;
+
+	ImGui::SetNextWindowSize(
+		ImVec2(windowWidth, windowHeight),
+		ImGuiCond_Always
+	);
+
+	ImGui::Begin(
+		"test",
+		nullptr,
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoCollapse
+	);
+
+	ImDrawList* drawList = ImGui::GetWindowDrawList();
+	ImVec2 pos = ImGui::GetCursorScreenPos();
+
+	char texts[3][50];
+
+	sprintf_s(texts[0], "%s\n+%.0f", aug1.name, aug1.value);
+	sprintf_s(texts[1], "%s\n+%.0f", aug2.name, aug2.value);
+	sprintf_s(texts[2], "%s\n+%.0f", aug3.name, aug3.value);
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (ImGui::Button(texts[i], ImVec2(width, height)))
+		{
+			switch (i)
+			{
+			case 0:
+				TimeManager::GetInstance()->TimeResume();
+				augment.UpgradePlayer(aug1, player);
+				isAugmnetSelected = false;
+				openAugmentPopup = false;
+				break;
+
+			case 1:
+				TimeManager::GetInstance()->TimeResume();
+				augment.UpgradePlayer(aug2, player);
+				isAugmnetSelected = false;
+				openAugmentPopup = false;
+				break;
+
+			case 2:
+				TimeManager::GetInstance()->TimeResume();
+				augment.UpgradePlayer(aug3, player);
+				isAugmnetSelected = false;
+				openAugmentPopup = false;
+				break;
+			}
+
+			openAugmentPopup = false;
+	
+		}
+
+		if (i < 2)
+			ImGui::SameLine(0.0f, gap);
+
+	}
+
+	ImGui::End();
+}
+
 
 void InGameStage::Render()
 {
@@ -114,6 +213,7 @@ void InGameStage::Render()
 	RenderHUD(minutes, seconds);
 	RenderPauseModal();
 	RenderResultModal(minutes, seconds);
+	RenderAugmentModal();
 }
 
 void InGameStage::RenderHUD(int minutes, int seconds)
@@ -147,6 +247,8 @@ void InGameStage::RenderHUD(int minutes, int seconds)
 		hpText
 	);
 
+	ImGui::Text("Level : %d", player->GetLevel());
+	ImGui::Text("EXP : %d/%d", player->GetExp(), player->GetExpTable());
 	score = seconds * 10 + ObjectManager::GetInstance()->getKillCount() * 10;
 
 	ImGui::Text("TIME  %02d:%02d", minutes, seconds);
@@ -175,6 +277,7 @@ void InGameStage::RenderHUD(int minutes, int seconds)
 	// Pause 열기
 	if (ImGui::Button("||"))
 	{
+		
 		openPausePopup = true;
 	}
 
@@ -206,6 +309,7 @@ void InGameStage::RenderPauseModal()
 	if (openPausePopup)
 	{
 		ImGui::OpenPopup("Pause Menu");
+		USoundManager::GetInstance()->PlaySFX(UI_OPEN);
 		openPausePopup = false;
 		TimeManager::GetInstance()->TimePause();
 		escPressed = false;
@@ -356,14 +460,27 @@ void InGameStage::RenderResultModal(int minutes, int seconds)
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoCollapse))
 	{
+		// 렌더 루프 안
+		if (gameResult != PrevGameResult)
+		{
+			if (gameResult == 1)
+			{
+				USoundManager::GetInstance()->StopBGM();
+				USoundManager::GetInstance()->PlaySFX(GAME_CLEAR);
+			}
+			else if (gameResult == 2)
+			{
+				USoundManager::GetInstance()->StopBGM();
+				USoundManager::GetInstance()->PlaySFX(GAME_OVER);
+			}
+			PrevGameResult = gameResult;
+		}
+
+		// 텍스트는 매 프레임 그려져야 하므로 밖으로 분리
 		if (gameResult == 1)
-		{
-			ImGui::Text("CLEAR!");
-		}
+			ImGui::Text("GAME CLEAR!");
 		else if (gameResult == 2)
-		{
 			ImGui::Text("GAME OVER");
-		}
 
 		ImGui::Separator();
 

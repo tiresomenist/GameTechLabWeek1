@@ -3,7 +3,8 @@
 
 
 
-Enemy::Enemy() {
+Enemy::Enemy(float difficulty) 
+{
 	//크기 0.03f
 	radius = 0.03f;
 	switch (rand() % 8) {
@@ -16,9 +17,9 @@ Enemy::Enemy() {
 	case 6: location = { -0.9f, 0.9f, 0.0f }; break;
 	case 7: location = { 0.0f, 0.9f, 0.0f }; break;
 	}
-	speed = 0.2f;
-	attack = 1.0f;
-	float MaxHealth = 300.0f;
+	speed = 0.2f + (0.05f * difficulty);
+	attack = 1.0f + (0.05f * difficulty);
+	float MaxHealth = 30.0f + (30.0f * difficulty);
 	health = MaxHealth;
 };
 void Enemy::MoveObject(float x, float y) {

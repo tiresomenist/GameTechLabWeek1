@@ -31,7 +31,20 @@ class App
 	//기본 쉐이더들
 	ID3D11VertexShader* defaultVertexShader;
 	ID3D11PixelShader* defaultPixelShader;
+	ID3D11PixelShader* texturePixelShader;
+	ID3D11SamplerState* textureSampler;
 	ID3D11InputLayout* defaultInputLayout;
+	ID3D11ShaderResourceView* textureSRV;
+	ID3D11Texture2D* texture;
+
+	//달 텍스쳐
+	ID3D11ShaderResourceView* moonTextureSRV;
+	ID3D11Texture2D* moonTexture;
+
+	//메테오 텍스쳐
+	ID3D11ShaderResourceView* meteorTextureSRV;
+	ID3D11Texture2D* meteorTexture;
+
 
 	//프레임 버퍼
 	ID3D11Texture2D* m_frameBuffer;
@@ -43,8 +56,13 @@ class App
 	//상수 버퍼
 	ID3D11Buffer* constantBuffer;
 
+	ID3D11Buffer* m_bgVertexBuffer;
+	//배경 텍스쳐
+	ID3D11Texture2D* m_bgTexture;
+	ID3D11ShaderResourceView* m_bgSRV;
+
 	//화면 클리어 컬러
-	float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	float ClearColor[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
 
 	//내부 초기화 함수들
 	
@@ -55,6 +73,7 @@ class App
 	//자원 생성 함수
 	void CreateDeviceandSwapchain();
 	void CreateShader();
+	void CreateTexture(const LPCWSTR& fileName, ID3D11Texture2D** texture, ID3D11ShaderResourceView** srv);
 	void CreateFrambuffer();
 	void CreateRasterizerState();
 
@@ -99,6 +118,18 @@ class App
 	ID3D11Buffer* GetConstantBuffer() const
 	{
 		return constantBuffer;
+	}
+
+	ID3D11ShaderResourceView* GetEarthTextureSRV() const { return textureSRV; }
+
+	ID3D11ShaderResourceView* GetMoonTextureSRV()
+	{
+		return moonTextureSRV;
+	}
+
+	ID3D11ShaderResourceView* GetMeteorTextureSRV()
+	{
+		return meteorTextureSRV;
 	}
 
 	void ReleaseAll();

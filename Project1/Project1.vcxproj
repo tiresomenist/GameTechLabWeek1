@@ -112,10 +112,13 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>$(ProjectDir)ThirdPartys\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Users\JUNGLE\Downloads\DirectXTex-main\DirectXTex\Bin\Desktop_2026\x64\Debug;$(SolutionDir)ThirdParty\DirectXTex\Lib\x64\$(Configuration);$(SolutionDir)ThirdParty\DirectXTex\Lib\x64\$(Configuration);$(ProjectDir)ThirdPartys\DirectXTex\Bin\Desktop_2026\x64\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTex.lib;DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
@@ -130,10 +133,13 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)ThirdPartys\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>;$(SolutionDir)ThirdParty\DirectXTex\Lib\x64\$(Configuration);$(SolutionDir)ThirdParty\DirectXTex\Lib\x64\$(Configuration);$(ProjectDir)ThirdPartys\DirectXTex\Bin\Desktop_2026\x64\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTex.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
@@ -141,6 +147,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
+    <ClInclude Include="Augment.h" />
+    <ClInclude Include="background.h" />
     <ClInclude Include="D3D11Util.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="FConstant.h" />
@@ -169,6 +177,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="Augment.cpp" />
     <ClCompile Include="D3D11Util.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="ImGui\imgui.cpp" />
@@ -200,6 +209,9 @@
     <FxCompile Include="defaultVS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="texturePS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

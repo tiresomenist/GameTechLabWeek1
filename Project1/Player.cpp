@@ -6,7 +6,7 @@ Player::Player() {
 	radius = 0.05f;
 	location = FVector(0.0f, 0.0f, 0.0f);
 	health = MaxHealth;
-	speed = 0.2f;
+	speed = 0.4f;
 	attack = 1.0f;
 };
 bool Player::IsWall(float x, float y) {
@@ -42,3 +42,70 @@ bool Player::IsDead() {
 float Player::GetMaxHealth() {
 	return MaxHealth;
 }
+
+int Player::GetLevel() {
+	return level;
+}
+
+int Player::GetExp() {
+	return exp;
+}
+
+int Player::GetExpTable() {
+	return expTable[level];
+}
+
+void Player::AddExp(int x) {
+	if(level != maxLevel)
+		exp += x;
+}
+
+bool Player::IsLevelUp() {
+
+	if (level == maxLevel)
+		return false;
+
+	if (exp >= expTable[level]) {
+
+		if (level == maxLevel - 1) {
+			level++;
+			return true;
+		}
+		else {
+			exp -= expTable[level];
+			level++;
+			return true;
+		}
+		
+	}
+
+	return false;
+}
+
+void Player::IncreaseAttack(float x) {
+	attack += x;
+}
+
+void Player::IncreaseAttackRange(float x) {
+	orbitRadius += x;
+}
+
+void Player::IncreaseAttackSpeed(float x) {
+	WeaponRotationSpeed += x;
+}
+
+void Player::IncreaseMoveSpeed(float x) {
+	speed += x;
+}
+
+void Player::IncreaseWeaponSize(float x) {
+
+}
+
+void Player::IncreaseHealHp(float x) {
+	health += x;
+
+	if (health > MaxHealth)
+		health = MaxHealth;
+}
+

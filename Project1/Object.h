@@ -37,7 +37,6 @@ protected:
 	float speed;
 	float attackSpeed;
 	float health;
-	float exp;
 	
 	FVector location;	
 	float radius;
