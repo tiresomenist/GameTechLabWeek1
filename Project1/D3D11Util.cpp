@@ -2,6 +2,7 @@
 #include "App.h"
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")
+#include <DirectXTex.h>
 
 void D3D11Util::CreateVertexShaderAndInputLayout(
     const LPCWSTR& fileName,
@@ -71,5 +72,77 @@ void D3D11Util::CreateSamplerState(ID3D11SamplerState** samplerState)
 	HRESULT hr = App::Ins->GetDevice()->CreateSamplerState(&samplerDesc, samplerState);
 }
 
+void D3D11Util::CreateTexture(const LPCWSTR& fileName, ID3D11Texture2D** texture, ID3D11ShaderResourceView** srv)
+{
+	DirectX::ScratchImage scratchImage;
+
+	HRESULT hr = DirectX::LoadFromWICFile(
+		fileName,
+		DirectX::WIC_FLAGS_NONE,
+		nullptr,
+		scratchImage
+	);
+
+	if (FAILED(hr))
+	{
+		OutputDebugStringA("Failed to load texture image\n");
+		return;
+	}
+
+	const DirectX::Image* image = scratchImage.GetImage(0, 0, 0);
+
+	if (image == nullptr)
+	{
+		OutputDebugStringA("Failed to get image data\n");
+		return;
+	}
+
+	D3D11_TEXTURE2D_DESC textureDesc = {};
+	textureDesc.Width = static_cast<UINT>(image->width);
+	textureDesc.Height = static_cast<UINT>(image->height);
+	textureDesc.MipLevels = 1;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = image->format;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+	D3D11_SUBRESOURCE_DATA initData = {};
+	initData.pSysMem = image->pixels;
+	initData.SysMemPitch = static_cast<UINT>(image->rowPitch);
+	initData.SysMemSlicePitch = static_cast<UINT>(image->slicePitch);
+
+	hr = App::Ins->GetDevice()->CreateTexture2D(
+		&textureDesc,
+		&initData,
+		texture
+	);
+
+	if (FAILED(hr))
+	{
+		OutputDebugStringA("Failed to create Texture2D\n");
+		return;
+	}
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Format = textureDesc.Format;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	srvDesc.Texture2D.MipLevels = 1;
+
+	hr = App::Ins->GetDevice()->CreateShaderResourceView(
+		*texture,
+		&srvDesc,
+		srv
+	);
+
+	if (FAILED(hr))
+	{
+		OutputDebugStringA("Failed to create SRV\n");
+		(*texture)->Release();   // 이미 만들어진 텍스처 정리
+		*texture = nullptr;
+		return;
+	}
+}
 
 

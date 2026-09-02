@@ -36,6 +36,8 @@ void InGameStage::Enter()
 	ObjectManager::GetInstance()->CreateWeapon();
 	ObjectManager::GetInstance()->CreateWeapon();
 
+	ObjectManager::GetInstance()->CreateExpOrb();
+
 	USoundManager::GetInstance()->StopBGM();
 	USoundManager::GetInstance()->PlayBGM(SOUND_KEY_BGM, true);
 }
@@ -101,7 +103,9 @@ void InGameStage::Update(float deltaTime)
 	player->AddExp(1);
 
 	// 레벨업 경험치 도달 시 일시정지 및 팝업 on
-	if (player->IsLevelUp()) {
+	if (player->IsLevelUp()) 
+	{
+		USoundManager::GetInstance()->PlaySFX(LEVEL_UP);
 		OutputDebugStringA("Level UP!");
 		TimeManager::GetInstance()->TimePause();
 		openAugmentPopup = true;

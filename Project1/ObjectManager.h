@@ -8,7 +8,8 @@
 
 class ObjectManager
 {
-	std::vector<Object*>obejctList;
+	static ObjectManager* Ins;
+	std::vector<Object*>objectList;
 	//적만 존재하는 리스트
 	std::vector<Enemy*> enemyList;
 
@@ -24,6 +25,7 @@ class ObjectManager
 	void CreateEnemy(float difficulty);
 	Player* CreatePlayer();
 	void CreateWeapon();
+	void CreateExpOrb();
 
 
 	ObjectManager();
@@ -36,8 +38,8 @@ class ObjectManager
 	void intersectsPlayerWithWall();
 	void SpinWeapon(float deltaTime, float rotationSpeed);
 	bool isPlayerDead() {
-		if (obejctList.size() > 0) {
-			return obejctList[0]->IsDead();
+		if (objectList.size() > 0) {
+			return objectList[0]->IsDead();
 		}
 		return false;
 	}
@@ -45,8 +47,6 @@ class ObjectManager
 
 	
 	ID3D11ShaderResourceView* m_lastBoundSRV = nullptr;
-	
-	static ObjectManager* Ins;
 
 	static ObjectManager* GetInstance()  {
 		if (Ins == nullptr) {

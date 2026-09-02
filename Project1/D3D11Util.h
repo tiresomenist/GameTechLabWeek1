@@ -34,6 +34,7 @@ public:
 		deviceContext->Unmap(constantBuffer, 0);
 	};
 
+	static void CreateTexture(const LPCWSTR& fileName, ID3D11Texture2D** texture, ID3D11ShaderResourceView** srv);
 
 
 

@@ -16,6 +16,12 @@
 #include "TimeManager.h"
 #include "SoundManager.h"
 #include "background.h"
+#include "Sphere.h"
+#include "Plane.h"
+
+#include <cmath>
+#include <algorithm>
+const float PI = 3.14159265358979323846f;
 
 
 App* App::Ins = nullptr;
@@ -164,10 +170,6 @@ void App::InitD3D()
 {
 	CreateDeviceandSwapchain();
 	CreateShader();
-	CreateTexture(L"earthCartoon.jpg", &texture, &textureSRV);
-	CreateTexture(L"moonCartoon.png", &moonTexture, &moonTextureSRV);
-	CreateTexture(L"meteor.jpg", &meteorTexture, &meteorTextureSRV);
-	CreateTexture(L"CartoonBackGround2.png", &m_bgTexture, &m_bgSRV);
 	CreateFrambuffer();
 	CreateRasterizerState();
 
@@ -181,6 +183,51 @@ void App::InitD3D()
 
 	//배경 버텍스 버퍼 생성
 	m_bgVertexBuffer = CreateVertexBuffer(bgQuad, sizeof(bgQuad));
+
+	//텍스쳐 + srv 생성
+	D3D11Util::CreateTexture(L"earthCartoon.jpg", &texture, &textureSRV);
+	D3D11Util::CreateTexture(L"moonCartoon.png", &moonTexture, &moonTextureSRV);
+	D3D11Util::CreateTexture(L"meteor.jpg", &meteorTexture, &meteorTextureSRV);
+	D3D11Util::CreateTexture(L"CartoonBackGround2.png", &m_bgTexture, &m_bgSRV);
+	D3D11Util::CreateTexture(L"star2.png", &expOrbTexture, &expOrbTextureSRV);
+
+	for (auto& vertex : sphere_vertices)
+	{
+		// vertex.x, vertex.y, vertex.z 사용
+		// ↓
+		// vertex.u 계산
+		// vertex.v 계산
+
+		vertex.u = 0.5f + (atan2(vertex.z, vertex.x) / (2 * PI));
+		vertex.v = 0.5f - (asin(std::clamp(vertex.y, -1.0f, 1.0f)) / PI);
+	}
+
+	for (auto& vertex : sphere_vertices)
+	{
+
+		vertex.u = 0.5f + (atan2(vertex.z, vertex.x) / (2 * PI));
+		vertex.v = 0.5f - (asin(std::clamp(vertex.y, -1.0f, 1.0f)) / PI);
+	}
+
+	SphereVertexBuffer = App::Ins->CreateVertexBuffer(sphere_vertices, sizeof(sphere_vertices));
+	SphereNumVertices = sizeof(sphere_vertices) / sizeof(FVertexSimple);
+	
+	PlaneVertexBuffer = App::Ins->CreateVertexBuffer(plane_vertices, sizeof(plane_vertices));
+	PlaneNumVertices = sizeof(plane_vertices) / sizeof(FVertexSimple);
+
+	D3D11_BLEND_DESC bd = {};
+	bd.RenderTarget[0].BlendEnable = TRUE;
+	bd.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	bd.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;        // Additive
+	bd.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	bd.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	bd.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	bd.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	bd.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	m_device->CreateBlendState(&bd, &m_blendState);
+
+
 
 	assert(constantBuffer != nullptr);
 };
@@ -239,78 +286,7 @@ void App::CreateShader()
 	D3D11Util::CreateSamplerState(&textureSampler);
 }
 
-void App::CreateTexture(const LPCWSTR& fileName, ID3D11Texture2D** texture, ID3D11ShaderResourceView** srv)
-{
-	DirectX::ScratchImage scratchImage;
 
-	HRESULT hr = DirectX::LoadFromWICFile(
-		fileName,
-		DirectX::WIC_FLAGS_NONE,
-		nullptr,
-		scratchImage
-	);
-
-	if (FAILED(hr))
-	{
-		OutputDebugStringA("Failed to load texture image\n");
-		return;
-	}
-
-	const DirectX::Image* image = scratchImage.GetImage(0, 0, 0);
-
-	if (image == nullptr)
-	{
-		OutputDebugStringA("Failed to get image data\n");
-		return;
-	}
-
-	D3D11_TEXTURE2D_DESC textureDesc = {};
-	textureDesc.Width = static_cast<UINT>(image->width);
-	textureDesc.Height = static_cast<UINT>(image->height);
-	textureDesc.MipLevels = 1;
-	textureDesc.ArraySize = 1;
-	textureDesc.Format = image->format;
-	textureDesc.SampleDesc.Count = 1;
-	textureDesc.Usage = D3D11_USAGE_DEFAULT;
-	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-
-	D3D11_SUBRESOURCE_DATA initData = {};
-	initData.pSysMem = image->pixels;
-	initData.SysMemPitch = static_cast<UINT>(image->rowPitch);
-	initData.SysMemSlicePitch = static_cast<UINT>(image->slicePitch);
-
-	hr = m_device->CreateTexture2D(
-		&textureDesc,
-		&initData,
-		texture
-	);
-
-	if (FAILED(hr))
-	{
-		OutputDebugStringA("Failed to create Texture2D\n");
-		return;
-	}
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	srvDesc.Format = textureDesc.Format;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MostDetailedMip = 0;
-	srvDesc.Texture2D.MipLevels = 1;
-
-	hr = m_device->CreateShaderResourceView(
-		*texture,
-		&srvDesc,
-		srv
-	);
-
-	if (FAILED(hr))
-	{
-		OutputDebugStringA("Failed to create SRV\n");
-		(*texture)->Release();   // 이미 만들어진 텍스처 정리
-		*texture = nullptr;
-		return;
-	}
-}
 
 void App::CreateFrambuffer()
 {
@@ -350,7 +326,7 @@ void App::Update()
 		}
 
 		m_currentStage = nextStage;
-		m_currentStage->Enter();
+		m_currentStage->Enter(); 
 		nextStage = nullptr;
 	}
 
@@ -386,6 +362,7 @@ void App::Render()
 	//OM
 	m_deviceContext->OMSetRenderTargets(1, &m_frameBufferRTV, nullptr);
 
+
 	m_deviceContext->VSSetConstantBuffers(0, 1, &constantBuffer);
 
 	m_deviceContext->VSSetShader(defaultVertexShader,0,0);
@@ -393,21 +370,25 @@ void App::Render()
 	m_deviceContext->PSSetSamplers(0, 1, &textureSampler);
 	m_deviceContext->PSSetShader(texturePixelShader, 0, 0);
 	
-	FConstant cb = {};
-	cb.offset = { 0.0f, 0.0f, 0.0f };
-	cb.radius = 1.0f;
-	D3D11Util::UpdateConstantBuffer(m_deviceContext, constantBuffer, cb);
-	m_deviceContext->VSSetConstantBuffers(0, 1, &constantBuffer);
-	UINT stride = sizeof(FVertexSimple);
-	UINT offset = 0;
-	m_deviceContext->IASetVertexBuffers(0, 1, &m_bgVertexBuffer, &stride, &offset);
-	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	//배경 그리기 시작
+	{
+		FConstant cb = {};
+		cb.offset = { 0.0f, 0.0f, 0.0f };
+		cb.radius = 1.0f;
+		D3D11Util::UpdateConstantBuffer(m_deviceContext, constantBuffer, cb);
+		m_deviceContext->VSSetConstantBuffers(0, 1, &constantBuffer);
+		UINT stride = sizeof(FVertexSimple);
+		UINT offset = 0;
+		m_deviceContext->IASetVertexBuffers(0, 1, &m_bgVertexBuffer, &stride, &offset);
+		m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
-	m_deviceContext->PSSetShaderResources(0, 1, &m_bgSRV);
-	m_deviceContext->Draw(4, 0);
+		m_deviceContext->PSSetShaderResources(0, 1, &m_bgSRV);
+		m_deviceContext->Draw(4, 0);
 
-	// 원상복구
-	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		// 원상복구
+		m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	}
+	//배경 그리기 끝
 
 
 	ImGui_ImplDX11_NewFrame();
