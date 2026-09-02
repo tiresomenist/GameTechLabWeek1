@@ -16,7 +16,6 @@ class ObjectManager
 	void AddObject(Object* obj);
 	void AddEnemy(Enemy* enemy);
 	void AddWeapon(Weapon* weapon);
-	static ObjectManager* Ins;
 	float orbitAngle = 0.0f;
 	int killCount;
 
