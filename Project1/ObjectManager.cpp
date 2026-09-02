@@ -129,7 +129,16 @@ void ObjectManager::Render()
 
 		for (auto enemy : enemyList)
 		{
-			enemy->renderer->RenderPrimitive(enemy->GetLocation(), enemy->GetRadius());
+			FHitFlashConstant hitFlashCB = {};
+			hitFlashCB.hitFlashAmount = enemy->GetHitFlashAmount();
+
+			D3D11Util::UpdateConstantBuffer(
+				App::Ins->GetDeviceContext(),
+				hitFlashBuffer,
+				hitFlashCB
+			);
+
+			enemy->renderer->RenderPrimitive(enemy->GetLocation(), enemy->GetRadius(), Priv::Sphere);
 		}
 
 		// enemy 렌더가 전부 끝난 뒤 상수버퍼 초기화
