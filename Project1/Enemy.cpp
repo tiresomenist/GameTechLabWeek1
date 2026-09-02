@@ -36,10 +36,16 @@ void Enemy::InvincibleTimerUpdate(float deltaTime)
 	if(isHit)
 	{
 		invincibleTimer += deltaTime;
+		hitFlashAmount = 1.0f - (invincibleTimer / flashDuration);
 		if (invincibleTimer >= invinciblethreshold)
 		{
 			isHit = false;
 			invincibleTimer = 0.0f;
+			hitFlashAmount = 0.0f;
+		}
+		if (invincibleTimer >= flashDuration)
+		{
+			hitFlashAmount = 0.0f;
 		}
 	}
 
