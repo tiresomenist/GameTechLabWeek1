@@ -130,6 +130,8 @@ void InGameStage::RenderAugmentModal()
 		isAugmnetSelected = true;
 	}
 
+	AugmentStruct* augments[3] = { &aug1, &aug2, &aug3 };
+
 	float width = 190.0f;
 	float height = 260.0f;
 	float gap = 20.0f;
@@ -213,6 +215,7 @@ void InGameStage::RenderAugmentModal()
 	for (int i = 0; i < 3; i++)
 	{
 		ImGui::PushID(i);
+		bool enhanced = augments[i]->isEnhanced;
 
 		// 증강 카드
 		ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 10.0f);
@@ -220,12 +223,16 @@ void InGameStage::RenderAugmentModal()
 
 		ImGui::PushStyleColor(
 			ImGuiCol_ChildBg,
-			ImVec4(0.08f, 0.10f, 0.13f, 0.95f)
+			enhanced
+			? ImVec4(0.16f, 0.10f, 0.05f, 0.95f)
+			: ImVec4(0.08f, 0.10f, 0.13f, 0.95f)
 		);
 
 		ImGui::PushStyleColor(
 			ImGuiCol_Border,
-			ImVec4(0.15f, 0.50f, 0.60f, 0.8f)
+			enhanced
+			? ImVec4(1.0f, 0.65f, 0.15f, 1.0f)
+			: ImVec4(0.15f, 0.50f, 0.60f, 0.8f)
 		);
 
 		ImGui::BeginChild(
@@ -262,9 +269,18 @@ void InGameStage::RenderAugmentModal()
 
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 7.0f);
 
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.10f, 0.45f, 0.55f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.15f, 0.60f, 0.70f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.20f, 0.75f, 0.85f, 1.0f));
+		if (enhanced)
+		{
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.75f, 0.45f, 0.08f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.90f, 0.58f, 0.12f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(1.00f, 0.70f, 0.18f, 1.0f));
+		}
+		else
+		{
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.10f, 0.45f, 0.55f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.15f, 0.60f, 0.70f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.20f, 0.75f, 0.85f, 1.0f));
+		}
 
 		if (ImGui::Button(
 			"SELECT",
