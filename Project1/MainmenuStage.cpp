@@ -115,6 +115,9 @@ void MainmenuStage::Render()
 
 	ImGuiIO& io = ImGui::GetIO();
 
+	const float BUTTON_GAP = 10.0f;
+	const float PANEL_PADDING = 20.0f;
+
 	ImVec2 windowSize(
 		MENU_WIDTH,
 		MENU_HEIGHT
@@ -122,7 +125,7 @@ void MainmenuStage::Render()
 
 	ImVec2 windowPos(
 		(io.DisplaySize.x - MENU_WIDTH) * 0.5f,
-		(io.DisplaySize.y - MENU_HEIGHT) * 0.5f
+		(io.DisplaySize.y - MENU_HEIGHT) * 0.5f + 100.0f
 	);
 
 	ImGui::SetNextWindowPos(
@@ -135,11 +138,6 @@ void MainmenuStage::Render()
 		ImGuiCond_Always
 	);
 
-	ImGui::PushStyleColor(
-		ImGuiCol_WindowBg,
-		ImVec4(0.02f, 0.04f, 0.06f, 0.35f)
-	);
-
 	ImGui::Begin(
 		"Main Menu",
 		nullptr,
@@ -148,66 +146,13 @@ void MainmenuStage::Render()
 		ImGuiWindowFlags_NoTitleBar |
 		ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoScrollbar |
+		ImGuiWindowFlags_NoBackground |
 		ImGuiWindowFlags_NoScrollWithMouse
 	);
 
 	// =========================
-	// Title
+	// 기본 버튼 스타일
 	// =========================
-
-	ImGui::Dummy(
-		ImVec2(0.0f, 30.0f)
-	);
-
-	// 게임 제목
-	ImGui::SetWindowFontScale(2.4f);
-
-	const char* title = "BALL SURVIVORS";
-	float titleWidth =
-		ImGui::CalcTextSize(title).x;
-
-	ImGui::SetCursorPosX(
-		(MENU_WIDTH - titleWidth) * 0.5f
-	);
-
-	ImGui::TextColored(
-		ImVec4(
-			0.35f,
-			0.85f,
-			0.90f,
-			1.0f
-		),
-		"%s",
-		title
-	);
-
-	ImGui::SetWindowFontScale(1.0f);
-
-	// 작은 서브타이틀
-	const char* subtitle =
-		"SURVIVE THE SWARM";
-
-	float subtitleWidth =
-		ImGui::CalcTextSize(subtitle).x;
-
-	ImGui::SetCursorPosX(
-		(MENU_WIDTH - subtitleWidth) * 0.5f
-	);
-
-	ImGui::TextDisabled(
-		"%s",
-		subtitle
-	);
-
-	ImGui::Dummy(
-		ImVec2(0.0f, 45.0f)
-	);
-
-	// 버튼 스타일
-	ImGui::PushStyleVar(
-		ImGuiStyleVar_FrameRounding,
-		7.0f
-	);
 
 	ImGui::PushStyleColor(
 		ImGuiCol_Button,
@@ -247,27 +192,42 @@ void MainmenuStage::Render()
 		(MENU_WIDTH - BUTTON_WIDTH) * 0.5f
 	);
 
+	// START 버튼의 실제 시작 위치 저장
+	ImVec2 startPos =
+		ImGui::GetCursorScreenPos();
+
 	ImGui::PushStyleColor(
 		ImGuiCol_Button,
 		selectedMenu == MENU_START
-		? ImVec4(0.15f, 0.60f, 0.70f, 1.0f)  // 선택
-		: ImVec4(0.10f, 0.45f, 0.55f, 1.0f)  // 기본
+		? ImVec4(0.15f, 0.60f, 0.70f, 1.0f)
+		: ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
 	);
 
 	bool startPressed = ImGui::Button(
 		"START",
-		ImVec2(BUTTON_WIDTH, BUTTON_HEIGHT)
+		ImVec2(
+			BUTTON_WIDTH,
+			BUTTON_HEIGHT
+		)
 	);
 
 	ImGui::PopStyleColor();
 
-	if (startPressed || selectedMenu == MENU_START && enterPressed)
+	if (
+		startPressed ||
+		(selectedMenu == MENU_START && enterPressed)
+		)
 	{
-		m_app->ChangeState(new InGameStage(m_app));
+		m_app->ChangeState(
+			new InGameStage(m_app)
+		);
 	}
 
 	ImGui::Dummy(
-		ImVec2(0.0f, 10.0f)
+		ImVec2(
+			0.0f,
+			BUTTON_GAP
+		)
 	);
 
 	// =========================
@@ -281,27 +241,40 @@ void MainmenuStage::Render()
 	ImGui::PushStyleColor(
 		ImGuiCol_Button,
 		selectedMenu == MENU_LEADERBOARD
-		? ImVec4(0.15f, 0.60f, 0.70f, 1.0f)  // 선택
-		: ImVec4(0.10f, 0.45f, 0.55f, 1.0f)  // 기본
+		? ImVec4(0.15f, 0.60f, 0.70f, 1.0f)
+		: ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
 	);
 
-	bool leaderboardPressed = ImGui::Button(
-		"LEADERBOARD",
-		ImVec2(BUTTON_WIDTH, BUTTON_HEIGHT)
-	);
+	bool leaderboardPressed =
+		ImGui::Button(
+			"LEADERBOARD",
+			ImVec2(
+				BUTTON_WIDTH,
+				BUTTON_HEIGHT
+			)
+		);
 
 	ImGui::PopStyleColor();
 
-	if (leaderboardPressed ||
-		(selectedMenu == MENU_LEADERBOARD &&
+	if (
+		leaderboardPressed ||
+		(
+			selectedMenu == MENU_LEADERBOARD &&
 			enterPressed &&
-			!ImGui::IsPopupOpen("Leaderboard")))
+			!ImGui::IsPopupOpen("Leaderboard")
+			)
+		)
 	{
-		ImGui::OpenPopup("Leaderboard");
+		ImGui::OpenPopup(
+			"Leaderboard"
+		);
 	}
 
 	ImGui::Dummy(
-		ImVec2(0.0f, 10.0f)
+		ImVec2(
+			0.0f,
+			BUTTON_GAP
+		)
 	);
 
 	// =========================
@@ -319,23 +292,36 @@ void MainmenuStage::Render()
 		: ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
 	);
 
-	bool settingsPressed = ImGui::Button(
-		"SETTINGS",
-		ImVec2(BUTTON_WIDTH, BUTTON_HEIGHT)
-	);
+	bool settingsPressed =
+		ImGui::Button(
+			"SETTINGS",
+			ImVec2(
+				BUTTON_WIDTH,
+				BUTTON_HEIGHT
+			)
+		);
 
 	ImGui::PopStyleColor();
 
-	if (settingsPressed ||
-		(selectedMenu == MENU_SETTINGS &&
+	if (
+		settingsPressed ||
+		(
+			selectedMenu == MENU_SETTINGS &&
 			enterPressed &&
-			!ImGui::IsPopupOpen("Settings")))
+			!ImGui::IsPopupOpen("Settings")
+			)
+		)
 	{
-		ImGui::OpenPopup("Settings");
+		ImGui::OpenPopup(
+			"Settings"
+		);
 	}
 
 	ImGui::Dummy(
-		ImVec2(0.0f, 10.0f)
+		ImVec2(
+			0.0f,
+			BUTTON_GAP
+		)
 	);
 
 	// =========================
@@ -353,25 +339,36 @@ void MainmenuStage::Render()
 		: ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
 	);
 
-	bool creditsPressed = ImGui::Button(
-		"CREDITS",
-		ImVec2(BUTTON_WIDTH, BUTTON_HEIGHT)
-	);
+	bool creditsPressed =
+		ImGui::Button(
+			"CREDITS",
+			ImVec2(
+				BUTTON_WIDTH,
+				BUTTON_HEIGHT
+			)
+		);
 
 	ImGui::PopStyleColor();
 
-	bool creditsOpen = ImGui::IsPopupOpen("Credits");
-
-	if (creditsPressed ||
-		(selectedMenu == MENU_CREDITS &&
+	if (
+		creditsPressed ||
+		(
+			selectedMenu == MENU_CREDITS &&
 			enterPressed &&
-			!ImGui::IsPopupOpen("Credits")))
+			!ImGui::IsPopupOpen("Credits")
+			)
+		)
 	{
-		ImGui::OpenPopup("Credits");
+		ImGui::OpenPopup(
+			"Credits"
+		);
 	}
 
 	ImGui::Dummy(
-		ImVec2(0.0f, 10.0f)
+		ImVec2(
+			0.0f,
+			BUTTON_GAP
+		)
 	);
 
 	// =========================
@@ -389,34 +386,77 @@ void MainmenuStage::Render()
 		: ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
 	);
 
-	bool exitPressed = ImGui::Button(
-		"EXIT",
-		ImVec2(BUTTON_WIDTH, BUTTON_HEIGHT)
-	);
+	bool exitPressed =
+		ImGui::Button(
+			"EXIT",
+			ImVec2(
+				BUTTON_WIDTH,
+				BUTTON_HEIGHT
+			)
+		);
+
+	// EXIT 버튼의 실제 아래쪽 좌표
+	ImVec2 exitMax =
+		ImGui::GetItemRectMax();
 
 	ImGui::PopStyleColor();
 
-	if (exitPressed ||
-		(selectedMenu == MENU_EXIT && enterPressed))
+	// =========================
+	// 버튼 뒤 패널
+	// =========================
+
+	// BackgroundDrawList를 쓰므로
+	// 코드상 지금 그려도 버튼 뒤쪽에 위치함
+	ImDrawList* backgroundDrawList =
+		ImGui::GetBackgroundDrawList();
+
+	ImVec2 panelMin(
+		startPos.x - PANEL_PADDING,
+		startPos.y - PANEL_PADDING
+	);
+
+	ImVec2 panelMax(
+		startPos.x + BUTTON_WIDTH + PANEL_PADDING,
+		exitMax.y + PANEL_PADDING
+	);
+
+	backgroundDrawList->AddRectFilled(
+		panelMin,
+		panelMax,
+		IM_COL32(
+			5,
+			12,
+			18,
+			100
+		),
+		12.0f
+	);
+
+	if (
+		exitPressed ||
+		(selectedMenu == MENU_EXIT && enterPressed)
+		)
 	{
 		PostQuitMessage(0);
 	}
 
+	// 기본 버튼 스타일 3개 복구
 	ImGui::PopStyleColor(3);
-	ImGui::PopStyleVar();
 
 	// =========================
 	// Credits Popup
 	// =========================
 
-	// 화면 중앙에 배치
 	ImGui::SetNextWindowPos(
 		ImVec2(
 			io.DisplaySize.x * 0.5f,
 			io.DisplaySize.y * 0.5f
 		),
 		ImGuiCond_Appearing,
-		ImVec2(0.5f, 0.5f)
+		ImVec2(
+			0.5f,
+			0.5f
+		)
 	);
 
 	ImGui::SetNextWindowSize(
@@ -427,10 +467,12 @@ void MainmenuStage::Render()
 		ImGuiCond_Always
 	);
 
-	// Credits 모달 배경
 	ImGui::PushStyleVar(
 		ImGuiStyleVar_WindowPadding,
-		ImVec2(25.0f, 22.0f)
+		ImVec2(
+			25.0f,
+			22.0f
+		)
 	);
 
 	ImGui::PushStyleVar(
@@ -468,18 +510,26 @@ void MainmenuStage::Render()
 		)
 	);
 
-	if (ImGui::BeginPopupModal(
-		"Credits",
-		nullptr,
-		ImGuiWindowFlags_NoTitleBar |
-		ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoScrollbar |
-		ImGuiWindowFlags_NoScrollWithMouse))
+	if (
+		ImGui::BeginPopupModal(
+			"Credits",
+			nullptr,
+			ImGuiWindowFlags_NoTitleBar |
+			ImGuiWindowFlags_NoResize |
+			ImGuiWindowFlags_NoCollapse |
+			ImGuiWindowFlags_NoMove |
+			ImGuiWindowFlags_NoScrollbar |
+			ImGuiWindowFlags_NoScrollWithMouse
+		)
+		)
 	{
-		// 최상단 타이틀
-		ImGui::SetWindowFontScale(1.8f);
+		// =========================
+		// Credits Title
+		// =========================
+
+		ImGui::SetWindowFontScale(
+			1.8f
+		);
 
 		const char* creditTitle =
 			"TEAM CREDITS";
@@ -490,8 +540,10 @@ void MainmenuStage::Render()
 			).x;
 
 		ImGui::SetCursorPosX(
-			(ImGui::GetWindowWidth() -
-				creditTitleWidth) * 0.5f
+			(
+				ImGui::GetWindowWidth() -
+				creditTitleWidth
+				) * 0.5f
 		);
 
 		ImGui::Text(
@@ -499,7 +551,9 @@ void MainmenuStage::Render()
 			creditTitle
 		);
 
-		ImGui::SetWindowFontScale(1.0f);
+		ImGui::SetWindowFontScale(
+			1.0f
+		);
 
 		const char* creditSubtitle =
 			"DEVELOPED BY";
@@ -510,8 +564,10 @@ void MainmenuStage::Render()
 			).x;
 
 		ImGui::SetCursorPosX(
-			(ImGui::GetWindowWidth() -
-				creditSubtitleWidth) * 0.5f
+			(
+				ImGui::GetWindowWidth() -
+				creditSubtitleWidth
+				) * 0.5f
 		);
 
 		ImGui::TextDisabled(
@@ -520,10 +576,16 @@ void MainmenuStage::Render()
 		);
 
 		ImGui::Dummy(
-			ImVec2(0.0f, 20.0f)
+			ImVec2(
+				0.0f,
+				20.0f
+			)
 		);
 
-		// 팀원 이름
+		// =========================
+		// Team Members
+		// =========================
+
 		for (const char* member : CREDIT_MEMBERS)
 		{
 			float textWidth =
@@ -532,8 +594,10 @@ void MainmenuStage::Render()
 				).x;
 
 			ImGui::SetCursorPosX(
-				(ImGui::GetWindowWidth() -
-					textWidth) * 0.5f
+				(
+					ImGui::GetWindowWidth() -
+					textWidth
+					) * 0.5f
 			);
 
 			ImGui::Text(
@@ -542,18 +606,29 @@ void MainmenuStage::Render()
 			);
 
 			ImGui::Dummy(
-				ImVec2(0.0f, 7.0f)
+				ImVec2(
+					0.0f,
+					7.0f
+				)
 			);
 		}
 
 		ImGui::Dummy(
-			ImVec2(0.0f, 15.0f)
+			ImVec2(
+				0.0f,
+				15.0f
+			)
 		);
 
+		// =========================
 		// Close
+		// =========================
+
 		ImGui::SetCursorPosX(
-			(ImGui::GetWindowWidth() -
-				CLOSE_BUTTON_WIDTH) * 0.5f
+			(
+				ImGui::GetWindowWidth() -
+				CLOSE_BUTTON_WIDTH
+				) * 0.5f
 		);
 
 		ImGui::PushStyleColor(
@@ -586,11 +661,15 @@ void MainmenuStage::Render()
 			)
 		);
 
-		if (ImGui::Button(
-			"CLOSE",
-			ImVec2(
-				CLOSE_BUTTON_WIDTH,
-				CLOSE_BUTTON_HEIGHT)))
+		if (
+			ImGui::Button(
+				"CLOSE",
+				ImVec2(
+					CLOSE_BUTTON_WIDTH,
+					CLOSE_BUTTON_HEIGHT
+				)
+			)
+			)
 		{
 			ImGui::CloseCurrentPopup();
 		}
@@ -598,8 +677,11 @@ void MainmenuStage::Render()
 		ImGui::PopStyleColor(3);
 
 		// ESC 키 입력 시 Credits 닫기
-		if (ImGui::IsKeyPressed(
-			ImGuiKey_Escape))
+		if (
+			ImGui::IsKeyPressed(
+				ImGuiKey_Escape
+			)
+			)
 		{
 			ImGui::CloseCurrentPopup();
 		}
@@ -623,8 +705,6 @@ void MainmenuStage::Render()
 	SettingsUI::Render();
 
 	ImGui::End();
-
-	ImGui::PopStyleColor();
 
 }
 
