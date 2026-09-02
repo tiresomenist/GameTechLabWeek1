@@ -43,10 +43,8 @@ void Object::SetLocation(float x,float y) {
 void Object::GetAttacked(float damage) {
 	health -= damage;
 
-	
 	if (health <= 0) { 
 		isDead = true; 
-	
 	}
 }
 
