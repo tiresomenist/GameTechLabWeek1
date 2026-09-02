@@ -30,13 +30,13 @@ void InGameStage::Enter()
 	ObjectManager::GetInstance()->setKillCount(0);
 	score = 0;
 
-	ObjectManager::GetInstance()->CreateWeapon();
-	ObjectManager::GetInstance()->CreateWeapon();
-	ObjectManager::GetInstance()->CreateWeapon();
-	ObjectManager::GetInstance()->CreateWeapon();
-	ObjectManager::GetInstance()->CreateWeapon();
+	ObjectManager::GetInstance()->CreateWeapon(player->GetWeaponRadius());
+	ObjectManager::GetInstance()->CreateWeapon(player->GetWeaponRadius());
+	ObjectManager::GetInstance()->CreateWeapon(player->GetWeaponRadius());
+	ObjectManager::GetInstance()->CreateWeapon(player->GetWeaponRadius());
+	ObjectManager::GetInstance()->CreateWeapon(player->GetWeaponRadius());
 
-	ObjectManager::GetInstance()->CreateExpOrb();
+
 
 	USoundManager::GetInstance()->StopBGM();
 	USoundManager::GetInstance()->PlayBGM(SOUND_KEY_BGM, true);
@@ -97,10 +97,12 @@ void InGameStage::Update(float deltaTime)
 	ObjectManager::GetInstance()->checkPlayerIntersectWithEnemy();
 	//플레이어와 벽의 충돌 체크
 	ObjectManager::GetInstance()->intersectsPlayerWithWall();
+	//플레이어와 레벨업 오브젝트 충돌 체크
+	ObjectManager::GetInstance()->checkPlayerIntersectWithExpOrb();
 
 
 	// 경험치 상승 임시구현
-	player->AddExp(1);
+	//player->AddExp(1);
 
 	// 레벨업 경험치 도달 시 일시정지 및 팝업 on
 	if (player->IsLevelUp()) 
@@ -351,7 +353,8 @@ void InGameStage::RenderPauseModal()
 			"RESUME",
 			ImVec2(buttonWidth, buttonHeight)) || (escPressed && !leaveGameOpen))
 		{
-			TimeManager::GetInstance()->TimeResume();
+			if(!openAugmentPopup)
+				TimeManager::GetInstance()->TimeResume();
 			ImGui::CloseCurrentPopup();
 		}
 

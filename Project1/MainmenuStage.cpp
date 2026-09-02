@@ -8,7 +8,7 @@
 #include <Windows.h>
 #include "SoundManager.h"
 
-#define SOUND_KEY_BGM L"bgm"
+#define SOUND_KEY_BGM L"bgm_2"
 
 
 namespace

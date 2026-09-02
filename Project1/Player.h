@@ -24,13 +24,14 @@ public:
 	int GetExpTable();
 	void AddExp(int x);
 	bool IsLevelUp();
+	float GetWeaponRadius() const { return weaponRadius; } // 플레이어의 무기 반지름 반환
 
 	void IncreaseAttack(float x);
 	void IncreaseAttackRange(float x);
 	void IncreaseAttackSpeed(float x);
 	void IncreaseMoveSpeed(float x);
 	void IncreaseHealHp(float x);
-
+	void SetWeaponRadius(float _r) { weaponRadius = _r; } // 플레이어의 무기 반지름 설정
 
 private:
 	float WeaponRotationSpeed = 6.0f;
@@ -39,5 +40,6 @@ private:
 	int exp = 0;
 	int level = 1;
 	int maxLevel = 10;
-	int expTable[11] = { 0, 200, 201, 202, 203, 204, 205, 206, 207, 208, 208};
+	int expTable[11] = { 0, 10, 20, 20, 20, 204, 205, 206, 207, 208, 208};
+	float weaponRadius = 0.02f;
 };

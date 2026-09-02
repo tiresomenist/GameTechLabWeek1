@@ -7,6 +7,8 @@
 
 #include "FHitFlashConstant.h"
 #include "D3D11Util.h"
+#include <cmath>
+
 
 ObjectManager* ObjectManager::Ins = nullptr;
 
@@ -40,15 +42,16 @@ Player* ObjectManager::CreatePlayer()
 	return newPlayer;
 }
 
-void ObjectManager::CreateWeapon()
+void ObjectManager::CreateWeapon(float radius)
 {
-	Weapon* newWeapon = new Weapon();
+	Weapon* newWeapon = new Weapon(radius);
 	AddWeapon(newWeapon);
 }
 
-void ObjectManager::CreateExpOrb()
+void ObjectManager::CreateExpOrb(float x,float y)
 {
 	UExpOrb* newExpOrb = new UExpOrb();
+	newExpOrb->SetLocation(x,y);
 	AddObject(newExpOrb);
 
 }
@@ -301,6 +304,10 @@ void ObjectManager::checkWeaponIntersectWithEnemy()
 				
 				if (enemy->IsDead())
 				{
+					
+					//경험치 오브 생성
+					CreateExpOrb(enemy->GetLocation().x, enemy->GetLocation().y);
+
 					//적 제거
 					killCount++;
 					auto it = std::find(enemyList.begin(), enemyList.end(), enemy);
@@ -308,10 +315,63 @@ void ObjectManager::checkWeaponIntersectWithEnemy()
 						delete* it; // 메모리 해제
 						enemyList.erase(it); // 리스트에서 제거
 					}
+
+
 				}
 			}
 		}
 	}
+}
+
+void ObjectManager::checkPlayerIntersectWithExpOrb()
+{
+	for(size_t i = 1; i < objectList.size(); ++i)
+	{
+		UExpOrb* expOrb = static_cast<UExpOrb*>(objectList[i]);
+
+		float leftDownX = expOrb->GetLocation().x - expOrb->GetRadius();
+		float leftDonwY = expOrb->GetLocation().y - expOrb->GetRadius();
+
+		float rightUpX = expOrb->GetLocation().x + expOrb->GetRadius();
+		float rightUpY = expOrb->GetLocation().y + expOrb->GetRadius();
+
+
+		float sphereCenterX = objectList[0]->GetLocation().x;
+		float sphereCenterY = objectList[0]->GetLocation().y;
+
+		float closestX = sphereCenterX;
+		if (closestX < leftDownX)  
+				closestX = leftDownX;
+
+		if (closestX > rightUpX)   
+				closestX = rightUpX;
+
+		float closestY = sphereCenterY;
+		if (closestY < leftDonwY)  
+				closestY = leftDonwY;
+
+		if (closestY > rightUpY)   
+				closestY = rightUpY;
+
+		float dx = sphereCenterX - closestX;
+		float dy = sphereCenterY - closestY;
+
+		if((dx*dx + dy* dy) <= (objectList[0]->GetRadius() * objectList[0]->GetRadius()))
+		{
+			USoundManager::GetInstance()->PlaySFX(PICK_EXP_ORB);
+			Player* player = static_cast<Player*>(objectList[0]);
+			player->AddExp(expOrb->GetGiveExp());
+			//USoundManager::GetInstance()->PlaySFX(EXP_ORB_COLLECT);
+			auto it = std::find(objectList.begin(), objectList.end(), expOrb);
+			if (it != objectList.end()) {
+				delete* it; // 메모리 해제
+				objectList.erase(it); // 리스트에서 제거
+			}
+		}
+
+	}
+
+
 }
 
 void ObjectManager::SpinWeapon(float deltaTime, float rotationSpeed)
@@ -376,7 +436,9 @@ void ObjectManager::UpgradePlayer(AugmentStruct aug) {
 		for (Weapon* weapon : weaponList)
 		{
 			weapon->IncreaseRadius(aug.value);
+			
 		}
+		player->SetWeaponRadius(player->GetWeaponRadius() * (1 + aug.value / 100.0f)); // 플레이어의 무기 반지름도 증가
 		break;
 
 	case AugmentType::HealHP:
@@ -385,7 +447,7 @@ void ObjectManager::UpgradePlayer(AugmentStruct aug) {
 		break;
 
 	case AugmentType::AddWeapon:
-		CreateWeapon();
+		CreateWeapon(player->GetWeaponRadius());
 		break;
 	}
 }

@@ -4,7 +4,7 @@
 class Weapon : public Object
 {
 public:
-	Weapon();
+	Weapon(float _radius);
 	~Weapon() = default;
 
 	virtual void MoveObject(float x, float y) override;

@@ -89,6 +89,7 @@ void USoundManager::Init()
     LoadSFX(UI_CLOSE, L".\\Resource\\Sound\\ui_close.wav");
     LoadSFX(ENEMY_DEAD, L".\\Resource\\Sound\\enemy_dead.wav");
     LoadSFX(LEVEL_UP, L".\\Resource\\Sound\\level_up.wav");
+    LoadSFX(PICK_EXP_ORB, L".\\Resource\\Sound\\pickupCoin.wav");
 }
 
 void USoundManager::Release()
