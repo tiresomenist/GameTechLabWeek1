@@ -15,15 +15,15 @@ Augment::Augment() {
 	ResetAugment();
 }
 
-std::string Augment::GetAugmentText(const AugmentStruct& aug) {
+std::string Augment::GetAugmentText(const AugmentStruct& aug) const {
 
 	char text[50];
 
 	if (aug.type == AugmentType::HealHP || aug.type == AugmentType::AddWeapon) {
-		sprintf_s(text, "%s\n+%.0f", aug.name, aug.value);
+		sprintf_s(text, "%s\n\n\n+%.0f", aug.name, aug.value);
 	}
 	else {
-		sprintf_s(text, "%s\n+%.0f%%", aug.name, aug.value);
+		sprintf_s(text, "%s\n\n\n+%.0f%%", aug.name, aug.value);
 	}
 
 	return text;

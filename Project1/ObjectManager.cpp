@@ -54,10 +54,7 @@ void ObjectManager::CreateExpOrb(float x,float y)
 	newExpOrb->SetLocation(x,y);
 	AddObject(newExpOrb);
 
-
 }
-
-
 
 ObjectManager::ObjectManager()
 {
@@ -396,6 +393,17 @@ void ObjectManager::SpinWeapon(float deltaTime, float rotationSpeed)
 	}
 }
 
+void ObjectManager::AddPlayerExp(int x) {
+	Player* player = static_cast<Player*>(objectList[0]);
+
+	player->AddExp(x);
+}
+
+bool ObjectManager::IsPlayerLevelUp() {
+	Player* player = static_cast<Player*>(objectList[0]);
+
+	return player->IsLevelUp();
+}
 
 void ObjectManager::UpgradePlayer(AugmentStruct aug) {
 	Player* player = static_cast<Player*>(objectList[0]);

@@ -55,7 +55,8 @@ class ObjectManager
 		}
 		return Ins;
 	}
-
+	void AddPlayerExp(int x);
+	bool IsPlayerLevelUp();
 	void UpgradePlayer(AugmentStruct aug);
 
 	void ReleaseAllObjects();
