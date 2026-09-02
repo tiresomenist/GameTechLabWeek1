@@ -515,15 +515,7 @@ void InGameStage::RenderPauseModal()
 	// =========================
 
 	// ESC 키 입력 체크
-	static bool prevEscDown = false;
-
-	bool escDown =
-		InputManager::GetInstance()->IsKeyPressed(VK_ESCAPE);
-
-	bool escPressed =
-		escDown && !prevEscDown;
-
-	prevEscDown = escDown;
+	bool escPressed = InputManager::GetInstance()->IsKeyTriggered(VK_ESCAPE);
 
 	// 인게임에서 ESC로 Pause 열기
 	if (escPressed &&
@@ -1013,7 +1005,7 @@ void InGameStage::RenderPauseModal()
 			ImGui::PopStyleColor(3);
 
 			// 경고창에서 ESC = 취소
-			if (ImGui::IsKeyPressed(ImGuiKey_Escape))
+			if (escPressed)
 			{
 				ImGui::CloseCurrentPopup();
 			}

@@ -29,28 +29,35 @@ App* App::Ins = nullptr;
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-LRESULT	CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	//Imgui를 사용하게 되면, 필요한 핸들러, imgui 라이브러리 merge후에 주석 풀기
-	if (ImGui_ImplWin32_WndProcHandler(hwnd, message, wParam, lParam))
-	{
-		return true;
-	}
+	// ImGui에도 입력 전달
+	bool imguiHandled = ImGui_ImplWin32_WndProcHandler(hwnd, message, wParam, lParam);
 
 	switch (message)
 	{
 	case WM_KEYDOWN:
-		InputManager::IMins->KeyDown(static_cast<int>(wParam));
+		if (InputManager::IMins != nullptr)
+			InputManager::IMins->KeyDown(static_cast<int>(wParam));
 		break;
+
 	case WM_KEYUP:
-		InputManager::IMins->KeyUp(static_cast<int>(wParam));
+		if (InputManager::IMins != nullptr)
+			InputManager::IMins->KeyUp(static_cast<int>(wParam));
 		break;
+
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
+
 	default:
+		if (imguiHandled)
+			return true;
+
 		return DefWindowProc(hwnd, message, wParam, lParam);
 	}
+
+	return 0;
 }
 
 
