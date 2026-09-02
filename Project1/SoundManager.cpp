@@ -142,6 +142,7 @@ void USoundManager::PlayBGM(const std::wstring& key, bool loop)
         hr = pVoice->SubmitSourceBuffer(&buffer);
         if (SUCCEEDED(hr))
         {
+            pVoice->SetVolume(bgmVolume);
             hr = pVoice->Start();
             currentBGMVoice = pVoice; // 현재 BGM 보이스 저장
         }
@@ -182,6 +183,7 @@ void USoundManager::PlaySFX(const std::wstring& key)
 
     if (SUCCEEDED(hr))
     {
+        pVoiceToPlay->SetVolume(sfxVolume);
         pVoiceToPlay->Start();
     }
 
@@ -221,3 +223,24 @@ bool USoundManager::LoadSFX(const std::wstring& key, const std::wstring& filePat
 
     return false;
 }
+
+void USoundManager::SetBGMVolume(float volume) {
+    bgmVolume = volume;
+
+    if (currentBGMVoice)
+    {
+        currentBGMVoice->SetVolume(bgmVolume);
+    }
+}
+void USoundManager::SetSFXVolume(float volume) {
+    sfxVolume = volume;
+
+    for (auto& pair : sfxPoolMap)
+    {
+        for (IXAudio2SourceVoice* currentSFXVoice : pair.second)
+        {
+            currentSFXVoice->SetVolume(sfxVolume);
+        }
+    }
+}
+
