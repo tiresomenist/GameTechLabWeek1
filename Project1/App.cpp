@@ -395,18 +395,19 @@ void App::Render()
 	m_deviceContext->PSSetSamplers(0, 1, &textureSampler);
 	m_deviceContext->PSSetShader(texturePixelShader, 0, 0);
 	
-	//배경 그리기 시작
+	// 배경 그리기 시작
 	{
 		FConstant cb = {};
 		cb.offset = { 0.0f, 0.0f, 0.0f };
-		cb.radius = 1.0f;
+		cb.scale = { 1.0f, 1.0f, 1.0f };
 		cb.Rotation = { 0.0f, 0.0f, 0.0f };
-		cb.Padding = 0.0f;
+
 		D3D11Util::UpdateConstantBuffer(m_deviceContext, constantBuffer, cb);
 		m_deviceContext->VSSetConstantBuffers(0, 1, &constantBuffer);
-	
-	UINT stride = sizeof(FVertexSimple);
+
+		UINT stride = sizeof(FVertexSimple);
 		UINT offset = 0;
+
 		m_deviceContext->IASetVertexBuffers(0, 1, &m_bgVertexBuffer, &stride, &offset);
 		m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
@@ -416,7 +417,7 @@ void App::Render()
 		// 원상복구
 		m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
-	//배경 그리기 끝
+	// 배경 그리기 끝
 
 
 	ImGui_ImplDX11_NewFrame();

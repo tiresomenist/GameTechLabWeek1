@@ -56,6 +56,9 @@ class App
 	//로켓 텍스쳐
 	ID3D11ShaderResourceView* rocketTextureSRV;
 	ID3D11Texture2D* rocketTexture;
+	// 제목 텍스처
+	ID3D11ShaderResourceView* titleTextureSRV;
+	ID3D11Texture2D* titleTexture;
 
 
 	//프레임 버퍼
@@ -190,6 +193,11 @@ class App
 		return rocketTextureSRV;
 	}
 
+
+	ID3D11ShaderResourceView* GetTitleTextureSRV()
+	{
+		return titleTextureSRV;
+	}
 
 	ID3D11BlendState* GetBlendState() const
 	{
