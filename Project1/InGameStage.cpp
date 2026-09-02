@@ -48,10 +48,7 @@ void InGameStage::Enter()
 	score = 0;
 
 	ObjectManager::GetInstance()->CreateWeapon(player->GetWeaponRadius());
-	ObjectManager::GetInstance()->CreateWeapon(player->GetWeaponRadius());
-	ObjectManager::GetInstance()->CreateWeapon(player->GetWeaponRadius());
-	ObjectManager::GetInstance()->CreateWeapon(player->GetWeaponRadius());
-	ObjectManager::GetInstance()->CreateWeapon(player->GetWeaponRadius());
+
 
 
 
@@ -106,7 +103,7 @@ void InGameStage::Update(float deltaTime)
 		return;
 	}
 
-	float spawnInterval = 1.5f - difficulty * 1.25f;
+	float spawnInterval = 1.5f - difficulty * 1.48f;
 	// 시작 1.5초
 	// 종료 0.25초
 

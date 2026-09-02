@@ -32,10 +32,11 @@ void Enemy::Reset(float difficulty)
 
 	// difficulty: 0.0f ~ 1.0f
 
-	speed = 0.2f + (0.05f * difficulty);      // 0.20 → 0.25
+	speed = 0.2f + (0.6f * difficulty);      // 0.20 → 0.25
 	attack = 1.0f + (0.2f * difficulty);      // 1.0 → 1.2
 	float maxHealth = 30.0f + (30.0f * difficulty); // 30 → 60
 	health = maxHealth;
+	isDead = false;
 };
 void Enemy::MoveObject(float x, float y) {
 	location.x += x;

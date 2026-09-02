@@ -61,7 +61,7 @@ private:
 	int exp = 0;
 	int level = 1;
 	int maxLevel = 10;
-	int expTable[11] = { 0, 10, 20, 20, 20, 204, 205, 206, 207, 208, 208};
+	int expTable[15] = { 0, 30, 50, 60, 80, 120, 150, 160, 200, 220, 230,250,300,320,350};
 	float weaponRadius = 0.02f;
 
 	

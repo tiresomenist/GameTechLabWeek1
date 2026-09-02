@@ -552,7 +552,7 @@ void ObjectManager::checkWeaponIntersectWithEnemy()
 					hitEffects.push_back(FHitEffect(enemy->GetLocation(), 0.0f, 0.5f, 0.2f, 1.0f));
 				}
 				
-				if (enemy->IsDead())
+ 				if (enemy->IsDead())
 				{
 					//경험치 오브 생성
 					CreateExpOrb(enemy->GetLocation().x, enemy->GetLocation().y);
