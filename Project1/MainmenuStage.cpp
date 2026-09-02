@@ -15,7 +15,7 @@ namespace
 {
 	// Main Menu
 	constexpr float MENU_WIDTH = 420.0f;
-	constexpr float MENU_HEIGHT = 360.0f;
+	constexpr float MENU_HEIGHT = 400.0f;
 
 	constexpr float BUTTON_WIDTH = 220.0f;
 	constexpr float BUTTON_HEIGHT = 45.0f;
@@ -23,6 +23,10 @@ namespace
 	// Credits
 	constexpr float CREDIT_WIDTH = 320.0f;
 	constexpr float CREDIT_HEIGHT = 260.0f;
+
+    // Leaderboard
+    constexpr float LEADERBOARD_WIDTH = 320.0f;
+    constexpr float LEADERBOARD_HEIGHT = 380.0f;
 
 	constexpr float CLOSE_BUTTON_WIDTH = 120.0f;
 	constexpr float CLOSE_BUTTON_HEIGHT = 35.0f;
@@ -99,6 +103,19 @@ void MainmenuStage::Render()
     ImGui::Dummy(ImVec2(0.0f, 10.0f));
 
     // =========================
+	// Leaderboard
+    // =========================
+
+    ImGui::SetCursorPosX((MENU_WIDTH - BUTTON_WIDTH) * 0.5f);
+
+    if (ImGui::Button("Leaderboard", ImVec2(BUTTON_WIDTH, BUTTON_HEIGHT)))
+    {
+        ImGui::OpenPopup("Leaderboard");
+    }
+
+    ImGui::Dummy(ImVec2(0.0f, 10.0f));
+    
+    // =========================
     // Credits
     // =========================
 
@@ -170,6 +187,68 @@ void MainmenuStage::Render()
         // Close
         ImGui::SetCursorPosX(
             (CREDIT_WIDTH - CLOSE_BUTTON_WIDTH) * 0.5f
+        );
+
+        if (ImGui::Button(
+            "CLOSE",
+            ImVec2(CLOSE_BUTTON_WIDTH, CLOSE_BUTTON_HEIGHT)))
+        {
+            ImGui::CloseCurrentPopup();
+        }
+
+        ImGui::EndPopup();
+    }
+
+    // =========================
+	// Leaderboard Popup
+    // =========================
+
+    ImGui::SetNextWindowSize(
+        ImVec2(LEADERBOARD_WIDTH, LEADERBOARD_HEIGHT),
+        ImGuiCond_Always
+    );
+
+    if (ImGui::BeginPopupModal(
+        "Leaderboard",
+        nullptr,
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoCollapse))
+    {
+        ImGui::Dummy(ImVec2(0.0f, 10.0f));
+
+        // 최상단 타이틀
+        const char* leaderboardTitle = "LEADERBOARD";
+        float leaderboardTitleWidth = ImGui::CalcTextSize(leaderboardTitle).x;
+
+        ImGui::SetCursorPosX(
+            (LEADERBOARD_WIDTH - leaderboardTitleWidth) * 0.5f
+        );
+
+        ImGui::Text("%s", leaderboardTitle);
+
+        ImGui::Separator();
+        ImGui::Dummy(ImVec2(0.0f, 15.0f));
+
+        int c = 0;
+        // 팀원 이름
+		for (auto& entry : LeaderboardManager::GetInstance()->GetScores())
+		{
+			c++;
+			char buffer[100];
+			sprintf_s(buffer, "%d. %s - %d", c, entry.first.c_str(), entry.second);
+			float textWidth = ImGui::CalcTextSize(buffer).x;
+			ImGui::SetCursorPosX(
+				(LEADERBOARD_WIDTH - textWidth) * 0.5f
+			);
+			ImGui::Text("%s", buffer);
+			ImGui::Dummy(ImVec2(0.0f, 3.0f));
+		}
+
+        ImGui::Dummy(ImVec2(0.0f, 10.0f));
+
+        // Close
+        ImGui::SetCursorPosX(
+            (LEADERBOARD_WIDTH - CLOSE_BUTTON_WIDTH) * 0.5f
         );
 
         if (ImGui::Button(

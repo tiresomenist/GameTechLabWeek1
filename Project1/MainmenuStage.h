@@ -1,5 +1,6 @@
 #pragma once
 #include "IGameStage.h"
+#include "LeaderboardManager.h"
 
 class App;
 

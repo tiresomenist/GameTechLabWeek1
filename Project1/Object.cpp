@@ -43,13 +43,10 @@ void Object::SetLocation(float x,float y) {
 void Object::GetAttacked(float damage) {
 	health -= damage;
 
-	char debugMessage[50];
-	sprintf_s(debugMessage, "%.0f %.0f\n", location.x,location.y);
-	OutputDebugStringA(debugMessage);
-	if (health <= 0) { isDead = true; 
-	char debugMessage[50];
-	sprintf_s(debugMessage, "Enemy Hit! HP: %.0f\n", health);
-	OutputDebugStringA(debugMessage);
+	
+	if (health <= 0) { 
+		isDead = true; 
+	
 	}
 }
 

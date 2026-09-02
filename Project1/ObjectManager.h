@@ -16,7 +16,6 @@ class ObjectManager
 	void AddObject(Object* obj);
 	void AddEnemy(Enemy* enemy);
 	void AddWeapon(Weapon* weapon);
-	static ObjectManager* Ins;
 	float orbitAngle = 0.0f;
 	int killCount;
 
@@ -43,6 +42,7 @@ class ObjectManager
 	}
 	void checkWeaponIntersectWithEnemy();
 
+	
 	ID3D11ShaderResourceView* m_lastBoundSRV = nullptr;
 	
 	static ObjectManager* Ins;

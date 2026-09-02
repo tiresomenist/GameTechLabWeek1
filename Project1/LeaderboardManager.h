@@ -27,5 +27,5 @@ private:
 	//std::vector<int> scores;
 	std::vector<std::pair<std::string, int>> scores;
 	int maxEntries = 10; // 최대 랭킹 개수
-	std::string filename = "Resources/leaderboard.txt";
+	std::string filename = "Resource/leaderboard.txt";
 };
