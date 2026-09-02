@@ -78,19 +78,20 @@ void MainmenuStage::Render()
 		ImGuiCond_Always
 	);
 
-	ImGuiWindowFlags flags =
+	ImGui::PushStyleColor(
+		ImGuiCol_WindowBg,
+		ImVec4(0.02f, 0.04f, 0.06f, 0.35f)
+	);
+
+	ImGui::Begin(
+		"Main Menu",
+		nullptr,
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoTitleBar |
 		ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoScrollbar |
-		ImGuiWindowFlags_NoScrollWithMouse |
-		ImGuiWindowFlags_NoBackground;
-
-	ImGui::Begin(
-		"Main Menu",
-		nullptr,
-		flags
+		ImGuiWindowFlags_NoScrollWithMouse
 	);
 
 	// =========================
@@ -511,6 +512,9 @@ void MainmenuStage::Render()
 	SettingsUI::Render();
 
 	ImGui::End();
+
+	ImGui::PopStyleColor();
+
 }
 
 void MainmenuStage::Exit()
