@@ -4,13 +4,19 @@
 #include <cstdio>
 
 Augment::Augment() {
-	augStruct[0] = { AugmentType::Attack,      "Attack",       300.0f, 600.0f };
-	augStruct[1] = { AugmentType::AttackRange, "Attack Range", 50.0f, 70.0f };
-	augStruct[2] = { AugmentType::AttackSpeed, "Attack Speed", 30.0f, 50.0f };
-	augStruct[3] = { AugmentType::MoveSpeed,   "Move Speed",   100.0f, 120.0f };
-	augStruct[4] = { AugmentType::WeaponSize,  "Weapon Size",  50.0f, 70.0f };
-	augStruct[5] = { AugmentType::HealHP,      "Heal HP",      40.0f, 100.0f };
-	augStruct[6] = { AugmentType::AddWeapon,   "Add Weapon",   1.0f, 3.0f };
+	augStruct = {
+	{ AugmentType::Attack,          "Damage",       300.0f, 600.0f },
+	{ AugmentType::AttackRange,     "Attack Range", 50.0f, 70.0f },
+	{ AugmentType::AttackSpeed,     "Attack Speed", 30.0f, 50.0f },
+	{ AugmentType::MoveSpeed,        "Move Speed",   100.0f, 120.0f },
+	{ AugmentType::WeaponSize,       "Weapon Size",  50.0f, 70.0f },
+	{ AugmentType::HealHP,           "Heal HP",      40.0f, 100.0f },
+	{ AugmentType::AddWeapon,        "Add Weapon",   1.0f, 3.0f },
+	{ AugmentType::RocketAdd,         "***Add Rocket***",    1.0f, 1.0f },
+	{ AugmentType::RocketSpeed,       "Rocket Speed",        20.0f, 40.0f },
+	{ AugmentType::RocketDamage,      "Rocket Damage",       30.0f, 60.0f },
+	{ AugmentType::RocketAttackSpeed, "Rocket Attack Speed", 20.0f, 40.0f }
+	};
 
 	ResetAugment();
 }
@@ -31,30 +37,29 @@ std::string Augment::GetAugmentText(const AugmentStruct& aug) const {
 
 AugmentStruct Augment::GetAugmentStruct() {
 
-	AugmentStruct aug;
-	int index;
-	index = rand() % augNum.size();
+	int index = rand() % availableAugments.size();
+
+	AugmentStruct aug = availableAugments[index];
 
 	float random = static_cast<float>(rand()) / RAND_MAX;
 
-	aug = augStruct[augNum[index]];
-
 	if (random < enhanceChance) {
-		OutputDebugStringA("강화 증강");
 		aug.isEnhanced = true;
 		aug.value = aug.enhenceValue;
 	}
 
-	augNum.erase(augNum.begin() + index);
+	availableAugments.erase(availableAugments.begin() + index);
 
 	return aug;
 }
 
 //증강 풀 초기화
 void Augment::ResetAugment() {
-	augNum.clear();
 
-	for(int i=0;i< static_cast<int>(AugmentType::Count);i++)
-		augNum.push_back(i);
+	availableAugments.clear();
 
+	for (const auto& aug : augStruct)
+	{
+		availableAugments.push_back(aug);
+	}
 }

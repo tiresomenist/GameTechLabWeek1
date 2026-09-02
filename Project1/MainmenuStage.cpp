@@ -80,6 +80,7 @@ void MainmenuStage::Update(float deltaTime)
 
 	//공들 회전
 	ObjectManager::GetInstance()->Update(deltaTime);
+
 	if (InputManager::GetInstance()->IsKeyTriggered(VK_UP) || InputManager::GetInstance()->IsKeyTriggered('W')) {
 		selectedMenu--;
 

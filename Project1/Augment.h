@@ -13,6 +13,10 @@ enum class AugmentType
 	WeaponSize,    // 무기크기
 	HealHP,        // 체력회복
 	AddWeapon,     // 무기추가
+	RocketAdd,
+	RocketSpeed,
+	RocketDamage,
+	RocketAttackSpeed,
 	Count
 };
 
@@ -34,9 +38,16 @@ public:
 	void ResetAugment();
 
 private:
-	AugmentStruct augStruct[static_cast<int>(AugmentType::Count)];
-	std::vector<int> augNum;
+	std::vector<AugmentStruct> augStruct;
+	std::vector<AugmentStruct> availableAugments;
+
+	// 강화 증강
 	bool isEnhanced = false;
 	float enhanceChance = 0.5f;
+
+	// 로켓 증강
+	bool hasRocket = false;
+
+
 };
 
