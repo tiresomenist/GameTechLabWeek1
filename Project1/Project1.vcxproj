@@ -168,13 +168,11 @@
     <ClInclude Include="MainmenuStage.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectManager.h" />
-    <ClInclude Include="Plane.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="TimeManager.h" />
     <ClInclude Include="UExpOrb.h" />
-    <ClInclude Include="UItem.h" />
     <ClInclude Include="URenderer.h" />
     <ClInclude Include="Weapon.h" />
   </ItemGroup>
@@ -202,7 +200,6 @@
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="UExpOrb.cpp" />
-    <ClCompile Include="UItem.cpp" />
     <ClCompile Include="URenderer.cpp" />
     <ClCompile Include="Weapon.cpp" />
   </ItemGroup>
@@ -220,7 +217,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="EPrimitives.h" />
+    <Image Include="earthCartoon.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

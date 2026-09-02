@@ -50,10 +50,7 @@ void ObjectManager::CreateExpOrb()
 	UExpOrb* newExpOrb = new UExpOrb();
 	AddObject(newExpOrb);
 
-
 }
-
-
 
 ObjectManager::ObjectManager()
 {
