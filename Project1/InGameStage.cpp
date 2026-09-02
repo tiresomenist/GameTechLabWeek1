@@ -350,7 +350,7 @@ void InGameStage::RenderPauseModal()
 	prevEscDown = escDown;
 
 	// 인게임에서 ESC로 Pause 열기
-	if (escPressed && !ImGui::IsPopupOpen("Pause Menu"))
+	if (escPressed && !ImGui::IsPopupOpen("Pause Menu") && gameResult == 0)
 	{
 		openPausePopup = true;
 	}
