@@ -642,6 +642,7 @@ void ObjectManager::CheckMissileIntersectWithEnemy()
 
 			if ((dx * dx + dy * dy) <= (r * r))
 			{
+				USoundManager::GetInstance()->PlaySFX(ENEMY_HIT);
 				enemy->GetAttacked(missile->GetDMG());
 				if (enemy->IsDead())
 				{
@@ -855,6 +856,23 @@ void ObjectManager::UpgradePlayer(AugmentStruct aug) {
 			CreateWeapon(player->GetWeaponRadius());
 		}
 		
+		break;
+
+	case AugmentType::RocketAdd:
+		
+		player->SetHasRocket(true);
+		break;
+
+	case AugmentType::RocketSpeed:
+		player->IncreaseMissileMoveSpeed(aug.value);
+		break;
+
+	case AugmentType::RocketDamage:
+		player->IncreaseMissileDmg(aug.value);
+		break;
+	
+	case AugmentType::RocketAttackSpeed:
+		player->IncreaseMissileRapidSpeed(aug.value);
 		break;
 	}
 }

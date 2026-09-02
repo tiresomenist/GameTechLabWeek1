@@ -143,16 +143,16 @@ void InGameStage::Update(float deltaTime)
 	//플레이어와 레벨업 오브젝트 충돌 체크
 	ObjectManager::GetInstance()->checkPlayerIntersectWithExpOrb();
 
-	//가장 가까운 적에게 미사일 발사
-	player->missileShootTimer += deltaTime;
+	if (player->HasRocket()) {
+		//가장 가까운 적에게 미사일 발사
+		player->missileShootTimer += deltaTime;
 
-	if(player->missileShootTimer >= player->missileRapidSpeed)
-	{
-		ObjectManager::GetInstance()->ShootMissileToEnemy();
-		player->missileShootTimer = 0.0f;
+		if (player->missileShootTimer >= player->missileRapidSpeed)
+		{
+			ObjectManager::GetInstance()->ShootMissileToEnemy();
+			player->missileShootTimer = 0.0f;
+		}
 	}
-	
-
 
 	ObjectManager::GetInstance()->MoveMissile(deltaTime);
 	ObjectManager::GetInstance()->CheckMissileIntersectWithEnemy();
@@ -197,10 +197,11 @@ void InGameStage::RenderAugmentModal()
 	//증강 생성 되었는지
 	if (!isAugmnetSelected) {
 		//증강 3개 랜덤뽑기
+
+		augment.ResetAugment(player->HasRocket());
 		aug1 = augment.GetAugmentStruct();
 		aug2 = augment.GetAugmentStruct();
 		aug3 = augment.GetAugmentStruct();
-		augment.ResetAugment();
 
 		isAugmnetSelected = true;
 		selectedAugment = 0;

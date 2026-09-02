@@ -20,9 +20,13 @@ public:
 	float GetMaxHealth();
 	void ScalePlayerRadius(float scale) { radius = 0.05f * scale; } // 플레이어의 반지름 배율 조정
 
+
 	int GetLevel();
 	int GetExp();
 	int GetExpTable();
+	bool HasRocket() const { return canShootMissile; }
+	void SetHasRocket(bool x);
+	
 	void AddExp(int x);
 	bool IsLevelUp();
 	float GetWeaponRadius() const { return weaponRadius; } // 플레이어의 무기 반지름 반환
@@ -34,6 +38,11 @@ public:
 	void IncreaseAttackSpeed(float x);
 	void IncreaseMoveSpeed(float x);
 	void IncreaseHealHp(float x);
+
+	void IncreaseMissileMoveSpeed(float x);
+	void IncreaseMissileDmg(float x);
+	void IncreaseMissileRapidSpeed(float x);
+
 	void SetWeaponRadius(float _r) { weaponRadius = _r; } // 플레이어의 무기 반지름 설정
 	void UpdateState() override; // 플레이어 상태 업데이트
 
@@ -41,11 +50,14 @@ public:
 	float missileDmg = 30.0f;
 	float missileMoveSpeed = 0.5f;
 	float missileRapidSpeed = 0.5f;
+	
 
 private:
 	float WeaponRotationSpeed = 6.0f;
 	float orbitRadius = 0.2f;
+	bool canShootMissile = false;
 	
+
 	int exp = 0;
 	int level = 1;
 	int maxLevel = 10;

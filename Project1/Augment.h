@@ -25,6 +25,7 @@ struct AugmentStruct {
 	const char* name;
 	float value;
 	float enhenceValue;
+	float weight;
 	bool isEnhanced;
 };
 
@@ -35,7 +36,7 @@ public:
 	Augment();
 	AugmentStruct GetAugmentStruct();
 	std::string GetAugmentText(const AugmentStruct& aug) const;
-	void ResetAugment();
+	void ResetAugment(bool hasRocket);
 
 private:
 	std::vector<AugmentStruct> augStruct;

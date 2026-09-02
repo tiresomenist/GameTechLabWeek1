@@ -8,6 +8,7 @@ Player::Player() {
 	health = MaxHealth;
 	speed = 0.4f;
 	attack = 100.0f;
+	canShootMissile = false;
 };
 bool Player::IsWall(float x, float y) {
 
@@ -108,6 +109,24 @@ void Player::IncreaseHealHp(float x) {
 	if (health > MaxHealth)
 		health = MaxHealth;
 }
+
+void Player::SetHasRocket(bool x) {
+	canShootMissile = x;
+}
+
+
+void Player::IncreaseMissileMoveSpeed(float x) {
+	missileMoveSpeed = missileMoveSpeed * (1.0f + x / 100.0f);
+}
+
+void Player::IncreaseMissileDmg(float x) {
+	missileDmg = missileDmg * (1.0f + x / 100.0f);
+}
+
+void Player::IncreaseMissileRapidSpeed(float x) {
+	missileRapidSpeed = missileRapidSpeed * ((100.0f - x) / 100.0f);
+}
+
 
 void Player::UpdateState()
 {
