@@ -208,6 +208,24 @@ void App::InitD3D()
 		vertex.v = 0.5f - (asin(std::clamp(vertex.y, -1.0f, 1.0f)) / PI);
 	}
 
+	// 텍스처 매핑 seam 보정
+	for (int i = 0; i < sizeof(sphere_vertices) / sizeof(FVertexSimple); i+=3)
+	{
+		float maxU = (std::max)({ sphere_vertices[i].u, sphere_vertices[i + 1].u, sphere_vertices[i + 2].u });
+		float minU = (std::min)({ sphere_vertices[i].u, sphere_vertices[i + 1].u, sphere_vertices[i + 2].u });
+
+		if (maxU - minU > 0.5f)
+		{
+			for (int j = 0; j < 3; ++j)
+			{
+				if (sphere_vertices[i + j].u < 0.5f)
+				{
+					sphere_vertices[i + j].u += 1.0f;
+				}
+			}
+		}
+	}
+
 	SphereVertexBuffer = App::Ins->CreateVertexBuffer(sphere_vertices, sizeof(sphere_vertices));
 	SphereNumVertices = sizeof(sphere_vertices) / sizeof(FVertexSimple);
 	
