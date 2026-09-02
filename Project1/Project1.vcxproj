@@ -167,6 +167,7 @@
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="LeaderboardUI.h" />
     <ClInclude Include="MainmenuStage.h" />
+    <ClInclude Include="UMissile.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectManager.h" />
     <ClInclude Include="Player.h" />
@@ -208,6 +209,7 @@
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="UExpOrb.cpp" />
     <ClCompile Include="UItem.cpp" />
+    <ClCompile Include="UMissile.cpp" />
     <ClCompile Include="URenderer.cpp" />
     <ClCompile Include="Weapon.cpp" />
   </ItemGroup>

@@ -32,6 +32,7 @@ public:
 
 	virtual void UpdateState(); //최종 업데이트
 	void SetLocation(float x,float y);
+	void SetRotation(float x, float y, float z);
 	URenderer* renderer;
 
 	void SetDepth(float d) { depth = d; }

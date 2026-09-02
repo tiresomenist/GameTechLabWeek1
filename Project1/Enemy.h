@@ -20,6 +20,11 @@ public:
 	float hitFlashAmount = 0.0f;
 	float flashDuration = 0.1f;       // 흰색이 사라지는 시간
 
+	void Reset(float difficulty);
+
+
+	bool pendingRemove = false; // 제거 예정 여부
+
 	bool GetisHit() const
 	{
 		return isHit;
@@ -29,6 +34,16 @@ public:
 	{
 		isHit = value;
 	};
+
+	bool GetPendingRemove() const
+	{
+		return pendingRemove;
+	}
+
+	void SetPendingRemove(bool value)
+	{
+		pendingRemove = value;
+	}
 
 	void SetHitFlashAmount(float amount)
 	{

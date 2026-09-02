@@ -143,6 +143,21 @@ void InGameStage::Update(float deltaTime)
 	//플레이어와 레벨업 오브젝트 충돌 체크
 	ObjectManager::GetInstance()->checkPlayerIntersectWithExpOrb();
 
+	//가장 가까운 적에게 미사일 발사
+	player->missileShootTimer += deltaTime;
+
+	if(player->missileShootTimer >= player->missileRapidSpeed)
+	{
+		ObjectManager::GetInstance()->ShootMissileToEnemy();
+		player->missileShootTimer = 0.0f;
+	}
+	
+
+
+	ObjectManager::GetInstance()->MoveMissile(deltaTime);
+	ObjectManager::GetInstance()->CheckMissileIntersectWithEnemy();
+	//미사일 적 충돌검사
+
 	// 레벨업 경험치 도달 시 일시정지 및 팝업 on
 	if (player->IsLevelUp()) 
 	{

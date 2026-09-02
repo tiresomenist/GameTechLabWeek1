@@ -53,6 +53,10 @@ class App
 	ID3D11ShaderResourceView* hitEffectTextureSRV;
 	ID3D11Texture2D* hitEffectTexture;
 
+	//로켓 텍스쳐
+	ID3D11ShaderResourceView* rocketTextureSRV;
+	ID3D11Texture2D* rocketTexture;
+
 	// 제목 텍스처
 	ID3D11ShaderResourceView* titleTextureSRV;
 	ID3D11Texture2D* titleTexture;
@@ -184,6 +188,11 @@ class App
 	ID3D11ShaderResourceView* GetHitEffectTextureSRV()
 	{
 		return hitEffectTextureSRV;
+	}
+
+	ID3D11ShaderResourceView* GetRocketTextureSRV()
+	{
+		return rocketTextureSRV;
 	}
 
 	ID3D11ShaderResourceView* GetTitleTextureSRV()

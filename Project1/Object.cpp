@@ -42,6 +42,13 @@ void Object::SetLocation(float x,float y) {
 	location.y = y;
 }
 
+void Object::SetRotation(float x, float y, float z)
+{
+	rotation.x = x;
+	rotation.y = y;
+	rotation.z = z;
+}
+
 void Object::GetAttacked(float damage) {
 	health -= damage;
 
