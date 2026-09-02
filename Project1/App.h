@@ -49,6 +49,10 @@ class App
 	ID3D11ShaderResourceView* expOrbTextureSRV;
 	ID3D11Texture2D* expOrbTexture;
 
+	// 타격 이펙트 텍스처
+	ID3D11ShaderResourceView* hitEffectTextureSRV;
+	ID3D11Texture2D* hitEffectTexture;
+
 
 	//프레임 버퍼
 	ID3D11Texture2D* m_frameBuffer;
@@ -171,6 +175,11 @@ class App
 	ID3D11ShaderResourceView* GetExpOrbTextureSRV()
 	{
 		return expOrbTextureSRV;
+	}
+
+	ID3D11ShaderResourceView* GetHitEffectTextureSRV()
+	{
+		return hitEffectTextureSRV;
 	}
 
 	ID3D11BlendState* GetBlendState() const

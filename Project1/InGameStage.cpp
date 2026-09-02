@@ -234,71 +234,101 @@ void InGameStage::Render()
 
 void InGameStage::RenderHUD(int minutes, int seconds)
 {
+	score = minutes * 600 + seconds * 10 + ObjectManager::GetInstance()->getKillCount() * 10;
+
 	/////////////////////////
 	// InGame 상시 HUD 
 	/////////////////////////
 
-	ImGui::SetNextWindowPos(ImVec2(20.0f, 20.0f), ImGuiCond_Always);
+	// 전체 화면 투명 오버레이 윈도우
+	ImGuiViewport* viewport = ImGui::GetMainViewport();
+	ImGui::SetNextWindowPos(viewport->Pos);
+	ImGui::SetNextWindowSize(viewport->Size);
+	ImGui::SetNextWindowBgAlpha(0.0f); // 투명 배경
 
 	ImGuiWindowFlags hudFlags =
+		ImGuiWindowFlags_NoDecoration |
+		ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoTitleBar |
-		ImGuiWindowFlags_AlwaysAutoResize;
+		ImGuiWindowFlags_NoSavedSettings |
+		ImGuiWindowFlags_NoFocusOnAppearing |
+		ImGuiWindowFlags_NoBringToFrontOnFocus |
+		ImGuiWindowFlags_NoMouseInputs; // 인게임 마우스 클릭/입력 통과
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 
 	// HUD 창 Begin
 	ImGui::Begin("HUD", nullptr, hudFlags);
 
-	// HP
-	ImGui::Text("HP");
+	//경험치 바
+	float screenWidth = viewport->Size.x;
+	float screenHeight = viewport->Size.y;
+	float expHeight = 10.0f;
+	float expRatio = static_cast<float>(player->GetExp()) / player->GetExpTable();
+	expRatio = ImClamp(expRatio, 0.0f, 1.0f);
 
-	float hpRatio = player->GetHealth() / player->GetMaxHealth();
+	ImGui::SetCursorPos(ImVec2(0.0f, 0.0f));
+	ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(0.15f, 0.75f, 0.25f, 1.0f)); // 초록색 경험치 게이지
+	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.08f, 0.08f, 0.12f, 0.8f));      // 게이지 배경
 
-	char hpText[32];
-	sprintf_s(hpText, "%.0f / %.0f", player->GetHealth(), player->GetMaxHealth());
+	ImGui::ProgressBar(expRatio, ImVec2(screenWidth, expHeight), "");
+	ImGui::PopStyleColor(2);
+	
+	// 글씨 크기 억지로 키움
+	ImGui::SetWindowFontScale(2.5f);
 
-	ImGui::ProgressBar(
-		hpRatio,
-		ImVec2(300.0f, 25.0f),
-		hpText
+	// 시간 표기
+	char timeStr[32];
+	snprintf(timeStr, sizeof(timeStr), "%02d:%02d", minutes, seconds);
+
+	float timeTextWidth = ImGui::CalcTextSize(timeStr).x;
+	ImGui::SetCursorPos(ImVec2((screenWidth - timeTextWidth) * 0.5f, expHeight + 8.0f));
+	ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "%s", timeStr);
+
+	// 스코어, 레벨
+	char levelStr[32], scoreStr[32];
+	snprintf(levelStr, sizeof(levelStr), "LV. %d", player->GetLevel());
+	snprintf(scoreStr, sizeof(scoreStr), "SCORE: %d", score);
+
+	float margin = 16.0f;
+	float maxRightTextWidth = ImMax(ImGui::CalcTextSize(levelStr).x, ImGui::CalcTextSize(scoreStr).x);
+	float rightAlignX = screenWidth - maxRightTextWidth - margin;
+
+	ImGui::SetCursorPos(ImVec2(rightAlignX, expHeight + 6.0f));
+	ImGui::TextColored(ImVec4(1.0f, 0.85f, 0.2f, 1.0f), "%s", levelStr);
+
+	ImGui::SetCursorPos(ImVec2(rightAlignX, expHeight + 38.0f));
+	ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "%s", scoreStr);
+
+	ImGui::SetWindowFontScale(1.0f);
+	
+	ImVec2 playerScreenPos(
+		(player->GetLocation().x + 1.0f) * 0.5f * screenWidth,
+		(1.0f - player->GetLocation().y) * 0.5f * screenHeight // DirectX NDC Y축(위쪽이 +) 반전 처리
 	);
 
-	ImGui::Text("Level : %d", player->GetLevel());
-	ImGui::Text("EXP : %d/%d", player->GetExp(), player->GetExpTable());
-	score = seconds * 10 + ObjectManager::GetInstance()->getKillCount() * 10;
+	float hpRatio = player->GetHealth() / player->GetMaxHealth();
+	hpRatio = ImClamp(hpRatio, 0.0f, 1.0f);
 
-	ImGui::Text("TIME  %02d:%02d", minutes, seconds);
-	ImGui::Text("Score: %d", score);
-	ImGui::Separator();
+	float hpBarWidth = 56.0f;     // HP 바 가로 폭
+	float hpBarHeight = 6.0f;     // HP 바 두께
+	float verticalOffset = 36.0f; // 플레이어 중심점 기준 위쪽 간격
 
-	// 임시 테스트 버튼
-	// TODO: 게임 종료조건 API 붙으면 삭제 예정
-	// +) Clear 조건은 붙었으나 테스트용으로 남겨둠
-	if (ImGui::Button("Preview Clear"))
-	{
-		gameResult = 1;
-		openResultPopup = true;
-	}
+	ImVec2 hpBarPos = ImVec2(playerScreenPos.x - (hpBarWidth * 0.5f), playerScreenPos.y + verticalOffset);
 
-	ImGui::SameLine();
+	
+	ImGui::SetCursorScreenPos(hpBarPos);
+	ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(0.9f, 0.2f, 0.2f, 1.0f)); // 노란색 HP
+	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.15f, 0.15f, 0.15f, 0.8f));
 
-	if (ImGui::Button("Preview Game Over"))
-	{
-		gameResult = 2;
-		openResultPopup = true;
-	}
+	ImGui::ProgressBar(hpRatio, ImVec2(hpBarWidth, hpBarHeight), "");
 
-	ImGui::Separator();
-
-	// Pause 열기
-	if (ImGui::Button("||"))
-	{
-		
-		openPausePopup = true;
-	}
+	ImGui::PopStyleColor(2);
 
 	// HUD 창 End
 	ImGui::End();
+	ImGui::PopStyleVar(2);
 }
 
 void InGameStage::RenderPauseModal()

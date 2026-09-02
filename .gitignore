@@ -410,3 +410,4 @@ FodyWeavers.xsd
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio
 
 Project1/imgui.ini
+Project1/Resource/leaderboard.txt
