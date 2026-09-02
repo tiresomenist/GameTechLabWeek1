@@ -27,7 +27,6 @@ class ObjectManager
 	void CreateWeapon();
 	void CreateExpOrb();
 
-
 	ObjectManager();
 	void Render();
 	void Update(float deltaTime);

@@ -5,7 +5,8 @@
 #include "EPrimitives.h"
 #include "UExpOrb.h"
 
-
+#include "FHitFlashConstant.h"
+#include "D3D11Util.h"
 
 ObjectManager* ObjectManager::Ins = nullptr;
 
@@ -114,15 +115,32 @@ void ObjectManager::Render()
 		ID3D11ShaderResourceView* srv = App::Ins->GetMeteorTextureSRV();
 		if (srv != m_lastBoundSRV)
 		{
-
 			App::Ins->GetDeviceContext()->PSSetShaderResources(0, 1, &srv);
 			m_lastBoundSRV = srv;
 		}
-				for (auto enemy : enemyList)
+
+		// PS 상수버퍼 설정
+		ID3D11Buffer* hitFlashBuffer =
+			App::Ins->GetHitFlashConstantBuffer();
+
+		App::Ins->GetDeviceContext()->PSSetConstantBuffers(
+			0, 1, &hitFlashBuffer
+		);
+
+		for (auto enemy : enemyList)
 		{
-			enemy->renderer->RenderPrimitive(enemy->GetLocation(), enemy->GetRadius(), Priv::Sphere);
+			enemy->renderer->RenderPrimitive(enemy->GetLocation(), enemy->GetRadius());
 		}
 
+		// enemy 렌더가 전부 끝난 뒤 상수버퍼 초기화
+		FHitFlashConstant resetCB = {};
+		resetCB.hitFlashAmount = 0.0f;
+
+		D3D11Util::UpdateConstantBuffer(
+			App::Ins->GetDeviceContext(),
+			hitFlashBuffer,
+			resetCB
+		);
 	}
 
 
@@ -271,6 +289,7 @@ void ObjectManager::checkWeaponIntersectWithEnemy()
 				{
 					USoundManager::GetInstance()->PlaySFX(ENEMY_HIT);
 					enemy->GetAttacked(player->GetAttack());
+					enemy->SetHitFlashAmount(1.0f);
 					enemy->SetisHit(true);
 				}
 				

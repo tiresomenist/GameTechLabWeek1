@@ -60,6 +60,8 @@ class App
 	//상수 버퍼
 	ID3D11Buffer* constantBuffer;
 
+	ID3D11Buffer* hitFlashConstantBuffer = nullptr;
+
 	ID3D11Buffer* m_bgVertexBuffer;
 	//배경 텍스쳐
 	ID3D11Texture2D* m_bgTexture;
@@ -77,7 +79,6 @@ class App
 	float ClearColor[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
 
 	//내부 초기화 함수들
-	
 	void InitD3D();
 	void Initwindow(HINSTANCE hInstance);
 	void InitImgui();
@@ -92,10 +93,8 @@ class App
 	//자원 해제 함수
 	void ReleaseShader();
 	void ReleaseDeviceAndSwapChain();
-
 	
 	//타이머,인풋 업데이트
-	
 	void Update();
 	void Render();
 
@@ -150,6 +149,11 @@ class App
 	ID3D11Buffer* GetConstantBuffer() const
 	{
 		return constantBuffer;
+	}
+
+	ID3D11Buffer* GetHitFlashConstantBuffer()
+	{
+		return hitFlashConstantBuffer;
 	}
 
 	ID3D11ShaderResourceView* GetEarthTextureSRV() const { return textureSRV; }
