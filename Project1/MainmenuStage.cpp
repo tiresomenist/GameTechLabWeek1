@@ -143,10 +143,12 @@ void MainmenuStage::Render()
     // Credits Popup
     // =========================
 
+    
     ImGui::SetNextWindowSize(
         ImVec2(CREDIT_WIDTH, CREDIT_HEIGHT),
         ImGuiCond_Always
     );
+
 
     if (ImGui::BeginPopupModal(
         "Credits",
@@ -198,7 +200,6 @@ void MainmenuStage::Render()
 
         ImGui::EndPopup();
     }
-
     // =========================
 	// Leaderboard Popup
     // =========================
