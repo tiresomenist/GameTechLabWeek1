@@ -56,8 +56,8 @@ public:
     float GetSFXVolume() { return sfxVolume; };
 
 private:
-    float bgmVolume = 1.0f;
-    float sfxVolume = 1.0f;
+    float bgmVolume = 0.5f;
+    float sfxVolume = 0.7f;
 
     bool LoadWavFile(const std::wstring& filePath, SoundData& outData);
     bool LoadBGM(const std::wstring& key, const std::wstring& filePath);

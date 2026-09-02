@@ -20,6 +20,8 @@ struct AugmentStruct {
 	AugmentType type;
 	const char* name;
 	float value;
+	float enhenceValue;
+	bool isEnhanced;
 };
 
 class Augment {
@@ -34,5 +36,7 @@ public:
 private:
 	AugmentStruct augStruct[static_cast<int>(AugmentType::Count)];
 	std::vector<int> augNum;
+	bool isEnhanced = false;
+	float enhanceChance = 0.5f;
 };
 
