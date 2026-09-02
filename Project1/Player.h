@@ -29,7 +29,6 @@ public:
 	void IncreaseAttackRange(float x);
 	void IncreaseAttackSpeed(float x);
 	void IncreaseMoveSpeed(float x);
-	void IncreaseWeaponSize(float x);
 	void IncreaseHealHp(float x);
 
 
@@ -39,6 +38,6 @@ private:
 	
 	int exp = 0;
 	int level = 1;
-	int maxLevel = 5;
-	int expTable[6] = { 0, 100, 101, 102, 103, 103 };
+	int maxLevel = 10;
+	int expTable[11] = { 0, 200, 201, 202, 203, 204, 205, 206, 207, 208, 208};
 };

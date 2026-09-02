@@ -24,8 +24,6 @@ Object::Object()
 {
 	renderer = new URenderer();
 
-
-
 }
 float Object::GetRadius() {
 	return radius;
@@ -56,4 +54,8 @@ float Object::GetAttack() {
 }
 float Object::GetHealth() {
 	return health;
+}
+
+void Object::IncreaseRadius(float x) {
+	radius = radius * (1.0f + x / 100.0f);
 }

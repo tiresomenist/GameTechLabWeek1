@@ -257,9 +257,52 @@ void ObjectManager::SpinWeapon(float deltaTime, float rotationSpeed)
 	for (int i = 0; i < count; ++i) {
 		weaponList[i]->UpdateOrbit(deltaTime, player->GetWeaponRotationSpeed(), orbitAngle + step * i,center,player->GetOrbitRadius());
 	}
+}
 
 
+void ObjectManager::UpgradePlayer(AugmentStruct aug) {
+	Player* player = static_cast<Player*>(obejctList[0]);
 
+	switch (aug.type)
+	{
+	case AugmentType::Attack:
+		// 공격력 증가
+		player->IncreaseAttack(aug.value);
+		break;
+
+	case AugmentType::AttackRange:
+		// 공격 범위 증가
+		player->IncreaseAttackRange(aug.value);
+		break;
+
+	case AugmentType::AttackSpeed:
+		// 공격 속도 증가
+		player->IncreaseAttackSpeed(aug.value);
+		break;
+
+	case AugmentType::MoveSpeed:
+		// 이동 속도 증가
+		player->IncreaseMoveSpeed(aug.value);
+		break;
+
+	case AugmentType::WeaponSize:
+		// 무기 크기 증가
+
+		for (Weapon* weapon : weaponList)
+		{
+			weapon->IncreaseRadius(aug.value);
+		}
+		break;
+
+	case AugmentType::HealHP:
+		// 체력 회복
+		player->IncreaseHealHp(aug.value);
+		break;
+
+	case AugmentType::AddWeapon:
+		CreateWeapon();
+		break;
+	}
 }
 
 

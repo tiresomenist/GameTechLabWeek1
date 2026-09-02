@@ -1,15 +1,19 @@
 #pragma once
 #include "Player.h"
 #include "Weapon.h"
+#include <string>
+
 
 enum class AugmentType
 {
-	Attack,
-	AttackRange,
-	AttackSpeed,
-	MoveSpeed,
-	WeaponSize,
-	HealHP
+	Attack,        // 공격력 
+	AttackRange,   // 공격범위
+	AttackSpeed,   // 공격속도
+	MoveSpeed,     // 이동속도
+	WeaponSize,    // 무기크기
+	HealHP,        // 체력회복
+	AddWeapon,     // 무기추가
+	Count
 };
 
 struct AugmentStruct {
@@ -21,14 +25,14 @@ struct AugmentStruct {
 class Augment {
 
 public:
+public:
 	Augment();
-
 	AugmentStruct GetAugmentStruct();
-	
-	void UpgradePlayer(AugmentStruct aug, Player *player);
+	std::string GetAugmentText(const AugmentStruct& aug);
 	void ResetAugment();
 
 private:
-	AugmentStruct augStruct[6];
-	std::vector<int> augNum = { 0,1,2,3,4,5 };
+	AugmentStruct augStruct[static_cast<int>(AugmentType::Count)];
+	std::vector<int> augNum;
 };
+

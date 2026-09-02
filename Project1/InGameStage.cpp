@@ -100,7 +100,6 @@ void InGameStage::Update(float deltaTime)
 	// 경험치 상승 임시구현
 	player->AddExp(1);
 
-
 	// 레벨업 경험치 도달 시 일시정지 및 팝업 on
 	if (player->IsLevelUp()) {
 		OutputDebugStringA("Level UP!");
@@ -118,10 +117,10 @@ void InGameStage::RenderAugmentModal()
 	//증강 생성 되었는지
 	if (!isAugmnetSelected) {
 		//증강 3개 랜덤뽑기
-		aug1 = augment.Augment::GetAugmentStruct();
-		aug2 = augment.Augment::GetAugmentStruct();
-		aug3 = augment.Augment::GetAugmentStruct();
-		augment.Augment::ResetAugment();
+		aug1 = augment.GetAugmentStruct();
+		aug2 = augment.GetAugmentStruct();
+		aug3 = augment.GetAugmentStruct();
+		augment.ResetAugment();
 
 		isAugmnetSelected = true;
 	}
@@ -148,35 +147,37 @@ void InGameStage::RenderAugmentModal()
 	ImDrawList* drawList = ImGui::GetWindowDrawList();
 	ImVec2 pos = ImGui::GetCursorScreenPos();
 
-	char texts[3][50];
+	std::string texts[3];
 
-	sprintf_s(texts[0], "%s\n+%.0f", aug1.name, aug1.value);
-	sprintf_s(texts[1], "%s\n+%.0f", aug2.name, aug2.value);
-	sprintf_s(texts[2], "%s\n+%.0f", aug3.name, aug3.value);
+	// 증강 텍스트
+	texts[0] = augment.GetAugmentText(aug1);
+	texts[1] = augment.GetAugmentText(aug2);
+	texts[2] = augment.GetAugmentText(aug3);
 
+	// 증강 버튼 생성
 	for (int i = 0; i < 3; i++)
 	{
-		if (ImGui::Button(texts[i], ImVec2(width, height)))
+		if (ImGui::Button(texts[i].c_str(), ImVec2(width, height)))
 		{
 			switch (i)
 			{
 			case 0:
 				TimeManager::GetInstance()->TimeResume();
-				augment.UpgradePlayer(aug1, player);
+				ObjectManager::GetInstance()->UpgradePlayer(aug1);
 				isAugmnetSelected = false;
 				openAugmentPopup = false;
 				break;
 
 			case 1:
 				TimeManager::GetInstance()->TimeResume();
-				augment.UpgradePlayer(aug2, player);
+				ObjectManager::GetInstance()->UpgradePlayer(aug2);
 				isAugmnetSelected = false;
 				openAugmentPopup = false;
 				break;
 
 			case 2:
 				TimeManager::GetInstance()->TimeResume();
-				augment.UpgradePlayer(aug3, player);
+				ObjectManager::GetInstance()->UpgradePlayer(aug3);
 				isAugmnetSelected = false;
 				openAugmentPopup = false;
 				break;

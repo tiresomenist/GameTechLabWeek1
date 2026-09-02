@@ -1,13 +1,32 @@
 #include <vector>
 #include "Augment.h"
+#include <string>
+#include <cstdio>
 
 Augment::Augment() {
-	augStruct[0] = { AugmentType::Attack,      "Attack",       10.0f };
-	augStruct[1] = { AugmentType::AttackRange, "Attack Range", 0.05f };
-	augStruct[2] = { AugmentType::AttackSpeed, "Attack Speed", 0.5f };
-	augStruct[3] = { AugmentType::MoveSpeed,   "Move Speed",   1.0f };
-	augStruct[4] = { AugmentType::WeaponSize,  "Weapon Size",  1.0f };
+	augStruct[0] = { AugmentType::Attack,      "Attack",       300.0f };
+	augStruct[1] = { AugmentType::AttackRange, "Attack Range", 50.0f };
+	augStruct[2] = { AugmentType::AttackSpeed, "Attack Speed", 30.0f };
+	augStruct[3] = { AugmentType::MoveSpeed,   "Move Speed",   100.0f };
+	augStruct[4] = { AugmentType::WeaponSize,  "Weapon Size",  50.0f };
 	augStruct[5] = { AugmentType::HealHP,      "Heal HP",      40.0f };
+	augStruct[6] = { AugmentType::AddWeapon,   "Add Weapon",   1.0f };
+
+	ResetAugment();
+}
+
+std::string Augment::GetAugmentText(const AugmentStruct& aug) {
+
+	char text[50];
+
+	if (aug.type == AugmentType::HealHP || aug.type == AugmentType::AddWeapon) {
+		sprintf_s(text, "%s\n+%.0f", aug.name, aug.value);
+	}
+	else {
+		sprintf_s(text, "%s\n+%.0f%%", aug.name, aug.value);
+	}
+
+	return text;
 }
 
 AugmentStruct Augment::GetAugmentStruct() {
@@ -23,48 +42,10 @@ AugmentStruct Augment::GetAugmentStruct() {
 	return aug;
 }
 
+//증강 풀 초기화
 void Augment::ResetAugment() {
 	augNum.clear();
-	augNum.push_back(0);
-	augNum.push_back(1);
-	augNum.push_back(2);
-	augNum.push_back(3);
-	augNum.push_back(4);
-	augNum.push_back(5);
-}
 
-void Augment::UpgradePlayer(AugmentStruct aug, Player* player) {
-	switch (aug.type)
-	{
-	case AugmentType::Attack:
-		// 공격력 증가
-		player->IncreaseAttack(aug.value);
-		break;
-
-	case AugmentType::AttackRange:
-		// 공격 범위 증가
-		player->IncreaseAttackRange(aug.value);
-		break;
-
-	case AugmentType::AttackSpeed:
-		// 공격 속도 증가
-		player->IncreaseAttackSpeed(aug.value);
-		break;
-
-	case AugmentType::MoveSpeed:
-		// 이동 속도 증가
-		player->IncreaseMoveSpeed(aug.value);
-		break;
-
-	case AugmentType::WeaponSize:
-		// 무기 크기 증가
-		player->IncreaseWeaponSize(aug.value);
-		break;
-
-	case AugmentType::HealHP:
-		// 체력 회복
-		player->IncreaseHealHp(aug.value);
-		break;
-	}
-	
+	for(int i=0;i< static_cast<int>(AugmentType::Count);i++)
+		augNum.push_back(i);
 }

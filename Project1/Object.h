@@ -27,6 +27,8 @@ public:
 	void GetAttacked(float damage);
 	virtual bool IsDead();
 
+	void IncreaseRadius(float x);
+
 	void UpdateState(); //최종 업데이트
 	void SetLocation(float x,float y);
 	URenderer* renderer;

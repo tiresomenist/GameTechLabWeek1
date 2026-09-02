@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "Weapon.h"
+#include "Augment.h"
 
 class ObjectManager
 {
@@ -54,7 +55,7 @@ class ObjectManager
 		return Ins;
 	}
 
-	
+	void UpgradePlayer(AugmentStruct aug);
 
 	void ReleaseAllObjects();
 

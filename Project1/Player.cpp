@@ -83,23 +83,19 @@ bool Player::IsLevelUp() {
 }
 
 void Player::IncreaseAttack(float x) {
-	attack += x;
+	attack = attack * (1.0f + x / 100.0f);
 }
 
 void Player::IncreaseAttackRange(float x) {
-	orbitRadius += x;
+	orbitRadius = orbitRadius * (1.0f + x / 100.0f);
 }
 
 void Player::IncreaseAttackSpeed(float x) {
-	WeaponRotationSpeed += x;
+	WeaponRotationSpeed = WeaponRotationSpeed * (1.0f + x / 100.0f);
 }
 
 void Player::IncreaseMoveSpeed(float x) {
-	speed += x;
-}
-
-void Player::IncreaseWeaponSize(float x) {
-
+	speed = speed * (1.0f + x / 100.0f);
 }
 
 void Player::IncreaseHealHp(float x) {
