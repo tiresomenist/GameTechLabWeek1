@@ -77,10 +77,10 @@ void InGameStage::Update(float deltaTime)
 
 	////플레이어 이동
 	FVector moveDir(0.0f, 0.0f, 0.0f);
-	if (InputManager::GetInstance()->IsKeyPressed(VK_UP))    moveDir.y += 1.0f;
-	if (InputManager::GetInstance()->IsKeyPressed(VK_DOWN))  moveDir.y -= 1.0f;
-	if (InputManager::GetInstance()->IsKeyPressed(VK_LEFT))  moveDir.x -= 1.0f;
-	if (InputManager::GetInstance()->IsKeyPressed(VK_RIGHT)) moveDir.x += 1.0f;
+	if (InputManager::GetInstance()->IsKeyPressed(VK_UP) || InputManager::GetInstance()->IsKeyPressed('W'))    moveDir.y += 1.0f;
+	if (InputManager::GetInstance()->IsKeyPressed(VK_DOWN) || InputManager::GetInstance()->IsKeyPressed('S'))  moveDir.y -= 1.0f;
+	if (InputManager::GetInstance()->IsKeyPressed(VK_LEFT) || InputManager::GetInstance()->IsKeyPressed('A'))  moveDir.x -= 1.0f;
+	if (InputManager::GetInstance()->IsKeyPressed(VK_RIGHT) || InputManager::GetInstance()->IsKeyPressed('D')) moveDir.x += 1.0f;
 	//인풋매니저 가져오고 델타타임이랑 이동속도 생각해서 한프레임당 이동 거리 계산해서 move호출
 	
 	player->MoveObject(moveDir.x * deltaTime * player->GetSpeed(), moveDir.y * deltaTime * player->GetSpeed());
