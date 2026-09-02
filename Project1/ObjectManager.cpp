@@ -336,6 +336,7 @@ void ObjectManager::EnemyMove(float deltaTime)
 	}
 
 }
+
 void ObjectManager::checkEnemiesIntersect()
 {
 	for (auto enemy : enemyList)
@@ -409,6 +410,7 @@ void ObjectManager::intersectsPlayerWithWall()
 	}
 
 }
+
 void ObjectManager::checkWeaponIntersectWithEnemy() 
 {
 	float deltaTime = TimeManager::GetInstance()->GetDeltaTime();
@@ -448,7 +450,6 @@ void ObjectManager::checkWeaponIntersectWithEnemy()
 				//적 피해 처리
 				if (enemy->GetisHit() == false)
 				{
-
 					USoundManager::GetInstance()->PlaySFX(ENEMY_HIT);
 					enemy->GetAttacked(player->GetAttack());
 					enemy->SetHitFlashAmount(1.0f);
@@ -458,7 +459,6 @@ void ObjectManager::checkWeaponIntersectWithEnemy()
 				
 				if (enemy->IsDead())
 				{
-					
 					//경험치 오브 생성
 					CreateExpOrb(enemy->GetLocation().x, enemy->GetLocation().y);
 
@@ -469,8 +469,6 @@ void ObjectManager::checkWeaponIntersectWithEnemy()
 						delete* it; // 메모리 해제
 						enemyList.erase(it); // 리스트에서 제거
 					}
-
-
 				}
 			}
 		}
