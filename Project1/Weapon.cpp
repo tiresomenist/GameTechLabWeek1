@@ -17,3 +17,8 @@ void Weapon::UpdateOrbit(float deltaTime, float rotationSpeed, float angle,const
 
 
 }
+void Weapon::UpdateState()
+{
+	rotation.x += 0.05f;
+	rotation.y += 0.05f;
+}

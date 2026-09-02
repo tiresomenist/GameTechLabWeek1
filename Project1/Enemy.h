@@ -9,6 +9,8 @@ public:
 	void MoveObject(float x, float y)override; // 실제움직이기
 	bool IsDead()override;
 	void InvincibleTimerUpdate(float deltaTime);
+
+	void UpdateState();
 	
 	bool isHit = false;
 

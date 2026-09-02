@@ -15,12 +15,13 @@ URenderer::URenderer()
 	
 }
 
-void URenderer::RenderPrimitive(FVector location,float radius, Priv primitiveType)
+void URenderer::RenderPrimitive(FVector location,float radius, FVector rotation, Priv primitiveType)
 {
 	FConstant constantData;
 	constantData.offset = location;
 	constantData.radius = radius;
-
+	constantData.Rotation = rotation;
+	constantData.Padding = 0.0f;
 	D3D11Util::UpdateConstantBuffer(App::Ins->GetDeviceContext(), App::Ins->GetConstantBuffer(), constantData);
 
 

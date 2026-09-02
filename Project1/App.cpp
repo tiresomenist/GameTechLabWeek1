@@ -375,6 +375,8 @@ void App::Render()
 		FConstant cb = {};
 		cb.offset = { 0.0f, 0.0f, 0.0f };
 		cb.radius = 1.0f;
+		cb.Rotation = { 0.0f, 0.0f, 0.0f };
+		cb.Padding = 0.0f;
 		D3D11Util::UpdateConstantBuffer(m_deviceContext, constantBuffer, cb);
 		m_deviceContext->VSSetConstantBuffers(0, 1, &constantBuffer);
 	

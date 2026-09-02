@@ -109,3 +109,9 @@ void Player::IncreaseHealHp(float x) {
 		health = MaxHealth;
 }
 
+void Player::UpdateState()
+{
+	rotation.x += 0.05f;
+	rotation.y += 0.05f;
+}
+
