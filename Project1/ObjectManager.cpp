@@ -277,9 +277,8 @@ void ObjectManager::Render()
 		App::Ins->GetDeviceContext()->OMSetBlendState(App::Ins->GetBlendState(), nullptr, 0xFFFFFFFF);
 		for (auto missile : missileList)
 		{
-			missile->renderer->RenderPrimitive(
-				missile->GetLocation(), missile->GetRadius(),
-				missile->GetRotation(), Priv::Plane);
+			missile->renderer->RenderPlane(
+				missile->GetLocation(), missile->GetRadius(), missile->GetRadius(), missile->GetRotation());
 		}
 		App::Ins->GetDeviceContext()->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 
