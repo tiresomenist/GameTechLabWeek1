@@ -24,8 +24,8 @@ class ObjectManager
 	public:
 	void CreateEnemy(float difficulty);
 	Player* CreatePlayer();
-	void CreateWeapon();
-	void CreateExpOrb();
+	void CreateWeapon(float radius);
+	void CreateExpOrb(float x, float y);
 
 	ObjectManager();
 	void Render();
@@ -43,6 +43,8 @@ class ObjectManager
 		return false;
 	}
 	void checkWeaponIntersectWithEnemy();
+	void checkPlayerIntersectWithExpOrb();
+
 
 	
 	ID3D11ShaderResourceView* m_lastBoundSRV = nullptr;

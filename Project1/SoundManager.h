@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-#define SOUND_KEY_BGM L"bgm"
+#define SOUND_KEY_BGM L"bgm_2"
 #define ENEMY_HIT L"hit_enemy"
 #define PLAYER_HIT L"hit_player"
 #define GAME_OVER L"game_over"
@@ -13,6 +13,7 @@
 #define UI_CLOSE L"ui_close"
 #define ENEMY_DEAD L"enemy_dead"
 #define LEVEL_UP L"level_up"
+#define PICK_EXP_ORB L"pickupCoin"
 
 struct SoundData
 {

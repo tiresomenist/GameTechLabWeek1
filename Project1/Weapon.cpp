@@ -1,8 +1,8 @@
 #include "Weapon.h"
 #include <cmath>
-Weapon::Weapon()
+Weapon::Weapon(float _radius)
 {
-	radius = 0.02f;
+	radius = _radius;
 	location = FVector(0.0f, 0.0f, 0.0f);
 }
 
