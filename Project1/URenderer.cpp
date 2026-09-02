@@ -19,9 +19,8 @@ void URenderer::RenderPrimitive(FVector location,float radius, FVector rotation,
 {
 	FConstant constantData;
 	constantData.offset = location;
-	constantData.radius = radius;
+	constantData.scale = FVector(radius, radius, radius);
 	constantData.Rotation = rotation;
-	constantData.Padding = 0.0f;
 	D3D11Util::UpdateConstantBuffer(App::Ins->GetDeviceContext(), App::Ins->GetConstantBuffer(), constantData);
 
 
@@ -35,4 +34,16 @@ void URenderer::RenderPrimitive(FVector location,float radius, FVector rotation,
 		App::Ins->GetDeviceContext()->Draw(App::Ins->GetPlaneNumVertices(), 0);
 	}
 }
-;
+
+void URenderer::RenderPlane(FVector location, float scaleX, float scaleY, FVector rotation)
+{
+	FConstant constantData;
+
+	constantData.offset = location;
+	constantData.scale = FVector(scaleX, scaleY, 1.0f);
+	constantData.Rotation = rotation;
+
+	D3D11Util::UpdateConstantBuffer(App::Ins->GetDeviceContext(), App::Ins->GetConstantBuffer(), constantData);
+
+	App::Ins->GetDeviceContext()->Draw(App::Ins->GetPlaneNumVertices(),	0);
+}

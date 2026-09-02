@@ -8,9 +8,13 @@
 cbuffer VertexConstantBuffer : register(b0)
 {
     float3 Offset;
-    float Radius;
+    float Padding1;
+
+    float3 Scale;
+    float Padding2;
+
     float3 Rotation;
-    float Padding;
+    float Padding3;
 };
 
 struct VS_INPUT
@@ -63,7 +67,7 @@ PS_INPUT mainVS(VS_INPUT input)
 {
     PS_INPUT output;
     
-    output.posProj = float4(Offset, 0.0f) + float4(ApplyRotation(input.pos.xyz, Rotation) * Radius, 1.0f);
+    output.posProj = float4(Offset, 0.0f) + float4(ApplyRotation(input.pos.xyz, Rotation) * Scale, 1.0f);
     output.col = input.col;
     
     output.uv = input.uv;

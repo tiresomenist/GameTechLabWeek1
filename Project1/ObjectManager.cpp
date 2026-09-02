@@ -96,7 +96,7 @@ void ObjectManager::Render()
 			App::Ins->GetDeviceContext()->OMSetBlendState(App::Ins->GetBlendState(), nullptr, 0xFFFFFFFF);
 			for (size_t i = 1; i < objectList.size(); ++i)
 			{
-				objectList[i]->renderer->RenderPrimitive(objectList[i]->GetLocation(), objectList[i]->GetRadius(), objectList[i]->GetRotation(), Priv::Plane);
+				objectList[i]->renderer->RenderPlane(objectList[i]->GetLocation(), objectList[i]->GetRadius(), objectList[i]->GetRadius(), objectList[i]->GetRotation());
 			}
 
 			App::Ins->GetDeviceContext()->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
@@ -202,11 +202,11 @@ void ObjectManager::Render()
 				cb
 			);
 
-			objectList[0]->renderer->RenderPrimitive(
+			objectList[0]->renderer->RenderPlane(
 				hitEffect.location,
 				hitEffect.size,
-				{ 0.0f, 0.0f, 0.0f },
-				Priv::Plane
+				hitEffect.size,
+				{ 0.0f, 0.0f, 0.0f }
 			);
 		}
 		FPixelConstant resetCB = {};
@@ -303,6 +303,33 @@ void ObjectManager::RenderMainMenu()
 		{
 			RenderWeapon(weapon);
 		}
+	}
+
+	// 제목 렌더
+	{
+		ID3D11ShaderResourceView* srv =
+			App::Ins->GetTitleTextureSRV();
+
+		App::Ins->GetDeviceContext()->PSSetShaderResources(
+			0, 1, &srv
+		);
+
+		// Plane VB로 변경
+		UINT offset = 0;
+		UINT stride = sizeof(FVertexSimple);
+
+		ID3D11Buffer* planeVB =
+			App::Ins->GetPlaneVertexBuffer();
+
+		App::Ins->GetDeviceContext()->IASetVertexBuffers(
+			0, 1, &planeVB, &stride, &offset
+		);
+
+		objectList[0]->renderer->RenderPlane(
+			FVector(0.0f, 0.55f, 0.0f),   // 제목 위치
+			0.3f, 0.5f,                         // 크기
+			FVector(0.0f, 0.0f, 0.0f)
+		);
 	}
 }
 

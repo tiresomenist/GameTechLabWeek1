@@ -4,7 +4,11 @@
 struct FConstant
 {
 	FVector offset;
-	float radius;
+	float Padding1;
+
+	FVector scale;
+	float Padding2;
+
 	FVector Rotation;
-	float Padding;
+	float Padding3;
 };

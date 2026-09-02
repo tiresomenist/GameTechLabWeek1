@@ -20,6 +20,7 @@ class URenderer
 	~URenderer();
 
 	void RenderPrimitive(FVector location, float radius, FVector rotation, Priv primitiveType);
+	void RenderPlane(FVector location, float scaleX, float scaleY, FVector rotation);
 
 
 	//ID3D11Buffer* GetVertexBuffer() const
