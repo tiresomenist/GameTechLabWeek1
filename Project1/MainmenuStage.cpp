@@ -43,14 +43,41 @@ void MainmenuStage::Enter()
 		SOUND_KEY_BGM,
 		true
 	);
+
+	if (player == nullptr) {
+		player = ObjectManager::GetInstance()->CreatePlayer();
+	}
+
+	TimeManager::GetInstance()->TimeReset();
+	TimeManager::GetInstance()->TimeStart();
+	player->SetWeaponRadius(0.1f);
+
+	ObjectManager::GetInstance()->CreateWeapon(player->GetWeaponRadius());
+
+	player->ScalePlayerRadius(10.0f);
 }
 
 void MainmenuStage::Update(float deltaTime)
 {
+	TimeManager::GetInstance()->TimeUpdate(deltaTime);
+
+	ObjectManager::GetInstance()->SpinWeaponMainMenu(
+		deltaTime,
+		player->GetWeaponRotationSpeed() * 0.2f
+	);
+
+	//공들 회전
+	ObjectManager::GetInstance()->Update(deltaTime);
 }
 
 void MainmenuStage::Render()
 {
+	// =========================
+	// Main Menu Background
+	// =========================
+
+	ObjectManager::GetInstance()->RenderMainMenu();
+
 	//메인 메뉴는 여기서 Imgui만 만져서 화면 띄우면 됨, imgui를 능숙하게 다뤄야하는데
 	//ai를 써야할거같습니다.
 
@@ -519,4 +546,5 @@ void MainmenuStage::Render()
 
 void MainmenuStage::Exit()
 {
+	ObjectManager::GetInstance()->ReleaseAllObjects();
 } 

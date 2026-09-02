@@ -111,7 +111,12 @@ void Player::IncreaseHealHp(float x) {
 
 void Player::UpdateState()
 {
-	rotation.x += 0.05f;
-	rotation.y += 0.05f;
+	rotation.y += 0.03f;
+
+	// 한 바퀴(2*pi)를 돌면 리셋하여 오버플로우 방지
+	if (rotation.y > 6.2831853f)
+	{
+		rotation.y -= 6.2831853f;
+	}
 }
 

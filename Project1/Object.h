@@ -34,12 +34,16 @@ public:
 	void SetLocation(float x,float y);
 	URenderer* renderer;
 
+	void SetDepth(float d) { depth = d; }
+	float GetDepth() const { return depth; }
+
 
 protected:
 	float attack;
 	float speed;
 	float attackSpeed;
 	float health;
+	float depth = 0.0f;
 	
 	FVector location;	
 	float radius;

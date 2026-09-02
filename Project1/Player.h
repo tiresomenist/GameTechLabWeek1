@@ -18,6 +18,7 @@ public:
 	float hittedTime = 0.0f;
 	float MaxHealth = 200.0f;
 	float GetMaxHealth();
+	void ScalePlayerRadius(float scale) { radius = 0.05f * scale; } // 플레이어의 반지름 배율 조정
 
 	int GetLevel();
 	int GetExp();

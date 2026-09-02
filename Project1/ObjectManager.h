@@ -33,6 +33,7 @@ class ObjectManager
 
 	ObjectManager();
 	void Render();
+	void RenderMainMenu();
 	void Update(float deltaTime);
 
 	void EnemyMove(float deltaTime);
@@ -40,6 +41,7 @@ class ObjectManager
 	void checkPlayerIntersectWithEnemy();
 	void intersectsPlayerWithWall();
 	void SpinWeapon(float deltaTime, float rotationSpeed);
+	void SpinWeaponMainMenu(float deltaTime, float rotationSpeed);
 	bool isPlayerDead() {
 		if (objectList.size() > 0) {
 			return objectList[0]->IsDead();

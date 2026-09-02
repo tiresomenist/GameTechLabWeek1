@@ -1,5 +1,6 @@
 #pragma once
 #include "IGameStage.h"
+#include "ObjectManager.h"
 #include "LeaderboardManager.h"
 
 class App;
@@ -13,18 +14,16 @@ public:
 	}
 
 
+
 	void Enter() override;
 	void Update(float deltaTime) override;
 	void Render() override;
 	void Exit() override;
 
+	std::vector<Object*>* objectList = nullptr;
+	Player* player = nullptr;
+
 
 private:
 	App* m_app;
-
-
-
-
-
-
 };

@@ -220,6 +220,92 @@ void ObjectManager::Render()
 	}
 }
 
+void ObjectManager::RenderMainMenu()
+{
+	if (objectList.empty())
+		return;
+
+	m_lastBoundSRV = nullptr;
+
+	UINT Offset = 0;
+	ID3D11Buffer* VB = App::Ins->GetSphereVertexBuffer();
+	UINT Stride = sizeof(FVertexSimple);
+
+	App::Ins->GetDeviceContext()->IASetVertexBuffers(
+		0, 1, &VB, &Stride, &Offset
+	);
+
+	// 달 렌더
+	auto RenderWeapon = [&](auto weapon)
+		{
+			ID3D11ShaderResourceView* srv =
+				App::Ins->GetMoonTextureSRV();
+
+			if (srv != m_lastBoundSRV)
+			{
+				App::Ins->GetDeviceContext()->PSSetShaderResources(
+					0, 1, &srv
+				);
+
+				m_lastBoundSRV = srv;
+			}
+
+			float depthScale =
+				1.0f + weapon->GetDepth() * 0.12f;
+
+			weapon->renderer->RenderPrimitive(
+				weapon->GetLocation(),
+				weapon->GetRadius() * depthScale,
+				weapon->GetRotation(),
+				Priv::Sphere
+			);
+		};
+
+	// 지구 렌더
+	auto RenderEarth = [&]()
+		{
+			ID3D11ShaderResourceView* srv =
+				App::Ins->GetEarthTextureSRV();
+
+			if (srv != m_lastBoundSRV)
+			{
+				App::Ins->GetDeviceContext()->PSSetShaderResources(
+					0, 1, &srv
+				);
+
+				m_lastBoundSRV = srv;
+			}
+
+			objectList[0]->renderer->RenderPrimitive(
+				objectList[0]->GetLocation(),
+				objectList[0]->GetRadius(),
+				objectList[0]->GetRotation(),
+				Priv::Sphere
+			);
+		};
+
+	// 지구 뒤쪽에 있는 달 먼저 렌더
+	for (auto weapon : weaponList)
+	{
+		if (weapon->GetDepth() < 0.0f)
+		{
+			RenderWeapon(weapon);
+		}
+	}
+
+	// 지구 렌더
+	RenderEarth();
+
+	// 지구 앞쪽에 있는 달 나중에 렌더
+	for (auto weapon : weaponList)
+	{
+		if (weapon->GetDepth() >= 0.0f)
+		{
+			RenderWeapon(weapon);
+		}
+	}
+}
+
 void ObjectManager::Update(float deltaTime)
 {
 	for (auto obj : objectList)
@@ -227,7 +313,7 @@ void ObjectManager::Update(float deltaTime)
 		obj->UpdateState();
 	}
 	for (auto obj : weaponList) {
-		obj->UpdateState();
+		obj->UpdateState(deltaTime);
 	}
 	for (auto enemy : enemyList)
 	{
@@ -458,6 +544,27 @@ void ObjectManager::SpinWeapon(float deltaTime, float rotationSpeed)
 
 	for (int i = 0; i < count; ++i) {
 		weaponList[i]->UpdateOrbit(deltaTime, player->GetWeaponRotationSpeed(), orbitAngle + step * i,center,player->GetOrbitRadius());
+	}
+}
+
+void ObjectManager::SpinWeaponMainMenu(float deltaTime, float rotationSpeed)
+{
+	Player* player = static_cast<Player*>(objectList[0]);
+	orbitAngle += rotationSpeed * deltaTime;      // 전체 회전
+
+	if (orbitAngle > 6.2831853f)
+		orbitAngle -= 6.2831853f;               // 오버플로 방지
+
+	int count = static_cast<int>(weaponList.size());
+	if (count == 0) return;
+
+	float step = 6.2831853f / count;
+	FVector center = player->GetLocation();
+
+	for (int i = 0; i < count; ++i) {
+		float angle = orbitAngle + step * i;
+		weaponList[i]->SetDepth(sinf(angle));
+		weaponList[i]->UpdateOrbitMainMenu(angle, center, player->GetOrbitRadius());
 	}
 }
 
