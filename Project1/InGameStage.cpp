@@ -134,7 +134,7 @@ void InGameStage::RenderAugmentModal()
 	if (!openAugmentPopup)
 		return;
 
-	if (InputManager::GetInstance()->IsKeyTriggered(VK_LEFT))
+	if (InputManager::GetInstance()->IsKeyTriggered(VK_LEFT) || InputManager::GetInstance()->IsKeyTriggered('A'))
 	{
 		selectedAugment--;
 
@@ -142,7 +142,7 @@ void InGameStage::RenderAugmentModal()
 			selectedAugment = 2;
 	}
 
-	if (InputManager::GetInstance()->IsKeyTriggered(VK_RIGHT))
+	if (InputManager::GetInstance()->IsKeyTriggered(VK_RIGHT) || InputManager::GetInstance()->IsKeyTriggered('D'))
 	{
 		selectedAugment++;
 
@@ -664,7 +664,7 @@ void InGameStage::RenderPauseModal()
 
 		if (!leaveGameOpen && !settingsOpen)
 		{
-			if (InputManager::GetInstance()->IsKeyTriggered(VK_UP))
+			if (InputManager::GetInstance()->IsKeyTriggered(VK_UP) || InputManager::GetInstance()->IsKeyTriggered('W'))
 			{
 				selectedPauseMenu--;
 
@@ -672,7 +672,7 @@ void InGameStage::RenderPauseModal()
 					selectedPauseMenu = PAUSE_COUNT - 1;
 			}
 
-			if (InputManager::GetInstance()->IsKeyTriggered(VK_DOWN))
+			if (InputManager::GetInstance()->IsKeyTriggered(VK_DOWN) || InputManager::GetInstance()->IsKeyTriggered('S'))
 			{
 				selectedPauseMenu++;
 
@@ -852,7 +852,7 @@ void InGameStage::RenderPauseModal()
 			ImGuiWindowFlags_NoScrollbar |
 			ImGuiWindowFlags_NoScrollWithMouse))
 		{
-			if (InputManager::GetInstance()->IsKeyTriggered(VK_LEFT))
+			if (InputManager::GetInstance()->IsKeyTriggered(VK_LEFT) || InputManager::GetInstance()->IsKeyTriggered('A'))
 			{
 				selectedLeaveMenu--;
 
@@ -860,7 +860,7 @@ void InGameStage::RenderPauseModal()
 					selectedLeaveMenu = LEAVE_COUNT - 1;
 			}
 
-			if (InputManager::GetInstance()->IsKeyTriggered(VK_RIGHT))
+			if (InputManager::GetInstance()->IsKeyTriggered(VK_RIGHT) || InputManager::GetInstance()->IsKeyTriggered('D'))
 			{
 				selectedLeaveMenu++;
 
