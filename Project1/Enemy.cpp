@@ -50,3 +50,8 @@ void Enemy::InvincibleTimerUpdate(float deltaTime)
 	}
 
 }
+void Enemy::UpdateState()
+{
+	rotation.x += 0.05f;
+	rotation.y += 0.05f;
+}

@@ -16,6 +16,7 @@ public:
 	float GetExp();
 	float GetRadius();
 	FVector GetLocation();
+	FVector GetRotation();
 
 	bool GetIsDead();
 	bool GetIsHit();
@@ -29,7 +30,7 @@ public:
 
 	void IncreaseRadius(float x);
 
-	void UpdateState(); //최종 업데이트
+	virtual void UpdateState(); //최종 업데이트
 	void SetLocation(float x,float y);
 	URenderer* renderer;
 
@@ -42,7 +43,7 @@ protected:
 	
 	FVector location;	
 	float radius;
-
+	FVector rotation = (0.0f, 0.0f, 0.0f);
 
 	int level;
 

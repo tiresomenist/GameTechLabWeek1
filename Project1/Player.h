@@ -32,6 +32,7 @@ public:
 	void IncreaseMoveSpeed(float x);
 	void IncreaseHealHp(float x);
 	void SetWeaponRadius(float _r) { weaponRadius = _r; } // 플레이어의 무기 반지름 설정
+	void UpdateState() override; // 플레이어 상태 업데이트
 
 private:
 	float WeaponRotationSpeed = 6.0f;

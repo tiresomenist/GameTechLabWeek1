@@ -109,7 +109,8 @@ void InGameStage::Update(float deltaTime)
 		TimeManager::GetInstance()->TimePause();
 		openAugmentPopup = true;
 	}
-
+	//공들 회전
+	ObjectManager::GetInstance()->Update(deltaTime);
 }
 
 void InGameStage::RenderAugmentModal()

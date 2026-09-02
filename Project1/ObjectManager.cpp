@@ -76,7 +76,7 @@ void ObjectManager::Render()
 			ID3D11Buffer* VB = App::Ins->GetSphereVertexBuffer();
 			UINT Stride = sizeof(FVertexSimple);
 			App::Ins->GetDeviceContext()->IASetVertexBuffers(0, 1, &VB, &Stride, &Offset);
-			objectList[0]->renderer->RenderPrimitive(objectList[0]->GetLocation(), objectList[0]->GetRadius(), Priv::Sphere);
+			objectList[0]->renderer->RenderPrimitive(objectList[0]->GetLocation(), objectList[0]->GetRadius(), objectList[0]->GetRotation(), Priv::Sphere);
 			}
 
 			srv = App::Ins->GetExpOrbTextureSRV();
@@ -96,7 +96,7 @@ void ObjectManager::Render()
 			App::Ins->GetDeviceContext()->OMSetBlendState(App::Ins->GetBlendState(), nullptr, 0xFFFFFFFF);
 			for (size_t i = 1; i < objectList.size(); ++i)
 			{
-				objectList[i]->renderer->RenderPrimitive(objectList[i]->GetLocation(), objectList[i]->GetRadius(), Priv::Plane);
+				objectList[i]->renderer->RenderPrimitive(objectList[i]->GetLocation(), objectList[i]->GetRadius(), objectList[i]->GetRotation(), Priv::Plane);
 			}
 
 			App::Ins->GetDeviceContext()->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
@@ -135,7 +135,7 @@ void ObjectManager::Render()
 				hitFlashCB
 			);
 
-			enemy->renderer->RenderPrimitive(enemy->GetLocation(), enemy->GetRadius(), Priv::Sphere);
+			enemy->renderer->RenderPrimitive(enemy->GetLocation(), enemy->GetRadius(), enemy->GetRotation(), Priv::Sphere);
 		}
 
 		// enemy 렌더가 전부 끝난 뒤 상수버퍼 초기화
@@ -166,7 +166,7 @@ void ObjectManager::Render()
 		}
 		for (auto weapon : weaponList)
 		{
-			weapon->renderer->RenderPrimitive(weapon->GetLocation(), weapon->GetRadius(), Priv::Sphere);
+			weapon->renderer->RenderPrimitive(weapon->GetLocation(), weapon->GetRadius(), weapon->GetRotation(), Priv::Sphere);
 		}
 
 	}
@@ -205,6 +205,7 @@ void ObjectManager::Render()
 			objectList[0]->renderer->RenderPrimitive(
 				hitEffect.location,
 				hitEffect.size,
+				{ 0.0f, 0.0f, 0.0f },
 				Priv::Plane
 			);
 		}
@@ -221,8 +222,17 @@ void ObjectManager::Render()
 
 void ObjectManager::Update(float deltaTime)
 {
-	EnemyMove(deltaTime);
-	checkEnemiesIntersect();
+	for (auto obj : objectList)
+	{
+		obj->UpdateState();
+	}
+	for (auto obj : weaponList) {
+		obj->UpdateState();
+	}
+	for (auto enemy : enemyList)
+	{
+		enemy->UpdateState();
+	}
 
 }
 

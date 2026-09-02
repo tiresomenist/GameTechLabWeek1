@@ -33,6 +33,10 @@ float Object::GetSpeed() {
 	return speed;
 }
 
+void Object::UpdateState()
+{	
+}
+
 void Object::SetLocation(float x,float y) {
 	location.x = x;
 	location.y = y;
@@ -59,3 +63,7 @@ float Object::GetHealth() {
 void Object::IncreaseRadius(float x) {
 	radius = radius * (1.0f + x / 100.0f);
 }
+
+FVector Object::GetRotation() {
+	return rotation;
+}	
