@@ -74,22 +74,48 @@ void InGameStage::Update(float deltaTime)
 
 	TimeManager::GetInstance()->TimeUpdate(deltaTime);
 
-	// 60초 생존하면 Clear
-	if (TimeManager::GetInstance()->GetcurrentTime() >= 60.0f)
+	//// 60초 생존하면 Clear
+	//if (TimeManager::GetInstance()->GetcurrentTime() >= 60.0f)
+	//{
+	//	TimeManager::GetInstance()->TimePause();
+	//	gameResult = 1;
+	//	openResultPopup = true;
+	//	return;
+	//}
+	//countTimeForEnemy += deltaTime;
+	//countTimeForPlayer += deltaTime;
+	//difficulty = TimeManager::GetInstance()->GetcurrentTime() / 10.0f;
+	////적군 생성 로직
+	//if (countTimeForEnemy > 2.0f - (difficulty * 0.39f)) {
+	//	countTimeForEnemy -= 2.0f-(difficulty * 0.39f);
+	//	ObjectManager::GetInstance()->CreateEnemy(difficulty);
+	//	//OutputDebugStringA("Enemy Created!\n");
+	//}
+
+	float currentTime = TimeManager::GetInstance()->GetcurrentTime();
+	float difficulty = currentTime / 120.0f;
+
+	if (difficulty > 1.0f)
+		difficulty = 1.0f;
+
+	if (currentTime >= 120.0f)
 	{
 		TimeManager::GetInstance()->TimePause();
 		gameResult = 1;
 		openResultPopup = true;
 		return;
 	}
+
+	float spawnInterval = 1.5f - difficulty * 1.25f;
+	// 시작 1.5초
+	// 종료 0.25초
+
 	countTimeForEnemy += deltaTime;
-	countTimeForPlayer += deltaTime;
-	difficulty = TimeManager::GetInstance()->GetcurrentTime() / 10.0f;
-	//적군 생성 로직
-	if (countTimeForEnemy > 2.0f - (difficulty * 0.39f)) {
-		countTimeForEnemy -= 2.0f-(difficulty * 0.39f);
+
+	if (countTimeForEnemy > spawnInterval)
+	{
+		countTimeForEnemy -= spawnInterval;
 		ObjectManager::GetInstance()->CreateEnemy(difficulty);
-		//OutputDebugStringA("Enemy Creted!\n");
 	}
 
 	////플레이어 이동

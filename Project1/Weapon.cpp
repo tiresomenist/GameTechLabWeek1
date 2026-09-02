@@ -28,8 +28,8 @@ void Weapon::UpdateOrbitMainMenu(
 	float orbitRadiusY = orbitRadius * 5.0f * 0.15f;
 
 	// 지구 중심 기준 달의 타원 궤도 위치
-	float x = cosf(angle) * orbitRadiusX;
-	float y = sinf(angle) * orbitRadiusY;
+	float x = cosf(angle) * -orbitRadiusX;
+	float y = sinf(angle) * -orbitRadiusY;
 
 	// 궤도 기울이기
 	float tilt = 0.25f; // 라디안, 약 14도
@@ -53,5 +53,5 @@ void Weapon::UpdateState()
 
 void Weapon::UpdateState(float deltaTime)
 {
-	rotation.y -= PI * 0.382f * deltaTime;
+	rotation.y += PI * 0.382f * deltaTime;
 }

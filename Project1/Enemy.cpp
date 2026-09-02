@@ -25,12 +25,18 @@ void Enemy::Reset(float difficulty)
 	case 6: location = { -0.9f, 0.9f, 0.0f }; break;
 	case 7: location = { 0.0f, 0.9f, 0.0f }; break;
 	}
-	speed = 0.2f + (0.05f * difficulty);
-	attack = 1.0f + (0.05f * difficulty);
-	float MaxHealth = 30.0f + (30.0f * difficulty);
-	health = MaxHealth;
-}
+	//speed = 0.2f + (0.05f * difficulty);
+	//attack = 1.0f + (0.05f * difficulty);
+	//float MaxHealth = 30.0f + (30.0f * difficulty);
+	//health = MaxHealth;
 
+	// difficulty: 0.0f ~ 1.0f
+
+	speed = 0.2f + (0.05f * difficulty);      // 0.20 → 0.25
+	attack = 1.0f + (0.2f * difficulty);      // 1.0 → 1.2
+	float maxHealth = 30.0f + (30.0f * difficulty); // 30 → 60
+	health = maxHealth;
+};
 void Enemy::MoveObject(float x, float y) {
 	location.x += x;
 	location.y += y;
