@@ -335,6 +335,7 @@ void ObjectManager::checkWeaponIntersectWithEnemy()
 	{
 		hitEffect.lifetime += deltaTime;
 		hitEffect.alpha = 1.0f - (hitEffect.lifetime / hitEffect.duration);
+		hitEffect.size = 0.1f + (hitEffect.lifetime / hitEffect.duration) * 0.05f;
 	}
 
 	//무기와 적 충돌 처리
