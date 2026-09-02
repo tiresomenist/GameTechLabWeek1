@@ -47,7 +47,7 @@ public:
 	void UpdateState() override; // 플레이어 상태 업데이트
 
 	float missileShootTimer = 0.0f;
-	float missileDmg = 30.0f;
+	float missileDmg = 10.0f;
 	float missileMoveSpeed = 0.5f;
 	float missileRapidSpeed = 0.5f;
 	

@@ -5,14 +5,14 @@
 
 Augment::Augment() {
 	augStruct = {
-	{ AugmentType::Attack,          "Damage",       300.0f, 600.0f, 10.0f },
-	{ AugmentType::AttackRange,     "moon orbit range", 50.0f, 70.0f, 10.0f },
-	{ AugmentType::AttackSpeed,     "spin speed",       30.0f, 50.0f, 10.0f },
-	{ AugmentType::MoveSpeed,        "Move Speed",   100.0f, 120.0f, 10.0f },
-	{ AugmentType::WeaponSize,       "moon Size",  50.0f, 70.0f, 10.0f },
-	{ AugmentType::HealHP,           "Heal HP",    40.0f, 100.0f, 10.0f },
-	{ AugmentType::AddWeapon,        "Add moon",   1.0f, 3.0f, 50.0f },
-	{ AugmentType::RocketAdd,         "***Add Rocket***",    0.0f, 0.0f, 3.0f },
+	{ AugmentType::Attack,          "Damage",       30.0f, 60.0f, 10.0f },
+	{ AugmentType::AttackRange,     "moon orbit range", 20.0f, 50.0f, 10.0f },
+	{ AugmentType::AttackSpeed,     "spin speed",       10.0f, 20.0f, 10.0f },
+	{ AugmentType::MoveSpeed,        "Move Speed",   40.0f, 80.0f, 10.0f },
+	{ AugmentType::WeaponSize,       "moon Size",  30.0f, 50.0f, 10.0f },
+	{ AugmentType::HealHP,           "Heal HP",    30.0f, 60.0f, 10.0f },
+	{ AugmentType::AddWeapon,        "Add moon",   1.0f, 2.0f, 20.0f },
+	{ AugmentType::RocketAdd,         "***Add Rocket***",    0.0f, 0.0f, 10.0f },
 	{ AugmentType::RocketSpeed,       "Rocket Speed",        20.0f, 40.0f, 20.0f },
 	{ AugmentType::RocketDamage,      "Rocket Damage",       30.0f, 60.0f, 20.0f },
 	{ AugmentType::RocketAttackSpeed, "Rocket Attack Speed", 30.0f, 50.0f, 20.0f }
