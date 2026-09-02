@@ -144,7 +144,7 @@ void InGameStage::RenderAugmentModal()
 	);
 
 	ImGui::Begin(
-		"test",
+		"Upgrade!!",
 		nullptr,
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoCollapse
