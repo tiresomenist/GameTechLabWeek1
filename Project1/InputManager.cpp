@@ -9,6 +9,10 @@ InputManager::InputManager() {
 }
 
 void InputManager::KeyDown(int key) {
+	if (!keys[key]) {
+		keyTriggered[key] = true;
+	}
+
 	keys[key] = true;
 }
 
@@ -18,4 +22,14 @@ void InputManager::KeyUp(int key) {
 
 bool InputManager::IsKeyPressed(int key) {
 	return keys[key];
+}
+
+bool InputManager::IsKeyTriggered(int key) {
+	if (keyTriggered[key]) {
+
+		keyTriggered[key] = false;
+		return true;
+	}
+
+	return false;
 }

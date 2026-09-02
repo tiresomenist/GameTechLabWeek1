@@ -13,6 +13,21 @@
 #include "SettingsUI.h"
 #include "LeaderboardUI.h"
 
+enum
+{
+	PAUSE_RESUME,
+	PAUSE_SETTINGS,
+	PAUSE_MAIN_MENU,
+	PAUSE_COUNT
+};
+
+enum
+{
+	LEAVE_YES,
+	LEAVE_NO,
+	LEAVE_COUNT
+};
+
 InGameStage::InGameStage(App* app)
 	: m_app(app)
 {
@@ -119,6 +134,25 @@ void InGameStage::RenderAugmentModal()
 	if (!openAugmentPopup)
 		return;
 
+	if (InputManager::GetInstance()->IsKeyTriggered(VK_LEFT))
+	{
+		selectedAugment--;
+
+		if (selectedAugment < 0)
+			selectedAugment = 2;
+	}
+
+	if (InputManager::GetInstance()->IsKeyTriggered(VK_RIGHT))
+	{
+		selectedAugment++;
+
+		if (selectedAugment >= 3)
+			selectedAugment = 0;
+	}
+
+	bool augmentEnterPressed = InputManager::GetInstance()->IsKeyTriggered(VK_RETURN);
+
+
 	//증강 생성 되었는지
 	if (!isAugmnetSelected) {
 		//증강 3개 랜덤뽑기
@@ -128,6 +162,7 @@ void InGameStage::RenderAugmentModal()
 		augment.ResetAugment();
 
 		isAugmnetSelected = true;
+		selectedAugment = 0;
 	}
 
 	AugmentStruct* augments[3] = { &aug1, &aug2, &aug3 };
@@ -282,10 +317,25 @@ void InGameStage::RenderAugmentModal()
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.20f, 0.75f, 0.85f, 1.0f));
 		}
 
-		if (ImGui::Button(
+		ImGui::PushStyleColor(
+			ImGuiCol_Button,
+			selectedAugment == i
+			? (enhanced
+				? ImVec4(0.95f, 0.58f, 0.10f, 1.0f)
+				: ImVec4(0.15f, 0.60f, 0.70f, 1.0f))
+			: (enhanced
+				? ImVec4(0.75f, 0.45f, 0.08f, 1.0f)
+				: ImVec4(0.10f, 0.45f, 0.55f, 1.0f))
+		);
+
+		bool selectPressed = ImGui::Button(
 			"SELECT",
 			ImVec2(ImGui::GetContentRegionAvail().x, buttonHeight)
-		))
+		);
+
+		ImGui::PopStyleColor();
+
+		if (selectPressed || (selectedAugment == i && augmentEnterPressed))
 		{
 			switch (i)
 			{
@@ -605,14 +655,58 @@ void InGameStage::RenderPauseModal()
 		bool settingsOpen =
 			ImGui::IsPopupOpen("Settings");
 
+		if (settingsOpen)
+		{
+			InputManager::GetInstance()->IsKeyTriggered(VK_RETURN);
+		}
+
+		enterPressed = false;
+
+		if (!leaveGameOpen && !settingsOpen)
+		{
+			if (InputManager::GetInstance()->IsKeyTriggered(VK_UP))
+			{
+				selectedPauseMenu--;
+
+				if (selectedPauseMenu < 0)
+					selectedPauseMenu = PAUSE_COUNT - 1;
+			}
+
+			if (InputManager::GetInstance()->IsKeyTriggered(VK_DOWN))
+			{
+				selectedPauseMenu++;
+
+				if (selectedPauseMenu >= PAUSE_COUNT)
+					selectedPauseMenu = 0;
+			}
+
+			enterPressed = InputManager::GetInstance()->IsKeyTriggered(VK_RETURN);
+		}
+
 		ImGui::SetCursorPosX(
 			(ImGui::GetWindowWidth() - buttonWidth) * 0.5f
 		);
 
-		if (ImGui::Button(
+		ImGui::PushStyleColor(
+			ImGuiCol_Button,
+			selectedPauseMenu == PAUSE_RESUME
+			? ImVec4(0.15f, 0.60f, 0.70f, 1.0f)
+			: ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
+		);
+
+		bool resumePressed = ImGui::Button(
 			"RESUME",
-			ImVec2(buttonWidth, buttonHeight))
-			|| (escPressed &&
+			ImVec2(buttonWidth, buttonHeight)
+		);
+
+		ImGui::PopStyleColor();
+
+		if (resumePressed ||
+			(selectedPauseMenu == PAUSE_RESUME &&
+				enterPressed &&
+				!leaveGameOpen &&
+				!settingsOpen) ||
+			(escPressed &&
 				!leaveGameOpen &&
 				!settingsOpen))
 		{
@@ -636,9 +730,25 @@ void InGameStage::RenderPauseModal()
 			(ImGui::GetWindowWidth() - buttonWidth) * 0.5f
 		);
 
-		if (ImGui::Button(
+		ImGui::PushStyleColor(
+			ImGuiCol_Button,
+			selectedPauseMenu == PAUSE_SETTINGS
+			? ImVec4(0.15f, 0.60f, 0.70f, 1.0f)
+			: ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
+		);
+
+		bool settingsPressed = ImGui::Button(
 			"SETTINGS",
-			ImVec2(buttonWidth, buttonHeight)))
+			ImVec2(buttonWidth, buttonHeight)
+		);
+
+		ImGui::PopStyleColor();
+
+		if (settingsPressed ||
+			(selectedPauseMenu == PAUSE_SETTINGS &&
+				enterPressed &&
+				!leaveGameOpen &&
+				!settingsOpen))
 		{
 			ImGui::OpenPopup("Settings");
 		}
@@ -656,9 +766,25 @@ void InGameStage::RenderPauseModal()
 			(ImGui::GetWindowWidth() - buttonWidth) * 0.5f
 		);
 
-		if (ImGui::Button(
+		ImGui::PushStyleColor(
+			ImGuiCol_Button,
+			selectedPauseMenu == PAUSE_MAIN_MENU
+			? ImVec4(0.15f, 0.60f, 0.70f, 1.0f)
+			: ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
+		);
+
+		bool mainMenuPressed = ImGui::Button(
 			"MAIN MENU",
-			ImVec2(buttonWidth, buttonHeight)))
+			ImVec2(buttonWidth, buttonHeight)
+		);
+
+		ImGui::PopStyleColor();
+
+		if (mainMenuPressed ||
+			(selectedPauseMenu == PAUSE_MAIN_MENU &&
+				enterPressed &&
+				!leaveGameOpen &&
+				!settingsOpen))
 		{
 			openMainMenuConfirm = true;
 		}
@@ -726,6 +852,25 @@ void InGameStage::RenderPauseModal()
 			ImGuiWindowFlags_NoScrollbar |
 			ImGuiWindowFlags_NoScrollWithMouse))
 		{
+			if (InputManager::GetInstance()->IsKeyTriggered(VK_LEFT))
+			{
+				selectedLeaveMenu--;
+
+				if (selectedLeaveMenu < 0)
+					selectedLeaveMenu = LEAVE_COUNT - 1;
+			}
+
+			if (InputManager::GetInstance()->IsKeyTriggered(VK_RIGHT))
+			{
+				selectedLeaveMenu++;
+
+				if (selectedLeaveMenu >= LEAVE_COUNT)
+					selectedLeaveMenu = 0;
+			}
+
+			bool leaveEnterPressed = InputManager::GetInstance()->IsKeyTriggered(VK_RETURN);
+
+
 			// 경고창 제목
 			ImGui::SetWindowFontScale(1.5f);
 
@@ -797,17 +942,25 @@ void InGameStage::RenderPauseModal()
 				ImVec4(0.65f, 0.24f, 0.26f, 1.0f)
 			);
 
-			if (ImGui::Button(
+			ImGui::PushStyleColor(
+				ImGuiCol_Button,
+				selectedLeaveMenu == LEAVE_YES
+				? ImVec4(0.75f, 0.28f, 0.30f, 1.0f)
+				: ImVec4(0.40f, 0.16f, 0.18f, 1.0f)
+			);
+
+			bool yesPressed = ImGui::Button(
 				"YES",
-				ImVec2(
-					confirmButtonWidth,
-					confirmButtonHeight)))
+				ImVec2(confirmButtonWidth, confirmButtonHeight)
+			);
+
+			ImGui::PopStyleColor();
+
+			if (yesPressed ||
+				(selectedLeaveMenu == LEAVE_YES && leaveEnterPressed))
 			{
 				ImGui::CloseCurrentPopup();
-
-				m_app->ChangeState(
-					new MainmenuStage(m_app)
-				);
+				m_app->ChangeState(new MainmenuStage(m_app));
 			}
 
 			ImGui::PopStyleColor(3);
@@ -833,11 +986,22 @@ void InGameStage::RenderPauseModal()
 				ImVec4(0.20f, 0.75f, 0.85f, 1.0f)
 			);
 
-			if (ImGui::Button(
+			ImGui::PushStyleColor(
+				ImGuiCol_Button,
+				selectedLeaveMenu == LEAVE_NO
+				? ImVec4(0.15f, 0.60f, 0.70f, 1.0f)
+				: ImVec4(0.07f, 0.30f, 0.36f, 1.0f)
+			);
+
+			bool noPressed = ImGui::Button(
 				"NO",
-				ImVec2(
-					confirmButtonWidth,
-					confirmButtonHeight)))
+				ImVec2(confirmButtonWidth, confirmButtonHeight)
+			);
+
+			ImGui::PopStyleColor();
+
+			if (noPressed ||
+				(selectedLeaveMenu == LEAVE_NO && leaveEnterPressed))
 			{
 				ImGui::CloseCurrentPopup();
 			}

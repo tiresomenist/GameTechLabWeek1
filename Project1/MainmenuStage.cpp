@@ -9,8 +9,20 @@
 #include "SoundManager.h"
 #include "SettingsUI.h"
 #include "LeaderboardUI.h"
+#include "InputManager.h"
 
 #define SOUND_KEY_BGM L"bgm_2"
+
+
+enum
+{
+	MENU_START,
+	MENU_LEADERBOARD,
+	MENU_SETTINGS,
+	MENU_CREDITS,
+	MENU_EXIT,
+	MENU_COUNT
+};
 
 namespace
 {
@@ -68,6 +80,24 @@ void MainmenuStage::Update(float deltaTime)
 
 	//공들 회전
 	ObjectManager::GetInstance()->Update(deltaTime);
+	if (InputManager::GetInstance()->IsKeyTriggered(VK_UP)) {
+		selectedMenu--;
+
+		if (selectedMenu < 0) {
+			selectedMenu = MENU_COUNT - 1;
+		}
+	}
+
+	if (InputManager::GetInstance()->IsKeyTriggered(VK_DOWN)) {
+		selectedMenu++;
+
+		if (selectedMenu >= MENU_COUNT) {
+			selectedMenu = 0;
+		}
+	}
+
+	enterPressed = InputManager::GetInstance()->IsKeyTriggered(VK_RETURN);
+
 }
 
 void MainmenuStage::Render()
@@ -217,15 +247,23 @@ void MainmenuStage::Render()
 		(MENU_WIDTH - BUTTON_WIDTH) * 0.5f
 	);
 
-	if (ImGui::Button(
+	ImGui::PushStyleColor(
+		ImGuiCol_Button,
+		selectedMenu == MENU_START
+		? ImVec4(0.15f, 0.60f, 0.70f, 1.0f)  // 선택
+		: ImVec4(0.10f, 0.45f, 0.55f, 1.0f)  // 기본
+	);
+
+	bool startPressed = ImGui::Button(
 		"START",
-		ImVec2(
-			BUTTON_WIDTH,
-			BUTTON_HEIGHT)))
+		ImVec2(BUTTON_WIDTH, BUTTON_HEIGHT)
+	);
+
+	ImGui::PopStyleColor();
+
+	if (startPressed || selectedMenu == MENU_START && enterPressed)
 	{
-		m_app->ChangeState(
-			new InGameStage(m_app)
-		);
+		m_app->ChangeState(new InGameStage(m_app));
 	}
 
 	ImGui::Dummy(
@@ -240,15 +278,26 @@ void MainmenuStage::Render()
 		(MENU_WIDTH - BUTTON_WIDTH) * 0.5f
 	);
 
-	if (ImGui::Button(
+	ImGui::PushStyleColor(
+		ImGuiCol_Button,
+		selectedMenu == MENU_LEADERBOARD
+		? ImVec4(0.15f, 0.60f, 0.70f, 1.0f)  // 선택
+		: ImVec4(0.10f, 0.45f, 0.55f, 1.0f)  // 기본
+	);
+
+	bool leaderboardPressed = ImGui::Button(
 		"LEADERBOARD",
-		ImVec2(
-			BUTTON_WIDTH,
-			BUTTON_HEIGHT)))
+		ImVec2(BUTTON_WIDTH, BUTTON_HEIGHT)
+	);
+
+	ImGui::PopStyleColor();
+
+	if (leaderboardPressed ||
+		(selectedMenu == MENU_LEADERBOARD &&
+			enterPressed &&
+			!ImGui::IsPopupOpen("Leaderboard")))
 	{
-		ImGui::OpenPopup(
-			"Leaderboard"
-		);
+		ImGui::OpenPopup("Leaderboard");
 	}
 
 	ImGui::Dummy(
@@ -263,15 +312,26 @@ void MainmenuStage::Render()
 		(MENU_WIDTH - BUTTON_WIDTH) * 0.5f
 	);
 
-	if (ImGui::Button(
+	ImGui::PushStyleColor(
+		ImGuiCol_Button,
+		selectedMenu == MENU_SETTINGS
+		? ImVec4(0.15f, 0.60f, 0.70f, 1.0f)
+		: ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
+	);
+
+	bool settingsPressed = ImGui::Button(
 		"SETTINGS",
-		ImVec2(
-			BUTTON_WIDTH,
-			BUTTON_HEIGHT)))
+		ImVec2(BUTTON_WIDTH, BUTTON_HEIGHT)
+	);
+
+	ImGui::PopStyleColor();
+
+	if (settingsPressed ||
+		(selectedMenu == MENU_SETTINGS &&
+			enterPressed &&
+			!ImGui::IsPopupOpen("Settings")))
 	{
-		ImGui::OpenPopup(
-			"Settings"
-		);
+		ImGui::OpenPopup("Settings");
 	}
 
 	ImGui::Dummy(
@@ -286,15 +346,28 @@ void MainmenuStage::Render()
 		(MENU_WIDTH - BUTTON_WIDTH) * 0.5f
 	);
 
-	if (ImGui::Button(
+	ImGui::PushStyleColor(
+		ImGuiCol_Button,
+		selectedMenu == MENU_CREDITS
+		? ImVec4(0.15f, 0.60f, 0.70f, 1.0f)
+		: ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
+	);
+
+	bool creditsPressed = ImGui::Button(
 		"CREDITS",
-		ImVec2(
-			BUTTON_WIDTH,
-			BUTTON_HEIGHT)))
+		ImVec2(BUTTON_WIDTH, BUTTON_HEIGHT)
+	);
+
+	ImGui::PopStyleColor();
+
+	bool creditsOpen = ImGui::IsPopupOpen("Credits");
+
+	if (creditsPressed ||
+		(selectedMenu == MENU_CREDITS &&
+			enterPressed &&
+			!ImGui::IsPopupOpen("Credits")))
 	{
-		ImGui::OpenPopup(
-			"Credits"
-		);
+		ImGui::OpenPopup("Credits");
 	}
 
 	ImGui::Dummy(
@@ -309,11 +382,22 @@ void MainmenuStage::Render()
 		(MENU_WIDTH - BUTTON_WIDTH) * 0.5f
 	);
 
-	if (ImGui::Button(
+	ImGui::PushStyleColor(
+		ImGuiCol_Button,
+		selectedMenu == MENU_EXIT
+		? ImVec4(0.15f, 0.60f, 0.70f, 1.0f)
+		: ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
+	);
+
+	bool exitPressed = ImGui::Button(
 		"EXIT",
-		ImVec2(
-			BUTTON_WIDTH,
-			BUTTON_HEIGHT)))
+		ImVec2(BUTTON_WIDTH, BUTTON_HEIGHT)
+	);
+
+	ImGui::PopStyleColor();
+
+	if (exitPressed ||
+		(selectedMenu == MENU_EXIT && enterPressed))
 	{
 		PostQuitMessage(0);
 	}

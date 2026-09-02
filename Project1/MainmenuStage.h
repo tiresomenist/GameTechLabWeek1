@@ -26,4 +26,8 @@ public:
 
 private:
 	App* m_app;
+	int selectedMenu = 0;
+	bool enterPressed = false;
+
+
 };

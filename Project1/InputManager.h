@@ -7,6 +7,7 @@ public:
 	void KeyDown(int key);
 	void KeyUp(int key);
 	bool IsKeyPressed(int key);
+	bool IsKeyTriggered(int key);
 	static InputManager* IMins;
 	static InputManager* GetInstance() {
 		if (IMins == nullptr) {
@@ -16,5 +17,6 @@ public:
 	}
 private:
 	bool keys[256] = {};
+	bool keyTriggered[256] = {};
 
 };

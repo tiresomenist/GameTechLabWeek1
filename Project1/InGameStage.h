@@ -27,7 +27,6 @@ public:
     void CheckHitCollision(float AttackRange);
     void intersectsPlayerWithWall();
 
-    InputManager inputManager;
     float countTimeForEnemy = 0.0f;
     float countTimeForPlayer = 0.0f;
     int difficulty;
@@ -54,6 +53,12 @@ private:
     AugmentStruct aug1;
     AugmentStruct aug2;
     AugmentStruct aug3;
+
+
+    int selectedAugment = 0;
+    int selectedLeaveMenu = 0;
+    int selectedPauseMenu = 0;
+    bool enterPressed = false;
 
     void RenderAugmentModal();
     void RenderHUD(int minutes, int seconds);
