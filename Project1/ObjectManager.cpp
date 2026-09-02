@@ -22,6 +22,11 @@ void ObjectManager::AddWeapon(Weapon* weapon)
 	weaponList.push_back(weapon);
 }
 
+void ObjectManager::AddMissile(UMissile* missile)
+{
+	missileList.push_back(missile);
+}
+
 void ObjectManager::AddObject(Object* obj)
 {
 	objectList.push_back(obj);
@@ -30,8 +35,41 @@ void ObjectManager::AddObject(Object* obj)
 
 void ObjectManager::CreateEnemy(float difficulty)
 {
-	Enemy* newEnemy = new Enemy(difficulty);
+	Enemy* newEnemy;
+
+	if (deadEnemyList.empty())
+	{
+		newEnemy = new Enemy(difficulty);
+	}
+	else
+	{
+		newEnemy = deadEnemyList.back();
+		deadEnemyList.pop_back();
+		newEnemy->Reset(difficulty);   // 재초기화
+	}
+
 	AddEnemy(newEnemy);
+}
+
+void ObjectManager::CreateMissile(float damage,float speed,FVector moveDir)
+{
+	UMissile* newmissile;
+
+
+	if (inactiveMissileList.empty())
+	{
+
+		newmissile = new UMissile(damage, speed, moveDir);
+	}
+	else
+	{
+		newmissile = inactiveMissileList.back();
+		inactiveMissileList.pop_back();
+		newmissile->Reset(damage, speed, moveDir);   // 재초기화
+	}
+	newmissile->SetRotation( 0.0f, 0.0f, atan2f(moveDir.y, moveDir.x) - 1.5707963f );
+	newmissile->SetLocation(objectList[0]->GetLocation().x, objectList[0]->GetLocation().y);
+	AddMissile(newmissile);
 }
 
 Player* ObjectManager::CreatePlayer()
@@ -53,6 +91,8 @@ void ObjectManager::CreateExpOrb(float x,float y)
 	newExpOrb->SetLocation(x,y);
 	AddObject(newExpOrb);
 }
+
+
 
 ObjectManager::ObjectManager()
 {
@@ -217,6 +257,32 @@ void ObjectManager::Render()
 
 		App::Ins->GetDeviceContext()->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 		hitEffects.erase(std::remove_if(hitEffects.begin(), hitEffects.end(),[](const FHitEffect& effect) { return effect.lifetime >= effect.duration; }),hitEffects.end());
+
+	}
+
+	ID3D11ShaderResourceView* srv = App::Ins->GetRocketTextureSRV();
+	if (srv != m_lastBoundSRV)
+	{
+		App::Ins->GetDeviceContext()->PSSetShaderResources(0, 1, &srv);
+		m_lastBoundSRV = srv;
+	}
+	if (missileList.size() > 0)
+	{
+		UINT Offset = 0;
+		ID3D11Buffer* VB = App::Ins->GetPlaneVertexBuffer();
+		UINT Stride = sizeof(FVertexSimple);
+		App::Ins->GetDeviceContext()->IASetVertexBuffers(0, 1, &VB, &Stride, &Offset);
+
+		float factor[4] = { 0, 0, 0, 0 };
+		App::Ins->GetDeviceContext()->OMSetBlendState(App::Ins->GetBlendState(), nullptr, 0xFFFFFFFF);
+		for (auto missile : missileList)
+		{
+			missile->renderer->RenderPrimitive(
+				missile->GetLocation(), missile->GetRadius(),
+				missile->GetRotation(), Priv::Plane);
+		}
+		App::Ins->GetDeviceContext()->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
+
 	}
 }
 
@@ -430,7 +496,9 @@ void ObjectManager::checkWeaponIntersectWithEnemy()
 	{
 		for (auto enemy : enemyList)
 		{
-			
+			if (enemy->GetPendingRemove())
+				continue;
+
 			if (weapon->Intersect(enemy)) {
 				//여기에 충돌관련 처리
 				//충돌한만큼 서로 밀어내기/적 체력 피해
@@ -458,23 +526,32 @@ void ObjectManager::checkWeaponIntersectWithEnemy()
 				
 				if (enemy->IsDead())
 				{
-					
-					//경험치 오브 생성
 					CreateExpOrb(enemy->GetLocation().x, enemy->GetLocation().y);
-
-					//적 제거
 					killCount++;
-					auto it = std::find(enemyList.begin(), enemyList.end(), enemy);
-					if (it != enemyList.end()) {
-						delete* it; // 메모리 해제
-						enemyList.erase(it); // 리스트에서 제거
-					}
-
-
+					enemy->SetPendingRemove(true);
 				}
 			}
 		}
 	}
+
+	for (int i = (int)enemyList.size() - 1; i >= 0; )
+	{
+		if (enemyList[i]->GetPendingRemove())
+		{
+			int s = enemyList.size() - 1;
+			deadEnemyList.push_back(enemyList[i]);
+			enemyList.erase(enemyList.begin() + i);
+
+			if (i == s)
+				--i;
+		}
+		else
+			--i;
+
+
+	}
+
+
 }
 
 void ObjectManager::checkPlayerIntersectWithExpOrb()
@@ -528,12 +605,161 @@ void ObjectManager::checkPlayerIntersectWithExpOrb()
 
 }
 
+void ObjectManager::CheckMissileIntersectWithEnemy()
+{
+	for (int mi = (int)missileList.size() - 1; mi >= 0; --mi)
+	{
+		UMissile* missile = missileList[mi];
+		if (missile->isInActive) continue;
+
+		float leftDownX = missile->GetLocation().x - missile->GetRadius();
+		float leftDownY = missile->GetLocation().y - missile->GetRadius();
+		float rightUpX = missile->GetLocation().x + missile->GetRadius();
+		float rightUpY = missile->GetLocation().y + missile->GetRadius();
+
+		for (int ei = (int)enemyList.size() - 1; ei >= 0; --ei)
+		{
+			Enemy* enemy = enemyList[ei];
+			if (enemy->GetPendingRemove()) continue;
+
+			float sphereCenterX = enemy->GetLocation().x;
+			float sphereCenterY = enemy->GetLocation().y;
+
+			float closestX = sphereCenterX;
+			if (closestX < leftDownX) closestX = leftDownX;
+			if (closestX > rightUpX)  closestX = rightUpX;
+
+			float closestY = sphereCenterY;
+			if (closestY < leftDownY) closestY = leftDownY;
+			if (closestY > rightUpY)  closestY = rightUpY;
+
+			float dx = sphereCenterX - closestX;
+			float dy = sphereCenterY - closestY;
+			float r = enemy->GetRadius();
+
+
+			if ((dx * dx + dy * dy) <= (r * r))
+			{
+				enemy->GetAttacked(missile->GetDMG());
+				if (enemy->IsDead())
+				{
+					CreateExpOrb(enemy->GetLocation().x, enemy->GetLocation().y);
+					killCount++;
+					enemy->SetPendingRemove(true);
+				}
+
+				missile->isInActive = true;   // 표시만
+				break;
+			}
+		}
+	}
+	for (int i = (int)enemyList.size() - 1; i >= 0; --i)
+	{
+		if (enemyList[i]->GetPendingRemove())
+		{
+			deadEnemyList.push_back(enemyList[i]);
+			enemyList.erase(enemyList.begin() + i);
+		}
+	}
+
+	for (int i = (int)missileList.size() - 1; i >= 0; --i)
+	{
+		if (missileList[i]->isInActive)
+		{
+			inactiveMissileList.push_back(missileList[i]);
+			missileList.erase(missileList.begin() + i);
+		}
+	}
+
+}
+
+void ObjectManager::ShootMissileToEnemy()
+{
+	if (enemyList.size() == 0)
+		return;
+
+	FVector nearestEnemyLocation = FindNearestEnemyLocation();
+	Player* player = static_cast<Player*>(objectList[0]);
+
+	FVector targetDir = { nearestEnemyLocation.x - player->GetLocation().x,
+					  nearestEnemyLocation.y - player->GetLocation().y,
+					  0.0f };
+
+	float len = sqrtf(targetDir.x * targetDir.x + targetDir.y * targetDir.y);
+	if (len > 0.0001f)
+	{
+		targetDir.x /= len;
+		targetDir.y /= len;
+	}
+
+	CreateMissile(player->GetMissileDmg(), player->GetMissileMoveSpeed(), targetDir);
+
+	//미사일을 적쪽으로 꺾이게 만들어야함
+
+	
+
+}
+
+void ObjectManager::MoveMissile(float deltaTime)
+{
+	for(auto& m : missileList)
+	{
+		if (m->isInActive)
+			continue;
+		m->AddLifetime(deltaTime);
+		m->UpdateLocation(deltaTime);
+
+	if (m->GetLifetime() >= m->GetDuration())
+		m->isInActive = true;
+	}
+
+
+	for (int i = (int)missileList.size() - 1; i >= 0; --i)
+	{
+		if (missileList[i]->isInActive)
+		{
+			inactiveMissileList.push_back(missileList[i]);
+			missileList.erase(missileList.begin() + i);
+		}
+	}
+
+}
+
+FVector ObjectManager::FindNearestEnemyLocation()
+{
+	FVector result = FVector(0.0f, 0.0f, 0.0f);
+
+	float minDistance = 6;
+
+	FVector playerLocation = objectList[0]->GetLocation();
+
+	for (auto enemy : enemyList)
+	{
+		if (enemy->GetPendingRemove())
+			continue;
+		
+		FVector enemyLocation = enemy->GetLocation();
+
+		float distance = (playerLocation.x - enemyLocation.x) * (playerLocation.x - enemyLocation.x) + (playerLocation.y - enemyLocation.y) * (playerLocation.y - enemyLocation.y);
+
+		if (minDistance > distance)
+		{
+			minDistance = distance;
+			result = enemyLocation;
+		}
+
+	}
+
+
+	return result;
+}
+
 void ObjectManager::SpinWeapon(float deltaTime, float rotationSpeed)
 {
 	Player* player = static_cast<Player*>(objectList[0]);
 	orbitAngle += player->GetWeaponRotationSpeed() * deltaTime;      // 전체 회전
 
-	if (orbitAngle > 6.2831853f)
+	while (orbitAngle > 6.2831853f)
 		orbitAngle -= 6.2831853f;               // 오버플로 방지
 
 	int count = static_cast<int>(weaponList.size());
@@ -647,6 +873,15 @@ void ObjectManager::ReleaseAllObjects()
 			delete weapon;
 		}
 		weaponList.clear();
+
+		for (auto* e : deadEnemyList) delete e;
+		deadEnemyList.clear();
+
+		for (auto* m : missileList) delete m;
+		missileList.clear();
+
+		for (auto* m : inactiveMissileList) delete m;
+		inactiveMissileList.clear();
 };
 
 

@@ -53,6 +53,10 @@ class App
 	ID3D11ShaderResourceView* hitEffectTextureSRV;
 	ID3D11Texture2D* hitEffectTexture;
 
+	//로켓 텍스쳐
+	ID3D11ShaderResourceView* rocketTextureSRV;
+	ID3D11Texture2D* rocketTexture;
+
 
 	//프레임 버퍼
 	ID3D11Texture2D* m_frameBuffer;
@@ -181,6 +185,11 @@ class App
 	{
 		return hitEffectTextureSRV;
 	}
+	ID3D11ShaderResourceView* GetRocketTextureSRV()
+	{
+		return rocketTextureSRV;
+	}
+
 
 	ID3D11BlendState* GetBlendState() const
 	{

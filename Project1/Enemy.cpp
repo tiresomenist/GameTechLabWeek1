@@ -5,8 +5,16 @@
 
 Enemy::Enemy(float difficulty) 
 {
-	//크기 0.03f
+	Reset(difficulty);
+};
+
+void Enemy::Reset(float difficulty)
+{
+	pendingRemove = false;
 	radius = 0.03f;
+	isHit = false;
+	invincibleTimer = 0.0f;
+	hitFlashAmount = 0.0f;
 	switch (rand() % 8) {
 	case 0: location = { -0.9f, 0.0f, 0.0f }; break;
 	case 1: location = { -0.9f, -0.9f, 0.0f }; break;
@@ -21,7 +29,8 @@ Enemy::Enemy(float difficulty)
 	attack = 1.0f + (0.05f * difficulty);
 	float MaxHealth = 30.0f + (30.0f * difficulty);
 	health = MaxHealth;
-};
+}
+
 void Enemy::MoveObject(float x, float y) {
 	location.x += x;
 	location.y += y;

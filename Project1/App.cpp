@@ -207,7 +207,7 @@ void App::InitD3D()
 	D3D11Util::CreateTexture(L"CartoonBackGround2.png", &m_bgTexture, &m_bgSRV);
 	D3D11Util::CreateTexture(L"star2.png", &expOrbTexture, &expOrbTextureSRV);
 	D3D11Util::CreateTexture(L"hit_effect.png", &hitEffectTexture, &hitEffectTextureSRV);
-
+	D3D11Util::CreateTexture(L"rocket2.png", &rocketTexture, &rocketTextureSRV);
 	for (auto& vertex : sphere_vertices)
 	{
 
