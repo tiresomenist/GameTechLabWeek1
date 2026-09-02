@@ -173,6 +173,7 @@
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="TimeManager.h" />
     <ClInclude Include="UExpOrb.h" />
+    <ClInclude Include="UItem.h" />
     <ClInclude Include="URenderer.h" />
     <ClInclude Include="Weapon.h" />
   </ItemGroup>
@@ -201,6 +202,7 @@
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="UExpOrb.cpp" />
+    <ClCompile Include="UItem.cpp" />
     <ClCompile Include="URenderer.cpp" />
     <ClCompile Include="Weapon.cpp" />
   </ItemGroup>

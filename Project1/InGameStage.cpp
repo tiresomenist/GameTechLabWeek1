@@ -160,6 +160,16 @@ void InGameStage::RenderAugmentModal()
 	texts[1] = augment.GetAugmentText(aug2);
 	texts[2] = augment.GetAugmentText(aug3);
 
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.10f, 0.45f, 0.55f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.15f, 0.60f, 0.70f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.20f, 0.75f, 0.85f, 1.0f));
+
+	ImGui::SetWindowFontScale(1.4f);
+	ImGui::PushStyleVar(
+		ImGuiStyleVar_ButtonTextAlign,
+		ImVec2(0.5f, 0.4f)
+	);
+
 	// 증강 버튼 생성
 	for (int i = 0; i < 3; i++)
 	{
@@ -197,10 +207,12 @@ void InGameStage::RenderAugmentModal()
 			ImGui::SameLine(0.0f, gap);
 
 	}
+	ImGui::PopStyleColor(3);
+	ImGui::PopStyleVar();
+	ImGui::SetWindowFontScale(1.0f);
 
 	ImGui::End();
 }
-
 
 void InGameStage::Render()
 {
@@ -349,9 +361,7 @@ void InGameStage::RenderPauseModal()
 			(ImGui::GetWindowSize().x - buttonWidth) * 0.5f
 		);
 
-		if (ImGui::Button(
-			"RESUME",
-			ImVec2(buttonWidth, buttonHeight)) || (escPressed && !leaveGameOpen))
+		if (ImGui::Button("RESUME",ImVec2(buttonWidth, buttonHeight)) || (escPressed && !leaveGameOpen))
 		{
 			if(!openAugmentPopup)
 				TimeManager::GetInstance()->TimeResume();

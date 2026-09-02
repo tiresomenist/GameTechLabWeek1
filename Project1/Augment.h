@@ -28,7 +28,7 @@ public:
 public:
 	Augment();
 	AugmentStruct GetAugmentStruct();
-	std::string GetAugmentText(const AugmentStruct& aug);
+	std::string GetAugmentText(const AugmentStruct& aug) const;
 	void ResetAugment();
 
 private:
