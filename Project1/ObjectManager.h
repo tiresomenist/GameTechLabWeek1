@@ -16,8 +16,9 @@ class ObjectManager
 	void AddObject(Object* obj);
 	void AddEnemy(Enemy* enemy);
 	void AddWeapon(Weapon* weapon);
-
+	static ObjectManager* Ins;
 	float orbitAngle = 0.0f;
+	int killCount;
 
 	public:
 	void CreateEnemy();
@@ -43,8 +44,6 @@ class ObjectManager
 	void checkWeaponIntersectWithEnemy();
 
 
-	
-	static ObjectManager* Ins;
 
 	static ObjectManager* GetInstance()  {
 		if (Ins == nullptr) {
@@ -56,5 +55,8 @@ class ObjectManager
 	
 
 	void ReleaseAllObjects();
+
+	void setKillCount(int count) { killCount = count; }
+	int  getKillCount() const { return killCount; }
 	
 };

@@ -194,6 +194,7 @@ void ObjectManager::checkWeaponIntersectWithEnemy()
 				if (enemy->IsDead())
 				{
 					//적 제거
+					killCount++;
 					auto it = std::find(enemyList.begin(), enemyList.end(), enemy);
 					if (it != enemyList.end()) {
 						delete* it; // 메모리 해제

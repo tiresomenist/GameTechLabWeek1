@@ -6,6 +6,7 @@
 #include "ImGui/imgui_impl_dx11.h"
 #include "ImGui/imgui_internal.h"
 
+
 #include "ObjectManager.h"
 
 InGameStage::InGameStage(App* app)
@@ -24,7 +25,8 @@ void InGameStage::Enter()
 	TimeManager::GetInstance()->TimeStart();
 
 	gameResult = 0;
-
+	ObjectManager::GetInstance()->setKillCount(0);
+	score = 0;
 	//테스트용으로 적한번 찍어본거.
 	ObjectManager::GetInstance()->CreateEnemy();
 
@@ -63,7 +65,7 @@ void InGameStage::Update(float deltaTime)
 	difficulty = TimeManager::GetInstance()->GetcurrentTime() / 10.0f;
 	//적군 생성 로직
 	if (countTimeForEnemy > 2.0f - (difficulty * 0.39f)) {
-		countTimeForEnemy -= 2.0f-(difficulty * 0.3f);
+		countTimeForEnemy -= 2.0f-(difficulty * 0.39f);
 		ObjectManager::GetInstance()->CreateEnemy();
 		//OutputDebugStringA("Enemy Creted!\n");
 
@@ -78,13 +80,7 @@ void InGameStage::Update(float deltaTime)
 	//인풋매니저 가져오고 델타타임이랑 이동속도 생각해서 한프레임당 이동 거리 계산해서 move호출
 	
 	player->MoveObject(moveDir.x * deltaTime * player->GetSpeed(), moveDir.y * deltaTime * player->GetSpeed());
-	// 플레이어 공격
-	if (countTimeForPlayer > (1.0f / player->GetAttackSpeed())) {
-		countTimeForPlayer -= (1.0f / player->GetAttackSpeed());
-		//공격 범위를 그리는 함수가 필요합니다.
-		//컬러값 (1.0f,0.0f,0.0f,0.5f)로 반지름 0.08f. 반투명 빨간색 생각중.
-		//CheckHitCollision(player->GetAttackRange());
-	}
+	
 	//무기 돌리기
 	ObjectManager::GetInstance()->SpinWeapon(deltaTime, player->GetWeaponRotationSpeed());	
 	//무기와 적의 충돌 체크
@@ -126,10 +122,6 @@ void InGameStage::RenderHUD(int minutes, int seconds)
 	// InGame 상시 HUD 
 	/////////////////////////
 
-	// 임시 UI 데이터
-	static float tempHP = 75.0f;
-	static float tempMaxHP = 100.0f;
-
 	ImGui::SetNextWindowPos(ImVec2(20.0f, 20.0f), ImGuiCond_Always);
 
 	ImGuiWindowFlags hudFlags =
@@ -155,8 +147,10 @@ void InGameStage::RenderHUD(int minutes, int seconds)
 		hpText
 	);
 
-	ImGui::Text("TIME  %02d:%02d", minutes, seconds);
+	score = seconds * 10 + ObjectManager::GetInstance()->getKillCount() * 10;
 
+	ImGui::Text("TIME  %02d:%02d", minutes, seconds);
+	ImGui::Text("Score: %d", score);
 	ImGui::Separator();
 
 	// 임시 테스트 버튼
@@ -344,9 +338,7 @@ void InGameStage::RenderResultModal(int minutes, int seconds)
 	// Result Modal: 게임 클리어 또는 게임 오버 시의 결과창 팝업
 	// =========================
 
-	// 임시 UI 변수
-	static int tempExp = 120;
-
+	static bool isSubmitted = false;
 	if (openResultPopup)
 	{
 		ImGui::OpenPopup("Game Result");
@@ -381,14 +373,35 @@ void InGameStage::RenderResultModal(int minutes, int seconds)
 			seconds
 		);
 
-		ImGui::Text("EXP : %d", tempExp);
+		ImGui::Text("Score : %d", score);
 
 		ImGui::Separator();
+
+		ImGui::BeginDisabled(isSubmitted);
+		// 리더보드 입력 구현
+		static char nickname[32] = "";
+		ImGui::InputText("Nickname", nickname, IM_ARRAYSIZE(nickname));
+		const char* buttonText = isSubmitted ? "Submitted" : "Submit";
+
+		if (ImGui::Button(buttonText)) {
+			if (strlen(nickname) > 0) {
+				// LeaderboardManager 등에 전달
+				LeaderboardManager::GetInstance()->AddScore(nickname, score);
+
+				// 입력 후 버퍼 초기화 (필요 시)
+				nickname[0] = '\0';
+				isSubmitted = true;
+			}
+		}
+
+		ImGui::Separator();
+		ImGui::EndDisabled();
 
 		if (ImGui::Button("RESTART", ImVec2(140.0f, 40.0f)))
 		{
 			ImGui::CloseCurrentPopup();
 			m_app->ChangeState(new InGameStage(m_app));
+			isSubmitted = false;
 		}
 
 		ImGui::SameLine();
@@ -397,6 +410,8 @@ void InGameStage::RenderResultModal(int minutes, int seconds)
 		{
 			ImGui::CloseCurrentPopup();
 			m_app->ChangeState(new MainmenuStage(m_app));
+			isSubmitted = false;
+
 		}
 
 		ImGui::EndPopup();

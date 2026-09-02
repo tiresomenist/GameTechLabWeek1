@@ -180,6 +180,8 @@
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
     <ClCompile Include="InGameStage.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="LeaderboardManager.cpp" />
+    <ClCompile Include="LeaderboardManager.h" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainmenuStage.cpp" />
     <ClCompile Include="Object.cpp" />

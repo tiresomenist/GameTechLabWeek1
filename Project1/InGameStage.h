@@ -3,6 +3,7 @@
 #include "ObjectManager.h"
 #include "TimeManager.h"
 #include "InputManager.h"
+#include "LeaderboardManager.h"
 
 class App;
 
@@ -29,7 +30,7 @@ public:
     float countTimeForEnemy = 0.0f;
     float countTimeForPlayer = 0.0f;
     int difficulty;
-
+    int score;
 private:
     App* m_app = nullptr;
 
