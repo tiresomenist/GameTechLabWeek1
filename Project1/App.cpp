@@ -7,7 +7,6 @@
 #pragma comment(lib, "d3d11.lib")
 
 #include "FConstant.h"
-#include "FHitFlashConstant.h"
 
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
@@ -182,14 +181,6 @@ void App::InitD3D()
 
 	m_device->CreateBuffer(&constantbufferdesc, nullptr, &constantBuffer);
 
-	D3D11_BUFFER_DESC hitFlashDesc = {};
-	hitFlashDesc.ByteWidth = sizeof(FHitFlashConstant);
-	hitFlashDesc.Usage = D3D11_USAGE_DYNAMIC;
-	hitFlashDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	hitFlashDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	m_device->CreateBuffer(&hitFlashDesc, nullptr, &hitFlashConstantBuffer);
-
-
 	//배경 버텍스 버퍼 생성
 	m_bgVertexBuffer = CreateVertexBuffer(bgQuad, sizeof(bgQuad));
 
@@ -239,7 +230,6 @@ void App::InitD3D()
 
 
 	assert(constantBuffer != nullptr);
-	assert(hitFlashConstantBuffer != nullptr);
 };
 
 void App::CreateDeviceandSwapchain()
@@ -387,8 +377,7 @@ void App::Render()
 		cb.radius = 1.0f;
 		D3D11Util::UpdateConstantBuffer(m_deviceContext, constantBuffer, cb);
 		m_deviceContext->VSSetConstantBuffers(0, 1, &constantBuffer);
-	
-	UINT stride = sizeof(FVertexSimple);
+		UINT stride = sizeof(FVertexSimple);
 		UINT offset = 0;
 		m_deviceContext->IASetVertexBuffers(0, 1, &m_bgVertexBuffer, &stride, &offset);
 		m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);

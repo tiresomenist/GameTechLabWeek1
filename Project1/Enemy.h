@@ -15,9 +15,6 @@ public:
 	float invinciblethreshold = 1.0f;
 	float invincibleTimer = 0.0f;
 
-	float hitFlashAmount = 0.0f;
-	float flashDuration = 0.1f;       // 흰색이 사라지는 시간
-
 	bool GetisHit() const
 	{
 		return isHit;
@@ -27,16 +24,6 @@ public:
 	{
 		isHit = value;
 	};
-
-	void SetHitFlashAmount(float amount)
-	{
-		hitFlashAmount = amount;
-	}
-
-	float GetHitFlashAmount() const
-	{
-		return hitFlashAmount;
-	}
 
 private:
 	
