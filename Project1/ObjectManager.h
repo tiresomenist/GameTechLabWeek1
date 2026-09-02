@@ -5,6 +5,7 @@
 #include "Enemy.h"
 #include "Weapon.h"
 #include "Augment.h"
+#include "FHitEffect.h"
 
 class ObjectManager
 {
@@ -15,11 +16,14 @@ class ObjectManager
 
 	std::vector<Weapon*> weaponList;
 
+	std::vector<FHitEffect> hitEffects;
+
 	void AddObject(Object* obj);
 	void AddEnemy(Enemy* enemy);
 	void AddWeapon(Weapon* weapon);
 	float orbitAngle = 0.0f;
-	int killCount;
+	int killCount = 0;
+	float hitFlashAlpha = 1.0f;
 
 	public:
 	void CreateEnemy(float difficulty);
@@ -63,5 +67,7 @@ class ObjectManager
 
 	void setKillCount(int count) { killCount = count; }
 	int  getKillCount() const { return killCount; }
+
+	float GetHitFlashAlpha() const { return hitFlashAlpha; }
 	
 };

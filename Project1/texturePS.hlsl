@@ -7,7 +7,8 @@ cbuffer PixelConstants : register(b0)
 {
     // 피격 시 흰색 깜빡임 정도 (0.0 ~ 1.0)
     float hitFlashAmount;
-    float3 padding;
+    float alpha;
+    float2 padding;
 };
 
 struct PS_INPUT
@@ -30,5 +31,7 @@ float4 mainPS(PS_INPUT input) : SV_TARGET
         hitColor,
         hitFlashAmount
     );
+    texColor.a *= alpha;
+    
     return texColor;
 }

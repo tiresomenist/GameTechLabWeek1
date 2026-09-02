@@ -5,7 +5,7 @@
 #include "EPrimitives.h"
 #include "UExpOrb.h"
 
-#include "FHitFlashConstant.h"
+#include "FPixelConstant.h"
 #include "D3D11Util.h"
 #include <cmath>
 
@@ -27,7 +27,6 @@ void ObjectManager::AddObject(Object* obj)
 	objectList.push_back(obj);
 	
 }
-
 
 void ObjectManager::CreateEnemy(float difficulty)
 {
@@ -53,13 +52,13 @@ void ObjectManager::CreateExpOrb(float x,float y)
 	UExpOrb* newExpOrb = new UExpOrb();
 	newExpOrb->SetLocation(x,y);
 	AddObject(newExpOrb);
-
 }
 
 ObjectManager::ObjectManager()
 {
 	Ins = this;
 }
+
 void ObjectManager::Render()
 {
 	
@@ -80,7 +79,7 @@ void ObjectManager::Render()
 			objectList[0]->renderer->RenderPrimitive(objectList[0]->GetLocation(), objectList[0]->GetRadius(), Priv::Sphere);
 			}
 
-			 srv = App::Ins->GetExpOrbTextureSRV();
+			srv = App::Ins->GetExpOrbTextureSRV();
 			if (srv != m_lastBoundSRV)
 			{
 				App::Ins->GetDeviceContext()->PSSetShaderResources(0, 1, &srv);
@@ -97,9 +96,7 @@ void ObjectManager::Render()
 			App::Ins->GetDeviceContext()->OMSetBlendState(App::Ins->GetBlendState(), nullptr, 0xFFFFFFFF);
 			for (size_t i = 1; i < objectList.size(); ++i)
 			{
-
 				objectList[i]->renderer->RenderPrimitive(objectList[i]->GetLocation(), objectList[i]->GetRadius(), Priv::Plane);
-				
 			}
 
 			App::Ins->GetDeviceContext()->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
@@ -129,7 +126,7 @@ void ObjectManager::Render()
 
 		for (auto enemy : enemyList)
 		{
-			FHitFlashConstant hitFlashCB = {};
+			FPixelConstant hitFlashCB = {};
 			hitFlashCB.hitFlashAmount = enemy->GetHitFlashAmount();
 
 			D3D11Util::UpdateConstantBuffer(
@@ -142,9 +139,10 @@ void ObjectManager::Render()
 		}
 
 		// enemy 렌더가 전부 끝난 뒤 상수버퍼 초기화
-		FHitFlashConstant resetCB = {};
+		FPixelConstant resetCB = {};
 		resetCB.hitFlashAmount = 0.0f;
-
+		resetCB.alpha = 1.0f;
+		
 		D3D11Util::UpdateConstantBuffer(
 			App::Ins->GetDeviceContext(),
 			hitFlashBuffer,
@@ -173,14 +171,61 @@ void ObjectManager::Render()
 
 	}
 
+	if (hitEffects.size() > 0)
+	{
+		UINT Offset = 0;
+		ID3D11Buffer* VB = App::Ins->GetPlaneVertexBuffer();
+		UINT Stride = sizeof(FVertexSimple);
+		App::Ins->GetDeviceContext()->IASetVertexBuffers(0, 1, &VB, &Stride, &Offset);
+		ID3D11ShaderResourceView* srv = App::Ins->GetHitEffectTextureSRV();
+		if (srv != m_lastBoundSRV)
+		{
+			App::Ins->GetDeviceContext()->PSSetShaderResources(0, 1, &srv);
+			m_lastBoundSRV = srv;
+		}
 
+		App::Ins->GetDeviceContext()->OMSetBlendState(App::Ins->GetBlendState(), nullptr, 0xFFFFFFFF);
+
+		ID3D11Buffer* pixelBuffer =	App::Ins->GetHitFlashConstantBuffer();
+
+		App::Ins->GetDeviceContext()->PSSetConstantBuffers(0, 1, &pixelBuffer);
+
+		for (auto& hitEffect : hitEffects)
+		{
+			FPixelConstant cb = {};
+			cb.hitFlashAmount = 0.0f;
+			cb.alpha = hitEffect.alpha;
+
+			D3D11Util::UpdateConstantBuffer(
+				App::Ins->GetDeviceContext(),
+				pixelBuffer,
+				cb
+			);
+
+			objectList[0]->renderer->RenderPrimitive(
+				hitEffect.location,
+				hitEffect.size,
+				Priv::Plane
+			);
+		}
+		FPixelConstant resetCB = {};
+		resetCB.hitFlashAmount = 0.0f;
+		resetCB.alpha = 1.0f;
+
+		D3D11Util::UpdateConstantBuffer(App::Ins->GetDeviceContext(),pixelBuffer,resetCB);
+
+		App::Ins->GetDeviceContext()->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
+		hitEffects.erase(std::remove_if(hitEffects.begin(), hitEffects.end(),[](const FHitEffect& effect) { return effect.lifetime >= effect.duration; }),hitEffects.end());
+	}
 }
+
 void ObjectManager::Update(float deltaTime)
 {
 	EnemyMove(deltaTime);
 	checkEnemiesIntersect();
 
 }
+
 void ObjectManager::EnemyMove(float deltaTime)
 {
 	for (auto enemy : enemyList)
@@ -270,8 +315,18 @@ void ObjectManager::intersectsPlayerWithWall()
 }
 void ObjectManager::checkWeaponIntersectWithEnemy() 
 {
+	float deltaTime = TimeManager::GetInstance()->GetDeltaTime();
+
 	for (auto enemy : enemyList)
-		enemy->InvincibleTimerUpdate(TimeManager::GetInstance()->GetDeltaTime());
+		enemy->InvincibleTimerUpdate(deltaTime);
+
+	// HitEffect의 lifetime 업데이트
+	for (auto& hitEffect : hitEffects)
+	{
+		hitEffect.lifetime += deltaTime;
+		hitEffect.alpha = 1.0f - (hitEffect.lifetime / hitEffect.duration);
+	}
+
 	//무기와 적 충돌 처리
 	Player* player = static_cast<Player*>(objectList[0]);
 	for (auto weapon : weaponList)
@@ -296,10 +351,12 @@ void ObjectManager::checkWeaponIntersectWithEnemy()
 				//적 피해 처리
 				if (enemy->GetisHit() == false)
 				{
+
 					USoundManager::GetInstance()->PlaySFX(ENEMY_HIT);
 					enemy->GetAttacked(player->GetAttack());
 					enemy->SetHitFlashAmount(1.0f);
 					enemy->SetisHit(true);
+					hitEffects.push_back(FHitEffect(enemy->GetLocation(), 0.0f, 0.5f, 0.2f, 1.0f));
 				}
 				
 				if (enemy->IsDead())

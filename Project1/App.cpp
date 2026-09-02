@@ -7,7 +7,7 @@
 #pragma comment(lib, "d3d11.lib")
 
 #include "FConstant.h"
-#include "FHitFlashConstant.h"
+#include "FPixelConstant.h"
 
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
@@ -183,7 +183,7 @@ void App::InitD3D()
 	m_device->CreateBuffer(&constantbufferdesc, nullptr, &constantBuffer);
 
 	D3D11_BUFFER_DESC hitFlashDesc = {};
-	hitFlashDesc.ByteWidth = sizeof(FHitFlashConstant);
+	hitFlashDesc.ByteWidth = sizeof(FPixelConstant);
 	hitFlashDesc.Usage = D3D11_USAGE_DYNAMIC;
 	hitFlashDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	hitFlashDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -199,17 +199,7 @@ void App::InitD3D()
 	D3D11Util::CreateTexture(L"meteor.jpg", &meteorTexture, &meteorTextureSRV);
 	D3D11Util::CreateTexture(L"CartoonBackGround2.png", &m_bgTexture, &m_bgSRV);
 	D3D11Util::CreateTexture(L"star2.png", &expOrbTexture, &expOrbTextureSRV);
-
-	for (auto& vertex : sphere_vertices)
-	{
-		// vertex.x, vertex.y, vertex.z 사용
-		// ↓
-		// vertex.u 계산
-		// vertex.v 계산
-
-		vertex.u = 0.5f + (atan2(vertex.z, vertex.x) / (2 * PI));
-		vertex.v = 0.5f - (asin(std::clamp(vertex.y, -1.0f, 1.0f)) / PI);
-	}
+	D3D11Util::CreateTexture(L"hit_effect.png", &hitEffectTexture, &hitEffectTextureSRV);
 
 	for (auto& vertex : sphere_vertices)
 	{
