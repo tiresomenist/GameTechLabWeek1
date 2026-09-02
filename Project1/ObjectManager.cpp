@@ -622,7 +622,11 @@ void ObjectManager::UpgradePlayer(AugmentStruct aug) {
 		break;
 
 	case AugmentType::AddWeapon:
-		CreateWeapon(player->GetWeaponRadius());
+
+		for (int i = 0; i < static_cast<int>(aug.value); i++) {
+			CreateWeapon(player->GetWeaponRadius());
+		}
+		
 		break;
 	}
 }

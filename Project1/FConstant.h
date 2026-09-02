@@ -8,4 +8,3 @@ struct FConstant
 	FVector Rotation;
 	float Padding;
 };
-

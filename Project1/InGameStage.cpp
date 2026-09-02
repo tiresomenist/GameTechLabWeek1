@@ -258,9 +258,13 @@ void InGameStage::RenderAugmentModal()
 
 		ImGui::PushStyleColor(
 			ImGuiCol_ChildBg,
-			enhanced
-			? ImVec4(0.16f, 0.10f, 0.05f, 0.95f)
-			: ImVec4(0.08f, 0.10f, 0.13f, 0.95f)
+			selectedAugment == i
+			? (enhanced
+				? ImVec4(0.24f, 0.14f, 0.06f, 0.95f)   // 선택 + 강화
+				: ImVec4(0.11f, 0.16f, 0.20f, 0.95f))  // 선택 + 일반
+			: (enhanced
+				? ImVec4(0.11f, 0.07f, 0.03f, 0.95f)   // 미선택 + 강화
+				: ImVec4(0.05f, 0.07f, 0.09f, 0.95f))  // 미선택 + 일반
 		);
 
 		ImGui::PushStyleColor(
@@ -321,11 +325,11 @@ void InGameStage::RenderAugmentModal()
 			ImGuiCol_Button,
 			selectedAugment == i
 			? (enhanced
-				? ImVec4(0.95f, 0.58f, 0.10f, 1.0f)
-				: ImVec4(0.15f, 0.60f, 0.70f, 1.0f))
+				? ImVec4(1.00f, 0.68f, 0.15f, 1.0f)   // 선택 + 강화
+				: ImVec4(0.20f, 0.75f, 0.85f, 1.0f))  // 선택
 			: (enhanced
-				? ImVec4(0.75f, 0.45f, 0.08f, 1.0f)
-				: ImVec4(0.10f, 0.45f, 0.55f, 1.0f))
+				? ImVec4(0.55f, 0.32f, 0.05f, 1.0f)   // 미선택 + 강화
+				: ImVec4(0.06f, 0.28f, 0.34f, 1.0f))  // 미선택
 		);
 
 		bool selectPressed = ImGui::Button(
