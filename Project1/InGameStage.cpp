@@ -11,6 +11,7 @@
 #include "SoundManager.h"
 #include "Augment.h"
 #include "SettingsUI.h"
+#include "LeaderboardUI.h"
 
 InGameStage::InGameStage(App* app)
 	: m_app(app)
@@ -78,10 +79,10 @@ void InGameStage::Update(float deltaTime)
 
 	////플레이어 이동
 	FVector moveDir(0.0f, 0.0f, 0.0f);
-	if (InputManager::GetInstance()->IsKeyPressed(VK_UP))    moveDir.y += 1.0f;
-	if (InputManager::GetInstance()->IsKeyPressed(VK_DOWN))  moveDir.y -= 1.0f;
-	if (InputManager::GetInstance()->IsKeyPressed(VK_LEFT))  moveDir.x -= 1.0f;
-	if (InputManager::GetInstance()->IsKeyPressed(VK_RIGHT)) moveDir.x += 1.0f;
+	if (InputManager::GetInstance()->IsKeyPressed(VK_UP) || InputManager::GetInstance()->IsKeyPressed('W'))    moveDir.y += 1.0f;
+	if (InputManager::GetInstance()->IsKeyPressed(VK_DOWN) || InputManager::GetInstance()->IsKeyPressed('S'))  moveDir.y -= 1.0f;
+	if (InputManager::GetInstance()->IsKeyPressed(VK_LEFT) || InputManager::GetInstance()->IsKeyPressed('A'))  moveDir.x -= 1.0f;
+	if (InputManager::GetInstance()->IsKeyPressed(VK_RIGHT) || InputManager::GetInstance()->IsKeyPressed('D')) moveDir.x += 1.0f;
 	//인풋매니저 가져오고 델타타임이랑 이동속도 생각해서 한프레임당 이동 거리 계산해서 move호출
 	
 	player->MoveObject(moveDir.x * deltaTime * player->GetSpeed(), moveDir.y * deltaTime * player->GetSpeed());
@@ -117,7 +118,7 @@ void InGameStage::RenderAugmentModal()
 {
 	if (!openAugmentPopup)
 		return;
-	
+
 	//증강 생성 되었는지
 	if (!isAugmnetSelected) {
 		//증강 3개 랜덤뽑기
@@ -129,27 +130,51 @@ void InGameStage::RenderAugmentModal()
 		isAugmnetSelected = true;
 	}
 
-	float width = 160.0f;
-	float height = 220.0f;
-	float gap = 30.0f;
+	float width = 190.0f;
+	float height = 260.0f;
+	float gap = 20.0f;
 
 	float windowWidth = width * 3 + gap * 2 + 40.0f;
-	float windowHeight = height + 60.0f;
+	float windowHeight = height + 100.0f;
+
+	// 화면 중앙에 배치
+	ImGuiIO& io = ImGui::GetIO();
+	ImGui::SetNextWindowPos(
+		ImVec2(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f),
+		ImGuiCond_Always,
+		ImVec2(0.5f, 0.5f)
+	);
 
 	ImGui::SetNextWindowSize(
 		ImVec2(windowWidth, windowHeight),
 		ImGuiCond_Always
 	);
 
-	ImGui::Begin(
-		"Upgrade!!",
-		nullptr,
-		ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoCollapse
+	// 증강 모달 배경
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(20.0f, 15.0f));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 14.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 1.0f);
+
+	ImGui::PushStyleColor(
+		ImGuiCol_WindowBg,
+		ImVec4(0.04f, 0.05f, 0.07f, 0.96f)
 	);
 
-	ImDrawList* drawList = ImGui::GetWindowDrawList();
-	ImVec2 pos = ImGui::GetCursorScreenPos();
+	ImGui::PushStyleColor(
+		ImGuiCol_Border,
+		ImVec4(0.15f, 0.50f, 0.60f, 0.8f)
+	);
+
+	ImGui::Begin(
+		"##LevelUp",
+		nullptr,
+		ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoScrollbar |
+		ImGuiWindowFlags_NoScrollWithMouse
+	);
 
 	std::string texts[3];
 
@@ -158,20 +183,93 @@ void InGameStage::RenderAugmentModal()
 	texts[1] = augment.GetAugmentText(aug2);
 	texts[2] = augment.GetAugmentText(aug3);
 
-	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.10f, 0.45f, 0.55f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.15f, 0.60f, 0.70f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.20f, 0.75f, 0.85f, 1.0f));
+	// 레벨업 텍스트
+	ImGui::SetWindowFontScale(1.6f);
 
-	ImGui::SetWindowFontScale(1.4f);
-	ImGui::PushStyleVar(
-		ImGuiStyleVar_ButtonTextAlign,
-		ImVec2(0.5f, 0.4f)
+	const char* title = "LEVEL UP!";
+	float titleWidth = ImGui::CalcTextSize(title).x;
+
+	ImGui::SetCursorPosX(
+		(ImGui::GetWindowWidth() - titleWidth) * 0.5f
 	);
+
+	ImGui::Text("%s", title);
+
+	ImGui::SetWindowFontScale(1.0f);
+
+	const char* subtitle = "Choose an Augment";
+	float subtitleWidth = ImGui::CalcTextSize(subtitle).x;
+
+	ImGui::SetCursorPosX(
+		(ImGui::GetWindowWidth() - subtitleWidth) * 0.5f
+	);
+
+	ImGui::TextDisabled("%s", subtitle);
+
+	ImGui::Spacing();
+	ImGui::Spacing();
 
 	// 증강 버튼 생성
 	for (int i = 0; i < 3; i++)
 	{
-		if (ImGui::Button(texts[i].c_str(), ImVec2(width, height)))
+		ImGui::PushID(i);
+
+		// 증강 카드
+		ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 10.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
+
+		ImGui::PushStyleColor(
+			ImGuiCol_ChildBg,
+			ImVec4(0.08f, 0.10f, 0.13f, 0.95f)
+		);
+
+		ImGui::PushStyleColor(
+			ImGuiCol_Border,
+			ImVec4(0.15f, 0.50f, 0.60f, 0.8f)
+		);
+
+		ImGui::BeginChild(
+			"AugmentCard",
+			ImVec2(width, height),
+			true,
+			ImGuiWindowFlags_NoScrollbar |
+			ImGuiWindowFlags_NoScrollWithMouse
+		);
+
+		ImGui::TextDisabled("AUGMENT %d", i + 1);
+
+		ImGui::Spacing();
+		ImGui::Separator();
+		ImGui::Spacing();
+
+		ImGui::SetWindowFontScale(1.2f);
+
+		// 증강 설명
+		ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x);
+
+		ImGui::TextWrapped("%s", texts[i].c_str());
+
+		ImGui::PopTextWrapPos();
+
+		ImGui::SetWindowFontScale(1.0f);
+
+		// 선택 버튼을 카드 아래에 배치
+		float buttonHeight = 42.0f;
+
+		ImGui::SetCursorPosY(
+			height - buttonHeight - 15.0f
+		);
+
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 7.0f);
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.10f, 0.45f, 0.55f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.15f, 0.60f, 0.70f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.20f, 0.75f, 0.85f, 1.0f));
+
+		if (ImGui::Button(
+			"SELECT",
+			ImVec2(ImGui::GetContentRegionAvail().x, buttonHeight)
+		))
 		{
 			switch (i)
 			{
@@ -198,18 +296,26 @@ void InGameStage::RenderAugmentModal()
 			}
 
 			openAugmentPopup = false;
-	
 		}
+
+		ImGui::PopStyleColor(3);
+		ImGui::PopStyleVar();
+
+		ImGui::EndChild();
+
+		ImGui::PopStyleColor(2);
+		ImGui::PopStyleVar(2);
+
+		ImGui::PopID();
 
 		if (i < 2)
 			ImGui::SameLine(0.0f, gap);
-
 	}
-	ImGui::PopStyleColor(3);
-	ImGui::PopStyleVar();
-	ImGui::SetWindowFontScale(1.0f);
 
 	ImGui::End();
+
+	ImGui::PopStyleColor(2);
+	ImGui::PopStyleVar(3);
 }
 
 void InGameStage::Render()
@@ -341,14 +447,18 @@ void InGameStage::RenderPauseModal()
 	// ESC 키 입력 체크
 	static bool prevEscDown = false;
 
-	bool escDown = InputManager::GetInstance()->IsKeyPressed(VK_ESCAPE);
+	bool escDown =
+		InputManager::GetInstance()->IsKeyPressed(VK_ESCAPE);
 
-	bool escPressed = escDown && !prevEscDown;
+	bool escPressed =
+		escDown && !prevEscDown;
 
 	prevEscDown = escDown;
 
 	// 인게임에서 ESC로 Pause 열기
-	if (escPressed && !ImGui::IsPopupOpen("Pause Menu"))
+	if (escPressed &&
+		!ImGui::IsPopupOpen("Pause Menu") &&
+		gameResult == 0)
 	{
 		openPausePopup = true;
 	}
@@ -358,52 +468,156 @@ void InGameStage::RenderPauseModal()
 		ImGui::OpenPopup("Pause Menu");
 		USoundManager::GetInstance()->PlaySFX(UI_OPEN);
 		openPausePopup = false;
+
 		TimeManager::GetInstance()->TimePause();
+
 		escPressed = false;
 	}
 
+	ImGuiIO& io = ImGui::GetIO();
+
+	// 화면 중앙에 배치
+	ImGui::SetNextWindowPos(
+		ImVec2(
+			io.DisplaySize.x * 0.5f,
+			io.DisplaySize.y * 0.5f
+		),
+		ImGuiCond_Appearing,
+		ImVec2(0.5f, 0.5f)
+	);
+
 	ImGui::SetNextWindowSize(
-		ImVec2(320.0f, 280.0f),
+		ImVec2(360.0f, 300.0f),
 		ImGuiCond_Always
+	);
+
+	// Pause 모달 배경
+	ImGui::PushStyleVar(
+		ImGuiStyleVar_WindowPadding,
+		ImVec2(30.0f, 25.0f)
+	);
+
+	ImGui::PushStyleVar(
+		ImGuiStyleVar_WindowRounding,
+		14.0f
+	);
+
+	ImGui::PushStyleVar(
+		ImGuiStyleVar_WindowBorderSize,
+		1.0f
+	);
+
+	ImGui::PushStyleVar(
+		ImGuiStyleVar_FrameRounding,
+		7.0f
+	);
+
+	ImGui::PushStyleColor(
+		ImGuiCol_PopupBg,
+		ImVec4(0.04f, 0.05f, 0.07f, 0.98f)
+	);
+
+	ImGui::PushStyleColor(
+		ImGuiCol_Border,
+		ImVec4(0.15f, 0.50f, 0.60f, 0.8f)
 	);
 
 	if (ImGui::BeginPopupModal(
 		"Pause Menu",
 		nullptr,
+		ImGuiWindowFlags_NoTitleBar |
 		ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoCollapse))
+		ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoScrollbar |
+		ImGuiWindowFlags_NoScrollWithMouse))
 	{
-		const float buttonWidth = 220.0f;
-		const float buttonHeight = 40.0f;
+		const float buttonWidth = 250.0f;
+		const float buttonHeight = 42.0f;
 
-		ImGui::Text("PAUSED");
-		ImGui::Separator();
-		ImGui::Dummy(ImVec2(0.0f, 15.0f));
+		// Pause 텍스트
+		ImGui::SetWindowFontScale(1.8f);
+
+		const char* title = "PAUSED";
+		float titleWidth =
+			ImGui::CalcTextSize(title).x;
+
+		ImGui::SetCursorPosX(
+			(ImGui::GetWindowWidth() - titleWidth) * 0.5f
+		);
+
+		ImGui::Text("%s", title);
+
+		ImGui::SetWindowFontScale(1.0f);
+
+		const char* subtitle = "Game Paused";
+		float subtitleWidth =
+			ImGui::CalcTextSize(subtitle).x;
+
+		ImGui::SetCursorPosX(
+			(ImGui::GetWindowWidth() - subtitleWidth) * 0.5f
+		);
+
+		ImGui::TextDisabled("%s", subtitle);
+
+		ImGui::Dummy(
+			ImVec2(0.0f, 18.0f)
+		);
+
+		// 버튼 스타일
+		ImGui::PushStyleColor(
+			ImGuiCol_Button,
+			ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
+		);
+
+		ImGui::PushStyleColor(
+			ImGuiCol_ButtonHovered,
+			ImVec4(0.15f, 0.60f, 0.70f, 1.0f)
+		);
+
+		ImGui::PushStyleColor(
+			ImGuiCol_ButtonActive,
+			ImVec4(0.20f, 0.75f, 0.85f, 1.0f)
+		);
 
 		// RESUME 버튼
 
 		// ESC 키 입력 시 Leave Game? 팝업이 열려있으면 RESUME 버튼이 작동하지 않도록 체크
-		bool leaveGameOpen = ImGui::IsPopupOpen("Leave Game?");
+		bool leaveGameOpen =
+			ImGui::IsPopupOpen("Leave Game?");
+
+		bool settingsOpen =
+			ImGui::IsPopupOpen("Settings");
 
 		ImGui::SetCursorPosX(
-			(ImGui::GetWindowSize().x - buttonWidth) * 0.5f
+			(ImGui::GetWindowWidth() - buttonWidth) * 0.5f
 		);
 
-		if (ImGui::Button("RESUME",ImVec2(buttonWidth, buttonHeight)) || (escPressed && !leaveGameOpen))
+		if (ImGui::Button(
+			"RESUME",
+			ImVec2(buttonWidth, buttonHeight))
+			|| (escPressed &&
+				!leaveGameOpen &&
+				!settingsOpen))
 		{
-			if(!openAugmentPopup)
+			if (!openAugmentPopup)
+			{
 				TimeManager::GetInstance()->TimeResume();
+			}
+
 			ImGui::CloseCurrentPopup();
 		}
 
-		ImGui::Dummy(ImVec2(0.0f, 10.0f));
+		ImGui::Dummy(
+			ImVec2(0.0f, 10.0f)
+		);
 
 		// =========================
-		// Settings 
+		// Settings
 		// =========================
 
 		ImGui::SetCursorPosX(
-			(ImGui::GetWindowSize().x - buttonWidth) * 0.5f
+			(ImGui::GetWindowWidth() - buttonWidth) * 0.5f
 		);
 
 		if (ImGui::Button(
@@ -413,15 +627,17 @@ void InGameStage::RenderPauseModal()
 			ImGui::OpenPopup("Settings");
 		}
 
-		ImGui::Dummy(ImVec2(0.0f, 10.0f));
 		SettingsUI::Render();
 
+		ImGui::Dummy(
+			ImVec2(0.0f, 10.0f)
+		);
 
 		// MAIN MENU 버튼
 		static bool openMainMenuConfirm = false;
 
 		ImGui::SetCursorPosX(
-			(ImGui::GetWindowSize().x - buttonWidth) * 0.5f
+			(ImGui::GetWindowWidth() - buttonWidth) * 0.5f
 		);
 
 		if (ImGui::Button(
@@ -431,8 +647,7 @@ void InGameStage::RenderPauseModal()
 			openMainMenuConfirm = true;
 		}
 
-	
-
+		ImGui::PopStyleColor(3);
 
 		// =========================
 		// Main Menu Confirm: 게임 진행 중 메인 메뉴로 돌아갈 때 경고창 팝업
@@ -444,37 +659,133 @@ void InGameStage::RenderPauseModal()
 			openMainMenuConfirm = false;
 		}
 
+		// 경고창 화면 중앙에 배치
+		ImGui::SetNextWindowPos(
+			ImVec2(
+				io.DisplaySize.x * 0.5f,
+				io.DisplaySize.y * 0.5f
+			),
+			ImGuiCond_Appearing,
+			ImVec2(0.5f, 0.5f)
+		);
+
 		ImGui::SetNextWindowSize(
-			ImVec2(300.0f, 170.0f),
+			ImVec2(340.0f, 190.0f),
 			ImGuiCond_Always
+		);
+
+		// Leave Game 모달 배경
+		ImGui::PushStyleVar(
+			ImGuiStyleVar_WindowPadding,
+			ImVec2(25.0f, 22.0f)
+		);
+
+		ImGui::PushStyleVar(
+			ImGuiStyleVar_WindowRounding,
+			12.0f
+		);
+
+		ImGui::PushStyleVar(
+			ImGuiStyleVar_WindowBorderSize,
+			1.0f
+		);
+
+		ImGui::PushStyleColor(
+			ImGuiCol_PopupBg,
+			ImVec4(0.04f, 0.05f, 0.07f, 0.99f)
+		);
+
+		ImGui::PushStyleColor(
+			ImGuiCol_Border,
+			ImVec4(0.15f, 0.50f, 0.60f, 0.8f)
 		);
 
 		if (ImGui::BeginPopupModal(
 			"Leave Game?",
 			nullptr,
+			ImGuiWindowFlags_NoTitleBar |
 			ImGuiWindowFlags_NoResize |
-			ImGuiWindowFlags_NoCollapse))
+			ImGuiWindowFlags_NoCollapse |
+			ImGuiWindowFlags_NoMove |
+			ImGuiWindowFlags_NoScrollbar |
+			ImGuiWindowFlags_NoScrollWithMouse))
 		{
-			ImGui::Text("Return to Main Menu?");
-			ImGui::Text("Current progress will be lost.");
+			// 경고창 제목
+			ImGui::SetWindowFontScale(1.5f);
 
-			ImGui::Separator();
-			ImGui::Dummy(ImVec2(0.0f, 10.0f));
+			const char* confirmTitle =
+				"LEAVE GAME?";
 
-			const float confirmButtonWidth = 100.0f;
+			float confirmTitleWidth =
+				ImGui::CalcTextSize(confirmTitle).x;
+
+			ImGui::SetCursorPosX(
+				(ImGui::GetWindowWidth() -
+					confirmTitleWidth) * 0.5f
+			);
+
+			ImGui::Text("%s", confirmTitle);
+
+			ImGui::SetWindowFontScale(1.0f);
+
+			ImGui::Dummy(
+				ImVec2(0.0f, 5.0f)
+			);
+
+			const char* warningText =
+				"Current progress will be lost.";
+
+			float warningWidth =
+				ImGui::CalcTextSize(warningText).x;
+
+			ImGui::SetCursorPosX(
+				(ImGui::GetWindowWidth() -
+					warningWidth) * 0.5f
+			);
+
+			ImGui::TextDisabled(
+				"%s",
+				warningText
+			);
+
+			ImGui::Dummy(
+				ImVec2(0.0f, 18.0f)
+			);
+
+			const float confirmButtonWidth = 125.0f;
+			const float confirmButtonHeight = 40.0f;
+			const float confirmGap = 15.0f;
 
 			float totalButtonWidth =
 				confirmButtonWidth * 2.0f
-				+ ImGui::GetStyle().ItemSpacing.x;
+				+ confirmGap;
 
 			ImGui::SetCursorPosX(
-				(ImGui::GetWindowSize().x - totalButtonWidth) * 0.5f
+				(ImGui::GetWindowWidth() -
+					totalButtonWidth) * 0.5f
 			);
 
 			// YES 버튼
+			ImGui::PushStyleColor(
+				ImGuiCol_Button,
+				ImVec4(0.40f, 0.16f, 0.18f, 1.0f)
+			);
+
+			ImGui::PushStyleColor(
+				ImGuiCol_ButtonHovered,
+				ImVec4(0.55f, 0.20f, 0.22f, 1.0f)
+			);
+
+			ImGui::PushStyleColor(
+				ImGuiCol_ButtonActive,
+				ImVec4(0.65f, 0.24f, 0.26f, 1.0f)
+			);
+
 			if (ImGui::Button(
 				"YES",
-				ImVec2(confirmButtonWidth, 35.0f)))
+				ImVec2(
+					confirmButtonWidth,
+					confirmButtonHeight)))
 			{
 				ImGui::CloseCurrentPopup();
 
@@ -483,25 +794,57 @@ void InGameStage::RenderPauseModal()
 				);
 			}
 
-			ImGui::SameLine();
+			ImGui::PopStyleColor(3);
+
+			ImGui::SameLine(
+				0.0f,
+				confirmGap
+			);
 
 			// NO 버튼
+			ImGui::PushStyleColor(
+				ImGuiCol_Button,
+				ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
+			);
+
+			ImGui::PushStyleColor(
+				ImGuiCol_ButtonHovered,
+				ImVec4(0.15f, 0.60f, 0.70f, 1.0f)
+			);
+
+			ImGui::PushStyleColor(
+				ImGuiCol_ButtonActive,
+				ImVec4(0.20f, 0.75f, 0.85f, 1.0f)
+			);
+
 			if (ImGui::Button(
 				"NO",
-				ImVec2(confirmButtonWidth, 35.0f)))
+				ImVec2(
+					confirmButtonWidth,
+					confirmButtonHeight)))
 			{
 				ImGui::CloseCurrentPopup();
 			}
+
+			ImGui::PopStyleColor(3);
 
 			// 경고창에서 ESC = 취소
 			if (ImGui::IsKeyPressed(ImGuiKey_Escape))
 			{
 				ImGui::CloseCurrentPopup();
 			}
+
 			ImGui::EndPopup();
 		}
+
+		ImGui::PopStyleColor(2);
+		ImGui::PopStyleVar(3);
+
 		ImGui::EndPopup();
 	}
+
+	ImGui::PopStyleColor(2);
+	ImGui::PopStyleVar(4);
 }
 
 void InGameStage::RenderResultModal(int minutes, int seconds)
@@ -511,22 +854,71 @@ void InGameStage::RenderResultModal(int minutes, int seconds)
 	// =========================
 
 	static bool isSubmitted = false;
+	static char nickname[32] = "";
+
 	if (openResultPopup)
 	{
 		ImGui::OpenPopup("Game Result");
 		openResultPopup = false;
 	}
 
+	ImGuiIO& io = ImGui::GetIO();
+
+	// 화면 중앙에 배치
+	ImGui::SetNextWindowPos(
+		ImVec2(
+			io.DisplaySize.x * 0.5f,
+			io.DisplaySize.y * 0.5f
+		),
+		ImGuiCond_Appearing,
+		ImVec2(0.5f, 0.5f)
+	);
+
 	ImGui::SetNextWindowSize(
-		ImVec2(360.0f, 250.0f),
+		ImVec2(460.0f, 390.0f),
 		ImGuiCond_Always
+	);
+
+	// Result 모달 배경
+	ImGui::PushStyleVar(
+		ImGuiStyleVar_WindowPadding,
+		ImVec2(30.0f, 25.0f)
+	);
+
+	ImGui::PushStyleVar(
+		ImGuiStyleVar_WindowRounding,
+		14.0f
+	);
+
+	ImGui::PushStyleVar(
+		ImGuiStyleVar_WindowBorderSize,
+		1.0f
+	);
+
+	ImGui::PushStyleVar(
+		ImGuiStyleVar_FrameRounding,
+		7.0f
+	);
+
+	ImGui::PushStyleColor(
+		ImGuiCol_PopupBg,
+		ImVec4(0.04f, 0.05f, 0.07f, 0.98f)
+	);
+
+	ImGui::PushStyleColor(
+		ImGuiCol_Border,
+		ImVec4(0.15f, 0.50f, 0.60f, 0.8f)
 	);
 
 	if (ImGui::BeginPopupModal(
 		"Game Result",
 		nullptr,
+		ImGuiWindowFlags_NoTitleBar |
 		ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoCollapse))
+		ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoScrollbar |
+		ImGuiWindowFlags_NoScrollWithMouse))
 	{
 		// 렌더 루프 안
 		if (gameResult != PrevGameResult)
@@ -541,37 +933,198 @@ void InGameStage::RenderResultModal(int minutes, int seconds)
 				USoundManager::GetInstance()->StopBGM();
 				USoundManager::GetInstance()->PlaySFX(GAME_OVER);
 			}
+
 			PrevGameResult = gameResult;
 		}
 
 		// 텍스트는 매 프레임 그려져야 하므로 밖으로 분리
+		const char* resultText = "";
+
 		if (gameResult == 1)
-			ImGui::Text("GAME CLEAR!");
+			resultText = "GAME CLEAR!";
 		else if (gameResult == 2)
-			ImGui::Text("GAME OVER");
+			resultText = "GAME OVER";
 
-		ImGui::Separator();
+		// 결과 텍스트
+		ImGui::SetWindowFontScale(2.0f);
 
-		ImGui::Text(
-			"Elapsed Time : %02d:%02d",
+		float resultTextWidth =
+			ImGui::CalcTextSize(resultText).x;
+
+		ImGui::SetCursorPosX(
+			(ImGui::GetWindowWidth() - resultTextWidth) * 0.5f
+		);
+
+		if (gameResult == 1)
+		{
+			ImGui::TextColored(
+				ImVec4(0.25f, 0.80f, 0.85f, 1.0f),
+				"%s",
+				resultText
+			);
+		}
+		else
+		{
+			ImGui::TextColored(
+				ImVec4(0.85f, 0.32f, 0.32f, 1.0f),
+				"%s",
+				resultText
+			);
+		}
+
+		ImGui::SetWindowFontScale(1.0f);
+
+		const char* subtitle =
+			gameResult == 1
+			? "Mission Complete"
+			: "Mission Failed";
+
+		float subtitleWidth =
+			ImGui::CalcTextSize(subtitle).x;
+
+		ImGui::SetCursorPosX(
+			(ImGui::GetWindowWidth() - subtitleWidth) * 0.5f
+		);
+
+		ImGui::TextDisabled("%s", subtitle);
+
+		ImGui::Dummy(ImVec2(0.0f, 18.0f));
+
+		// 플레이 결과
+		char timeValue[32];
+		sprintf_s(
+			timeValue,
+			"%02d:%02d",
 			minutes,
 			seconds
 		);
 
-		ImGui::Text("Score : %d", score);
+		char scoreValue[32];
+		sprintf_s(
+			scoreValue,
+			"%d",
+			score
+		);
 
+		// TIME / SCORE를 각각 같은 폭의 영역에 가운데 정렬
+		const float columnGap = 60.0f;
+		const float columnWidth = 120.0f;
+		const float totalWidth =
+			columnWidth * 2.0f + columnGap;
+
+		const float startX =
+			(ImGui::GetWindowWidth() - totalWidth) * 0.5f;
+
+		const float timeCenter =
+			startX + columnWidth * 0.5f;
+
+		const float scoreCenter =
+			startX + columnWidth + columnGap + columnWidth * 0.5f;
+
+		// TIME / SCORE 라벨
+		const char* timeLabel = "TIME";
+		const char* scoreLabel = "SCORE";
+
+		ImGui::SetCursorPosX(
+			timeCenter - ImGui::CalcTextSize(timeLabel).x * 0.5f
+		);
+		ImGui::TextDisabled("%s", timeLabel);
+
+		ImGui::SameLine();
+
+		ImGui::SetCursorPosX(
+			scoreCenter - ImGui::CalcTextSize(scoreLabel).x * 0.5f
+		);
+		ImGui::TextDisabled("%s", scoreLabel);
+
+		// TIME / SCORE 값
+		ImGui::SetWindowFontScale(1.5f);
+
+		float timeWidth = ImGui::CalcTextSize(timeValue).x;
+		float scoreWidth = ImGui::CalcTextSize(scoreValue).x;
+
+		ImGui::SetCursorPosX(
+			timeCenter - timeWidth * 0.5f
+		);
+		ImGui::Text("%s", timeValue);
+
+		ImGui::SameLine();
+
+		ImGui::SetCursorPosX(
+			scoreCenter - scoreWidth * 0.5f
+		);
+		ImGui::Text("%s", scoreValue);
+
+		ImGui::SetWindowFontScale(1.0f);
+
+		ImGui::Dummy(ImVec2(0.0f, 15.0f));
 		ImGui::Separator();
+		ImGui::Dummy(ImVec2(0.0f, 10.0f));
+
+		// 리더보드 입력 구현
+		const float viewButtonWidth = 150.0f;
+		const float viewButtonHeight = 30.0f;
+
+		// 리더보드 입력 구현
+		ImGui::Text("SAVE SCORE");
+		ImGui::TextDisabled("Enter a nickname for the leaderboard");
+
+		ImGui::Dummy(ImVec2(0.0f, 6.0f));
 
 		ImGui::BeginDisabled(isSubmitted);
-		// 리더보드 입력 구현
-		static char nickname[32] = "";
-		ImGui::InputText("Nickname", nickname, IM_ARRAYSIZE(nickname));
-		const char* buttonText = isSubmitted ? "Submitted" : "Submit";
 
-		if (ImGui::Button(buttonText)) {
-			if (strlen(nickname) > 0) {
+		const float submitButtonWidth = 100.0f;
+		const float inputButtonGap = 10.0f;
+
+		float inputWidth =
+			ImGui::GetContentRegionAvail().x
+			- submitButtonWidth
+			- inputButtonGap;
+
+		// 닉네임 입력창
+		ImGui::SetNextItemWidth(inputWidth);
+
+		ImGui::InputTextWithHint(
+			"##Nickname",
+			"Nickname",
+			nickname,
+			IM_ARRAYSIZE(nickname)
+		);
+
+		float inputHeight = ImGui::GetItemRectSize().y;
+
+		ImGui::SameLine(0.0f, inputButtonGap);
+
+		// SUBMIT 버튼
+		ImGui::PushStyleColor(
+			ImGuiCol_Button,
+			ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
+		);
+
+		ImGui::PushStyleColor(
+			ImGuiCol_ButtonHovered,
+			ImVec4(0.15f, 0.60f, 0.70f, 1.0f)
+		);
+
+		ImGui::PushStyleColor(
+			ImGuiCol_ButtonActive,
+			ImVec4(0.20f, 0.75f, 0.85f, 1.0f)
+		);
+
+		const char* buttonText =
+			isSubmitted ? "SAVED" : "SUBMIT";
+
+		if (ImGui::Button(
+			buttonText,
+			ImVec2(submitButtonWidth, inputHeight)))
+		{
+			if (strlen(nickname) > 0)
+			{
 				// LeaderboardManager 등에 전달
-				LeaderboardManager::GetInstance()->AddScore(nickname, score);
+				LeaderboardManager::GetInstance()->AddScore(
+					nickname,
+					score
+				);
 
 				// 입력 후 버퍼 초기화 (필요 시)
 				nickname[0] = '\0';
@@ -579,28 +1132,115 @@ void InGameStage::RenderResultModal(int minutes, int seconds)
 			}
 		}
 
-		ImGui::Separator();
+		ImGui::PopStyleColor(3);
+
 		ImGui::EndDisabled();
 
-		if (ImGui::Button("RESTART", ImVec2(140.0f, 40.0f)))
+		ImGui::Dummy(ImVec2(0.0f, 5.0f));
+
+		// 리더보드 확인
+		ImGui::PushStyleColor(
+			ImGuiCol_Button,
+			ImVec4(0.0f, 0.0f, 0.0f, 0.0f)
+		);
+
+		ImGui::PushStyleColor(
+			ImGuiCol_ButtonHovered,
+			ImVec4(0.10f, 0.25f, 0.30f, 0.55f)
+		);
+
+		ImGui::PushStyleColor(
+			ImGuiCol_ButtonActive,
+			ImVec4(0.12f, 0.35f, 0.42f, 0.7f)
+		);
+
+		ImGui::PushStyleColor(
+			ImGuiCol_Text,
+			ImVec4(0.45f, 0.70f, 0.75f, 1.0f)
+		);
+
+		ImGui::PushStyleVar(
+			ImGuiStyleVar_FramePadding,
+			ImVec2(4.0f, 3.0f)
+		);
+
+		if (ImGui::Button("VIEW LEADERBOARD >"))
 		{
-			ImGui::CloseCurrentPopup();
-			m_app->ChangeState(new InGameStage(m_app));
-			isSubmitted = false;
+			ImGui::OpenPopup("Leaderboard");
 		}
 
-		ImGui::SameLine();
+		ImGui::PopStyleVar();
+		ImGui::PopStyleColor(4);
 
-		if (ImGui::Button("MAIN MENU", ImVec2(140.0f, 40.0f)))
+		// 기존 Leaderboard UI 사용
+		LeaderboardUI::Render();
+
+		ImGui::Dummy(ImVec2(0.0f, 14.0f));
+
+		// RESTART / MAIN MENU 버튼
+		const float buttonWidth = 180.0f;
+		const float buttonHeight = 42.0f;
+		const float gap = 15.0f;
+
+		float totalButtonWidth =
+			buttonWidth * 2.0f + gap;
+
+		ImGui::SetCursorPosX(
+			(ImGui::GetWindowWidth() - totalButtonWidth) * 0.5f
+		);
+
+		ImGui::PushStyleColor(
+			ImGuiCol_Button,
+			ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
+		);
+
+		ImGui::PushStyleColor(
+			ImGuiCol_ButtonHovered,
+			ImVec4(0.15f, 0.60f, 0.70f, 1.0f)
+		);
+
+		ImGui::PushStyleColor(
+			ImGuiCol_ButtonActive,
+			ImVec4(0.20f, 0.75f, 0.85f, 1.0f)
+		);
+
+		if (ImGui::Button(
+			"RESTART",
+			ImVec2(buttonWidth, buttonHeight)))
 		{
 			ImGui::CloseCurrentPopup();
-			m_app->ChangeState(new MainmenuStage(m_app));
-			isSubmitted = false;
 
+			m_app->ChangeState(
+				new InGameStage(m_app)
+			);
+
+			isSubmitted = false;
+			nickname[0] = '\0';
 		}
+
+		ImGui::SameLine(0.0f, gap);
+
+		if (ImGui::Button(
+			"MAIN MENU",
+			ImVec2(buttonWidth, buttonHeight)))
+		{
+			ImGui::CloseCurrentPopup();
+
+			m_app->ChangeState(
+				new MainmenuStage(m_app)
+			);
+
+			isSubmitted = false;
+			nickname[0] = '\0';
+		}
+
+		ImGui::PopStyleColor(3);
 
 		ImGui::EndPopup();
 	}
+
+	ImGui::PopStyleColor(2);
+	ImGui::PopStyleVar(4);
 }
 
 void InGameStage::Exit()

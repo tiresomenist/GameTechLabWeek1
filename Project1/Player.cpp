@@ -34,7 +34,11 @@ void Player::GetAttacked(float damage) {
 	hittedTime = thisTime;
 	health -= damage;
 
-	if (health <= 0) isDead = true;
+	if (health <= 0)
+	{
+		isDead = true;
+		health = 0;
+	}
 }
 bool Player::IsDead() {
 	return isDead;

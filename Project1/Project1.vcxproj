@@ -165,6 +165,7 @@
     <ClInclude Include="ImGui\imstb_truetype.h" />
     <ClInclude Include="InGameStage.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="LeaderboardUI.h" />
     <ClInclude Include="MainmenuStage.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectManager.h" />
@@ -195,6 +196,7 @@
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="LeaderboardManager.cpp" />
     <ClCompile Include="LeaderboardManager.h" />
+    <ClCompile Include="LeaderboardUI.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainmenuStage.cpp" />
     <ClCompile Include="Object.cpp" />
