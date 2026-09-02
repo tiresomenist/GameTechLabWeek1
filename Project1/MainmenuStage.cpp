@@ -7,6 +7,7 @@
 #include "ImGui/imgui_internal.h"
 #include <Windows.h>
 #include "SoundManager.h"
+#include "SettingsUI.h"
 
 #define SOUND_KEY_BGM L"bgm_2"
 
@@ -15,7 +16,7 @@ namespace
 {
 	// Main Menu
 	constexpr float MENU_WIDTH = 420.0f;
-	constexpr float MENU_HEIGHT = 400.0f;
+	constexpr float MENU_HEIGHT = 450.0f;
 
 	constexpr float BUTTON_WIDTH = 220.0f;
 	constexpr float BUTTON_HEIGHT = 45.0f;
@@ -30,6 +31,14 @@ namespace
 
 	constexpr float CLOSE_BUTTON_WIDTH = 120.0f;
 	constexpr float CLOSE_BUTTON_HEIGHT = 35.0f;
+
+    // Settings
+    constexpr float SETTING_WIDTH = 320.0f;
+    constexpr float SETTING_HEIGHT = 250.0f;
+
+    constexpr float LABEL_WIDTH = 40.0f;
+    constexpr float SLIDER_WIDTH = 210.0f;
+    constexpr float ROW_WIDTH = LABEL_WIDTH + SLIDER_WIDTH;
 
     const char* CREDIT_MEMBERS[] =
     {
@@ -124,6 +133,19 @@ void MainmenuStage::Render()
     if (ImGui::Button("CREDITS", ImVec2(BUTTON_WIDTH, BUTTON_HEIGHT)))
     {
         ImGui::OpenPopup("Credits");
+    }
+
+    ImGui::Dummy(ImVec2(0.0f, 10.0f));
+
+    // =========================
+    // Settings
+    // =========================
+
+    ImGui::SetCursorPosX((MENU_WIDTH - BUTTON_WIDTH) * 0.5f);
+
+    if (ImGui::Button("Settings", ImVec2(BUTTON_WIDTH, BUTTON_HEIGHT)))
+    {
+        ImGui::OpenPopup("Settings");
     }
 
     ImGui::Dummy(ImVec2(0.0f, 10.0f));
@@ -262,8 +284,13 @@ void MainmenuStage::Render()
         ImGui::EndPopup();
     }
 
-    ImGui::End();
+    // =========================
+    // Settings Popup
+    // =========================
 
+    SettingsUI::Render();
+
+    ImGui::End();
 
 }
 

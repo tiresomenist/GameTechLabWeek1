@@ -10,6 +10,7 @@
 #include "ObjectManager.h"
 #include "SoundManager.h"
 #include "Augment.h"
+#include "SettingsUI.h"
 
 InGameStage::InGameStage(App* app)
 	: m_app(app)
@@ -100,10 +101,6 @@ void InGameStage::Update(float deltaTime)
 	//플레이어와 레벨업 오브젝트 충돌 체크
 	ObjectManager::GetInstance()->checkPlayerIntersectWithExpOrb();
 
-
-	// 경험치 상승 임시구현
-	//player->AddExp(1);
-
 	// 레벨업 경험치 도달 시 일시정지 및 팝업 on
 	if (player->IsLevelUp()) 
 	{
@@ -144,7 +141,7 @@ void InGameStage::RenderAugmentModal()
 	);
 
 	ImGui::Begin(
-		"test",
+		"Upgrade!!",
 		nullptr,
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoCollapse
@@ -365,7 +362,7 @@ void InGameStage::RenderPauseModal()
 	}
 
 	ImGui::SetNextWindowSize(
-		ImVec2(320.0f, 220.0f),
+		ImVec2(320.0f, 280.0f),
 		ImGuiCond_Always
 	);
 
@@ -400,6 +397,25 @@ void InGameStage::RenderPauseModal()
 
 		ImGui::Dummy(ImVec2(0.0f, 10.0f));
 
+		// =========================
+		// Settings 
+		// =========================
+
+		ImGui::SetCursorPosX(
+			(ImGui::GetWindowSize().x - buttonWidth) * 0.5f
+		);
+
+		if (ImGui::Button(
+			"SETTINGS",
+			ImVec2(buttonWidth, buttonHeight)))
+		{
+			ImGui::OpenPopup("Settings");
+		}
+
+		ImGui::Dummy(ImVec2(0.0f, 10.0f));
+		SettingsUI::Render();
+
+
 		// MAIN MENU 버튼
 		static bool openMainMenuConfirm = false;
 
@@ -413,6 +429,9 @@ void InGameStage::RenderPauseModal()
 		{
 			openMainMenuConfirm = true;
 		}
+
+	
+
 
 		// =========================
 		// Main Menu Confirm: 게임 진행 중 메인 메뉴로 돌아갈 때 경고창 팝업

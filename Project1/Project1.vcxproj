@@ -200,6 +200,8 @@
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="ObjectManager.cpp" />
+    <ClCompile Include="SettingsUI.cpp" />
+    <ClCompile Include="SettingsUI.h" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="UExpOrb.cpp" />
