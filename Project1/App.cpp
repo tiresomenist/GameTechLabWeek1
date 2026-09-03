@@ -46,10 +46,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			InputManager::IMins->KeyUp(static_cast<int>(wParam));
 		break;
 
+	case WM_KILLFOCUS:
+		if (InputManager::IMins != nullptr)
+			InputManager::IMins->KeyReset();
+		break;
+
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
-
 	default:
 		if (imguiHandled)
 			return true;
