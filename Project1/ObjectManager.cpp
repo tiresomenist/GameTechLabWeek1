@@ -708,7 +708,7 @@ void ObjectManager::CheckMissileIntersectWithEnemy()
 					enemy->SetPendingRemove(true);
 				}
 
-				missile->isInActive = true;   // 표시만
+				//missile->isInActive = true;   // 표시만
 				break;
 			}
 		}

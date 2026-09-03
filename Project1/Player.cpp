@@ -88,7 +88,7 @@ bool Player::IsLevelUp() {
 }
 
 void Player::IncreaseAttack(float x) {
-	attack = attack * (1.0f + x / 100.0f);
+	attack = attack += x;
 }
 
 void Player::IncreaseAttackRange(float x) {

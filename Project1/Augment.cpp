@@ -5,25 +5,26 @@
 
 Augment::Augment() {
 	augStruct = {
-	{ AugmentType::Attack,          "Moon Damage",       30.0f, 60.0f, 10.0f },
-	{ AugmentType::AttackRange,     "Moon Orbit Range", 20.0f, 50.0f, 10.0f },
-	{ AugmentType::AttackSpeed,     "Moon Spin Speed",       10.0f, 20.0f, 10.0f },
-	{ AugmentType::MoveSpeed,        "Player Move Speed",   25.0f, 50.0f, 10.0f },
-	{ AugmentType::WeaponSize,       "Moon Size",  30.0f, 50.0f, 10.0f },
-	{ AugmentType::HealHP,           "Heal HP",    30.0f, 60.0f, 10.0f },
-	{ AugmentType::AddWeapon,        "Add Moon Weapon",   2.0f, 3.0f, 25.0f },
-	{ AugmentType::RocketAdd,         "************\n***Add Rocket***\n**************",    0.0f, 0.0f, 10.0f },
-	{ AugmentType::RocketSpeed,       "Rocket Move Speed",        20.0f, 40.0f, 20.0f },
-	{ AugmentType::RocketDamage,      "Rocket Damage",       30.0f, 60.0f, 20.0f },
-	{ AugmentType::RocketAttackSpeed, "Rocket Attack Speed", 30.0f, 50.0f, 20.0f }
+	{ AugmentType::Attack,          "Moon Damage",          5.0f, 10.0f, 20.0f },
+	{ AugmentType::AttackRange,     "Moon Orbit Radius",    10.0f, 20.0f, 30.0f },
+	{ AugmentType::AttackSpeed,     "Moon Orbit Speed",     10.0f, 20.0f, 20.0f },
+	{ AugmentType::MoveSpeed,        "Player Move Speed",   20.0f, 40.0f, 20.0f },
+	{ AugmentType::WeaponSize,       "Moon Size",           20.0f, 20.0f, 20.0f },
+	{ AugmentType::HealHP,           "Heal HP",             50.0f, 100.0f, 20.0f },
+	{ AugmentType::AddWeapon,        "Add Moon Weapon",      1.0f, 2.0f, 20.0f },
+	{ AugmentType::RocketAdd,         "****************\n*  Add Rocket  *\n****************",    0.0f, 0.0f, 20.0f },
+	{ AugmentType::RocketSpeed,       "Rocket Move Speed",   30.0f, 50.0f, 20.0f },
+	{ AugmentType::RocketDamage,      "Rocket Damage",       30.0f, 50.0f, 20.0f },
+	{ AugmentType::RocketAttackSpeed, "Rocket Attack Speed", 20.0f, 40.0f, 20.0f }
 	};
+
 }
 
 std::string Augment::GetAugmentText(const AugmentStruct& aug) const {
 
-	char text[50];
+	char text[256];
 
-	if (aug.type == AugmentType::HealHP || aug.type == AugmentType::AddWeapon) {
+	if (aug.type == AugmentType::HealHP || aug.type == AugmentType::AddWeapon || aug.type == AugmentType::Attack) {
 		sprintf_s(text, "%s\n\n\n+%.0f", aug.name, aug.value);
 	}
 	else if (aug.type == AugmentType::RocketAdd){

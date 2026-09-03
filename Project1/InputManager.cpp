@@ -21,6 +21,7 @@ void InputManager::KeyUp(int key) {
 }
 
 bool InputManager::IsKeyPressed(int key) {
+
 	return keys[key];
 }
 

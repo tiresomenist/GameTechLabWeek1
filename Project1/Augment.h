@@ -44,7 +44,7 @@ private:
 
 	// 강화 증강
 	bool isEnhanced = false;
-	float enhanceChance = 0.2f;
+	float enhanceChance = 0.1f;
 
 	// 로켓 증강
 	bool hasRocket = false;

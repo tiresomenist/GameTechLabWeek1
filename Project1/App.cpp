@@ -44,6 +44,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_KEYUP:
 		if (InputManager::IMins != nullptr)
 			InputManager::IMins->KeyUp(static_cast<int>(wParam));
+			if(wParam == VK_RETURN)
+				InputManager::IMins->KeyReset();
+
 		break;
 
 	case WM_KILLFOCUS:
