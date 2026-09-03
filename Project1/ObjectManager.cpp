@@ -546,8 +546,9 @@ void ObjectManager::checkWeaponIntersectWithEnemy()
 				{
 					USoundManager::GetInstance()->PlaySFX(ENEMY_HIT);
 					enemy->GetAttacked(player->GetAttack());
-					enemy->SetHitFlashAmount(1.0f);
+					
 					enemy->SetisHit(true);
+					enemy->SetHitFlashAmount(1.0f);
 					hitEffects.push_back(FHitEffect(enemy->GetLocation(), 0.0f, 0.5f, 0.2f, 1.0f));
 				}
 				
@@ -635,6 +636,17 @@ void ObjectManager::checkPlayerIntersectWithExpOrb()
 
 void ObjectManager::CheckMissileIntersectWithEnemy()
 {
+	float deltaTime = TimeManager::GetInstance()->GetDeltaTime();
+	for (auto enemy : enemyList)
+		enemy->InvincibleTimerUpdate(deltaTime);
+	// HitEffect의 lifetime 업데이트
+	for (auto& hitEffect : hitEffects)
+	{
+		hitEffect.lifetime += deltaTime;
+		hitEffect.alpha = 1.0f - (hitEffect.lifetime / hitEffect.duration);
+		hitEffect.size = 0.1f + (hitEffect.lifetime / hitEffect.duration) * 0.05f;
+	}
+
 	for (int mi = (int)missileList.size() - 1; mi >= 0; --mi)
 	{
 		UMissile* missile = missileList[mi];
@@ -668,8 +680,17 @@ void ObjectManager::CheckMissileIntersectWithEnemy()
 
 			if ((dx * dx + dy * dy) <= (r * r))
 			{
-				USoundManager::GetInstance()->PlaySFX(ENEMY_HIT);
-				enemy->GetAttacked(missile->GetDMG());
+				//적 피해 처리
+				if (enemy->GetisHit() == false)
+				{
+					USoundManager::GetInstance()->PlaySFX(ENEMY_HIT);
+					enemy->GetAttacked(missile->GetDMG());
+
+					enemy->SetisHit(true);
+					enemy->SetHitFlashAmount(1.0f);
+					hitEffects.push_back(FHitEffect(enemy->GetLocation(), 0.0f, 0.5f, 0.2f, 1.0f));
+				}
+
 				if (enemy->IsDead())
 				{
 					CreateExpOrb(enemy->GetLocation().x, enemy->GetLocation().y);
