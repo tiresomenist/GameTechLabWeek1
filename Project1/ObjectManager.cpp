@@ -101,7 +101,30 @@ ObjectManager::ObjectManager()
 
 void ObjectManager::Render()
 {
-	
+	// 배경 그리기 시작
+	{
+		ID3D11ShaderResourceView* srv = App::Ins->GetbgTextureSRV();
+		App::Ins->GetDeviceContext()->PSSetShaderResources(0, 1, &srv);
+
+		FConstant cb = {};
+		cb.offset = { 0.0f, 0.0f, 0.0f };
+		cb.scale = { 2.0f, 2.0f, 0.0f };
+		cb.Rotation = { 0.0f, 0.0f, 0.0f };
+
+		ID3D11Buffer* constantBuffer = App::Ins->GetConstantBuffer();
+		D3D11Util::UpdateConstantBuffer(App::Ins->GetDeviceContext(), constantBuffer, cb);
+		App::Ins->GetDeviceContext()->VSSetConstantBuffers(0, 1, &constantBuffer);
+
+		UINT stride = sizeof(FVertexSimple);
+		UINT offset = 0;
+		ID3D11Buffer* VB = App::Ins->GetPlaneVertexBuffer();
+
+		App::Ins->GetDeviceContext()->IASetVertexBuffers(0, 1, &VB, &stride, &offset);
+		App::Ins->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		App::Ins->GetDeviceContext()->Draw(6, 0);
+	}
+	// 배경 그리기 끝
+
 	if (objectList.size() > 0)
 	{
 		ID3D11ShaderResourceView* srv = App::Ins->GetEarthTextureSRV();
@@ -287,6 +310,30 @@ void ObjectManager::Render()
 
 void ObjectManager::RenderMainMenu()
 {
+	// 배경 그리기 시작
+	{
+		ID3D11ShaderResourceView* srv = App::Ins->GetTitleBackgroundTextureSRV();
+		App::Ins->GetDeviceContext()->PSSetShaderResources(0, 1, &srv);
+
+		FConstant cb = {};
+		cb.offset = { 0.0f, 0.0f, 0.0f };
+		cb.scale = { 2.0f, 2.0f, 0.0f };
+		cb.Rotation = { 0.0f, 0.0f, 0.0f };
+
+		ID3D11Buffer* constantBuffer = App::Ins->GetConstantBuffer();
+		D3D11Util::UpdateConstantBuffer(App::Ins->GetDeviceContext(), constantBuffer, cb);
+		App::Ins->GetDeviceContext()->VSSetConstantBuffers(0, 1, &constantBuffer);
+
+		UINT stride = sizeof(FVertexSimple);
+		UINT offset = 0;
+		ID3D11Buffer* VB = App::Ins->GetPlaneVertexBuffer();
+
+		App::Ins->GetDeviceContext()->IASetVertexBuffers(0, 1, &VB, &stride, &offset);
+		App::Ins->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		App::Ins->GetDeviceContext()->Draw(6, 0);
+	}
+	// 배경 그리기 끝
+
 	if (objectList.empty())
 		return;
 
@@ -304,7 +351,7 @@ void ObjectManager::RenderMainMenu()
 	auto RenderWeapon = [&](auto weapon)
 		{
 			ID3D11ShaderResourceView* srv =
-				App::Ins->GetMoonTextureSRV();
+				App::Ins->GetMoonBackgroundTextureSRV();
 
 			if (srv != m_lastBoundSRV)
 			{
@@ -330,7 +377,7 @@ void ObjectManager::RenderMainMenu()
 	auto RenderEarth = [&]()
 		{
 			ID3D11ShaderResourceView* srv =
-				App::Ins->GetEarthTextureSRV();
+				App::Ins->GetEarthBackgroundTextureSRV();
 
 			if (srv != m_lastBoundSRV)
 			{
@@ -372,6 +419,7 @@ void ObjectManager::RenderMainMenu()
 
 	// 제목 렌더
 	{
+		
 		ID3D11ShaderResourceView* srv =
 			App::Ins->GetTitleTextureSRV();
 
@@ -399,13 +447,15 @@ void ObjectManager::RenderMainMenu()
 		App::Ins->GetDeviceContext()->IASetVertexBuffers(
 			0, 1, &planeVB, &stride, &offset
 		);
-
+		App::Ins->GetDeviceContext()->OMSetBlendState(App::Ins->GetBlendState(), nullptr, 0xFFFFFFFF);
 		objectList[0]->renderer->RenderPlane(
-			FVector(0.0f, 0.55f, 0.0f),   // 제목 위치
-			0.3f, 0.5f,                         // 크기
+			FVector(0.0f, 0.35f, 0.0f),   // 제목 위치
+			1.4f, 0.7f,                         // 크기
 			FVector(0.0f, 0.0f, 0.0f)
 		);
+		
 	}
+	App::Ins->GetDeviceContext()->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 }
 
 void ObjectManager::Update(float deltaTime)

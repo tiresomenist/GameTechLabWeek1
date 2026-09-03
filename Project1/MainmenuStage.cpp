@@ -126,7 +126,7 @@ void MainmenuStage::Render()
 
 	ImVec2 windowPos(
 		(io.DisplaySize.x - MENU_WIDTH) * 0.5f,
-		(io.DisplaySize.y - MENU_HEIGHT) * 0.5f + 100.0f
+		(io.DisplaySize.y - MENU_HEIGHT) * 0.5f + 250.0f
 	);
 
 	ImGui::SetNextWindowPos(
@@ -158,9 +158,9 @@ void MainmenuStage::Render()
 	ImGui::PushStyleColor(
 		ImGuiCol_Button,
 		ImVec4(
-			0.10f,
-			0.45f,
-			0.55f,
+			0.06f,
+			0.27f,
+			0.34f,
 			1.0f
 		)
 	);
@@ -168,9 +168,9 @@ void MainmenuStage::Render()
 	ImGui::PushStyleColor(
 		ImGuiCol_ButtonHovered,
 		ImVec4(
-			0.15f,
-			0.60f,
-			0.70f,
+			0.13f,
+			0.55f,
+			0.65f,
 			1.0f
 		)
 	);
@@ -178,9 +178,9 @@ void MainmenuStage::Render()
 	ImGui::PushStyleColor(
 		ImGuiCol_ButtonActive,
 		ImVec4(
-			0.20f,
-			0.75f,
-			0.85f,
+			0.18f,
+			0.68f,
+			0.78f,
 			1.0f
 		)
 	);
@@ -200,8 +200,8 @@ void MainmenuStage::Render()
 	ImGui::PushStyleColor(
 		ImGuiCol_Button,
 		selectedMenu == MENU_START
-		? ImVec4(0.15f, 0.60f, 0.70f, 1.0f)
-		: ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
+		? ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
+		: ImVec4(0.06f, 0.27f, 0.34f, 1.0f)
 	);
 
 	bool startPressed = ImGui::Button(
@@ -242,8 +242,8 @@ void MainmenuStage::Render()
 	ImGui::PushStyleColor(
 		ImGuiCol_Button,
 		selectedMenu == MENU_LEADERBOARD
-		? ImVec4(0.15f, 0.60f, 0.70f, 1.0f)
-		: ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
+		? ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
+		: ImVec4(0.06f, 0.27f, 0.34f, 1.0f)
 	);
 
 	bool leaderboardPressed =
@@ -289,8 +289,8 @@ void MainmenuStage::Render()
 	ImGui::PushStyleColor(
 		ImGuiCol_Button,
 		selectedMenu == MENU_SETTINGS
-		? ImVec4(0.15f, 0.60f, 0.70f, 1.0f)
-		: ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
+		? ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
+		: ImVec4(0.06f, 0.27f, 0.34f, 1.0f)
 	);
 
 	bool settingsPressed =
@@ -336,8 +336,8 @@ void MainmenuStage::Render()
 	ImGui::PushStyleColor(
 		ImGuiCol_Button,
 		selectedMenu == MENU_CREDITS
-		? ImVec4(0.15f, 0.60f, 0.70f, 1.0f)
-		: ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
+		? ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
+		: ImVec4(0.06f, 0.27f, 0.34f, 1.0f)
 	);
 
 	bool creditsPressed =
@@ -383,8 +383,8 @@ void MainmenuStage::Render()
 	ImGui::PushStyleColor(
 		ImGuiCol_Button,
 		selectedMenu == MENU_EXIT
-		? ImVec4(0.15f, 0.60f, 0.70f, 1.0f)
-		: ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
+		? ImVec4(0.10f, 0.45f, 0.55f, 1.0f)
+		: ImVec4(0.06f, 0.27f, 0.34f, 1.0f)
 	);
 
 	bool exitPressed =
@@ -428,7 +428,7 @@ void MainmenuStage::Render()
 			5,
 			12,
 			18,
-			100
+			0
 		),
 		12.0f
 	);

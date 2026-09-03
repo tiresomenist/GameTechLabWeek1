@@ -216,6 +216,10 @@ void App::InitD3D()
 	D3D11Util::CreateTexture(L"hit_effect.png", &hitEffectTexture, &hitEffectTextureSRV);
 	D3D11Util::CreateTexture(L"rocket2.png", &rocketTexture, &rocketTextureSRV);
 	D3D11Util::CreateTexture(L"title.png", &titleTexture, &titleTextureSRV);
+	D3D11Util::CreateTexture(L"title_background.png", &titleBackgroundTexture, &titleBackgroundTextureSRV);
+	D3D11Util::CreateTexture(L"earth_background.png", &earthBackgroundTexture, &earthBackgroundTextureSRV);
+	D3D11Util::CreateTexture(L"moon_background.png", &moonBackgroundTexture, &moonBackgroundTextureSRV);
+
 	for (auto& vertex : sphere_vertices)
 	{
 
@@ -371,77 +375,44 @@ void App::Update()
 
 	}
 };
+
 void App::Render()
 {
-	//현재 상태의 render 호출
-
-	//화면 클리어
+	// 화면 클리어
 	m_deviceContext->ClearRenderTargetView(m_frameBufferRTV, ClearColor);
 
-
-	//IA
-	
-	//인풋레이아웃 설정
+	// IA
 	m_deviceContext->IASetInputLayout(defaultInputLayout);
-	//topology를 trianglelist로 설정
 	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-
-	//RS
+	// RS
 	m_deviceContext->RSSetViewports(1, &ViewportInfo);
 	m_deviceContext->RSSetState(m_rasterizerState);
 
-
-	//OM
+	// OM
 	m_deviceContext->OMSetRenderTargets(1, &m_frameBufferRTV, nullptr);
 
-
+	// Shader
 	m_deviceContext->VSSetConstantBuffers(0, 1, &constantBuffer);
-
-	m_deviceContext->VSSetShader(defaultVertexShader,0,0);
-	//m_deviceContext->PSSetShader(defaultPixelShader, 0, 0);
+	m_deviceContext->VSSetShader(defaultVertexShader, 0, 0);
 	m_deviceContext->PSSetSamplers(0, 1, &textureSampler);
 	m_deviceContext->PSSetShader(texturePixelShader, 0, 0);
-	
-	// 배경 그리기 시작
-	{
-		FConstant cb = {};
-		cb.offset = { 0.0f, 0.0f, 0.0f };
-		cb.scale = { 1.0f, 1.0f, 1.0f };
-		cb.Rotation = { 0.0f, 0.0f, 0.0f };
 
-		D3D11Util::UpdateConstantBuffer(m_deviceContext, constantBuffer, cb);
-		m_deviceContext->VSSetConstantBuffers(0, 1, &constantBuffer);
-
-		UINT stride = sizeof(FVertexSimple);
-		UINT offset = 0;
-
-		m_deviceContext->IASetVertexBuffers(0, 1, &m_bgVertexBuffer, &stride, &offset);
-		m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-
-		m_deviceContext->PSSetShaderResources(0, 1, &m_bgSRV);
-		m_deviceContext->Draw(4, 0);
-
-		// 원상복구
-		m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	}
-	// 배경 그리기 끝
-
-
+	// ImGui 프레임 시작
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
+	// 여기서 배경/지구/달 + ImGui UI 모두 그림
 	if (m_currentStage != nullptr)
- 		m_currentStage->Render();
+		m_currentStage->Render();
 
-
+	// ImGui 실제 렌더
 	ImGui::Render();
- 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 	m_swapChain->Present(1, 0);
- }
+}
 
 App::App()
 {

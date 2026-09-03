@@ -61,6 +61,21 @@ class App
 	ID3D11ShaderResourceView* titleTextureSRV;
 	ID3D11Texture2D* titleTexture;
 
+	// 제목 배경 텍스처
+	ID3D11ShaderResourceView* titleBackgroundTextureSRV;
+	ID3D11Texture2D* titleBackgroundTexture;
+
+	// 지구 배경 텍스처
+	ID3D11ShaderResourceView* earthBackgroundTextureSRV;
+	ID3D11Texture2D* earthBackgroundTexture;
+
+	// 달 배경 텍스처
+	ID3D11ShaderResourceView* moonBackgroundTextureSRV;
+	ID3D11Texture2D* moonBackgroundTexture;
+
+	//배경 텍스쳐
+	ID3D11Texture2D* m_bgTexture;
+	ID3D11ShaderResourceView* m_bgSRV;
 
 	//프레임 버퍼
 	ID3D11Texture2D* m_frameBuffer;
@@ -75,9 +90,7 @@ class App
 	ID3D11Buffer* hitFlashConstantBuffer = nullptr;
 
 	ID3D11Buffer* m_bgVertexBuffer;
-	//배경 텍스쳐
-	ID3D11Texture2D* m_bgTexture;
-	ID3D11ShaderResourceView* m_bgSRV;
+	
 
 	ID3D11Buffer* SphereVertexBuffer;
 	UINT SphereNumVertices = 0;
@@ -198,6 +211,26 @@ class App
 	ID3D11ShaderResourceView* GetTitleTextureSRV()
 	{
 		return titleTextureSRV;
+	}
+
+	ID3D11ShaderResourceView* GetTitleBackgroundTextureSRV()
+	{
+		return titleBackgroundTextureSRV;
+	}
+
+	ID3D11ShaderResourceView* GetEarthBackgroundTextureSRV()
+	{
+		return earthBackgroundTextureSRV;
+	}
+
+	ID3D11ShaderResourceView* GetMoonBackgroundTextureSRV()
+	{
+		return moonBackgroundTextureSRV;
+	}
+
+	ID3D11ShaderResourceView* GetbgTextureSRV()
+	{
+		return m_bgSRV;
 	}
 
 	ID3D11BlendState* GetBlendState() const
