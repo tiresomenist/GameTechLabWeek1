@@ -33,3 +33,8 @@ bool InputManager::IsKeyTriggered(int key) {
 
 	return false;
 }
+
+void InputManager::KeyReset() {
+	memset(keys, 0, sizeof(keys));
+	memset(keyTriggered, 0, sizeof(keyTriggered));
+}

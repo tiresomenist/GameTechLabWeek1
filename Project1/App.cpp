@@ -46,10 +46,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			InputManager::IMins->KeyUp(static_cast<int>(wParam));
 		break;
 
+	case WM_KILLFOCUS:
+		if (InputManager::IMins != nullptr)
+			InputManager::IMins->KeyReset();
+		break;
+
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
-
 	default:
 		if (imguiHandled)
 			return true;
@@ -208,6 +212,7 @@ void App::InitD3D()
 	D3D11Util::CreateTexture(L"star2.png", &expOrbTexture, &expOrbTextureSRV);
 	D3D11Util::CreateTexture(L"hit_effect.png", &hitEffectTexture, &hitEffectTextureSRV);
 	D3D11Util::CreateTexture(L"rocket2.png", &rocketTexture, &rocketTextureSRV);
+	D3D11Util::CreateTexture(L"title.png", &titleTexture, &titleTextureSRV);
 	for (auto& vertex : sphere_vertices)
 	{
 
@@ -242,7 +247,7 @@ void App::InitD3D()
 	D3D11_BLEND_DESC bd = {};
 	bd.RenderTarget[0].BlendEnable = TRUE;
 	bd.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	bd.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;        // Additive
+	bd.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;    // Additive
 	bd.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 	bd.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 	bd.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;

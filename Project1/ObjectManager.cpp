@@ -379,6 +379,16 @@ void ObjectManager::RenderMainMenu()
 			0, 1, &srv
 		);
 
+		FPixelConstant cb = {};
+		cb.hitFlashAmount = 0.0f;
+		cb.alpha = 1.0f;
+		ID3D11Buffer* pixelBuffer = App::Ins->GetHitFlashConstantBuffer();
+		D3D11Util::UpdateConstantBuffer(
+			App::Ins->GetDeviceContext(),
+			pixelBuffer,
+			cb
+		);
+		App::Ins->GetDeviceContext()->PSSetConstantBuffers(0, 1, &pixelBuffer);
 		// Plane VB로 변경
 		UINT offset = 0;
 		UINT stride = sizeof(FVertexSimple);
